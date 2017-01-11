@@ -1,18 +1,32 @@
-var element = document.getElementsByTagName("body")[0].children[0]
-
-element.innerHTML = "Hej du"
+var pokelist = document.getElementById("pokemon-list")
+var pokeinfo = document.getElementById("pokemon-info")
 var pokemons = []
 var moves = []
 
 function update(){
 	var pokes = pokemons.filter(hasMoveAmongFilter("tackle"))
 	pokes = pokes.filter(hasAbilityAmongFilter("intimidate"))
-	var result = ""
 	for(var i in pokes){
-		result += (pokes[i].form == "Base" ? "" : pokes[i].form + " " ) + pokes[i].name + "<br>"
-		//result += JSON.stringify(pokes[i]) + "<br>"
+		pokelist.appendChild(createPokemonListElement(pokes[i]))
 	}
-	element.innerHTML = result
+}
+
+function createPokemonListElement(pokemon) {
+	var pokeElement = newTag("li")
+	pokeElement.innerHTML = (pokemon.form == "Base" ? "" : pokemon.form + " " ) + pokemon.name
+	pokeElement.onclick = function(){
+		pokeinfo.innerHTML = JSON.stringify(pokemon)
+	}
+	return pokeElement
+}
+
+function textifyPokemons(pokemons){
+	var result = ""
+	for(var i in pokemons){
+		result += (pokemons[i].form == "Base" ? "" : pokemons[i].form + " " ) + pokemons[i].name + "<br>"
+		//result += JSON.stringify(pokemons[i]) + "<br>"
+	}
+	return result
 }
 
 function hasMoveAmongFilter(...moves) {
@@ -33,6 +47,13 @@ function hasAbilityAmongFilter(...abilities) {
 		}
 		return false
 	}
+}
+
+function newTag(tag, parentElement){
+	var newElement = document.createElement(tag)
+	if(parentElement)
+		parentElement.appendChild(newElement)
+	return newElement
 }
 
 function request(url, callback) {
