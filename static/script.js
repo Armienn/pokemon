@@ -5,19 +5,20 @@ var pokemons = []
 var moves = []
 
 function update(){
-    for(var i in pokemons){
-        for(var j in pokemons[i].moves){
-            var move = pokemons[i].moves[j].name
-            if(!moves[move].pokemons)
-                moves[move].pokemons = []
-            moves[move].pokemons.push({id: pokemons[i].id, form: pokemons[i].form})
+    var pokesA = moves["False Swipe"].pokemons
+    var pokesB = moves["Spore"].pokemons
+    var pokes = []
+    for(var i in pokesA){
+        for(var j in pokesB){
+            if(pokesA[i].id == pokesB[j].id && pokesA[i].form == pokesB[j].form)
+            pokes.push(pokesA[i])
         }
     }
-    var result = "{<br>"
-    for(var i in moves){
-        result += "\"" + i + "\":" + JSON.stringify(moves[i]) + ",<br>"
+    var result = ""
+    for(var i in pokes){
+        result += JSON.stringify(pokes[i]) + ",<br>"
     }
-    element.innerHTML = result + "}"
+    element.innerHTML = result
 }
 
 function request(url, callback) {
