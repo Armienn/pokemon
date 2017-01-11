@@ -657,5 +657,5 @@
 "Cut":{"name":"Cut","type":"Normal","power":"50","accuracy":"95","category":"Physical"},
 "Prismatic Laser":{"name":"Prismatic Laser","type":"Psychic","power":"160","accuracy":"100","category":"Special"},
 "Fleur Cannon":{"name":"Fleur Cannon","type":"Fairy","power":"130","accuracy":"90","category":"Special"},
-"Spectral Thief":{"name":"Spectral Thief","type":"Ghost","power":"90","accuracy":"100","category":"Physical"},
+"Spectral Thief":{"name":"Spectral Thief","type":"Ghost","power":"90","accuracy":"100","category":"Physical"}
 }
