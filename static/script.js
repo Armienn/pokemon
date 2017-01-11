@@ -4,13 +4,14 @@ var pokelist = document.getElementById("pokemon-list")
 var pokeinfo = document.getElementById("pokemon-info")
 var pokemons = []
 var moves = []
-var filters = []
+var filters = {}
 
 function update(){
 	var pokes = pokemons
 	clearInterface()
 	for(var i in filters){
 		pokes = pokes.filter(filters[i])
+		currentfilterlist.appendChild(createFilterListElement(i))
 	}
 	for(var i in pokes){
 		pokelist.appendChild(createPokemonListElement(pokes[i]))
@@ -32,16 +33,27 @@ function addFilterEntry(label, filterFunction){
 	var addElement = newTag("button", filterElement)
 	addElement.innerHTML = "Add"
 	addElement.onclick = function(){
-		addFilter(filterFunction, inputElement.value)
+		addFilter(label, inputElement.value, filterFunction)
 		update()
 	}
 }
 
-function addFilter(filterFunction, input){
+function addFilter(label, input, filterFunction){
+	var title = label + input
 	var inputs = input.split(",")
 	for(var i in inputs)
 		inputs[i] = inputs[i].trim()
-	filters.push(filterFunction(inputs))
+	filters[title] = filterFunction(...inputs)
+}
+
+function createFilterListElement(filterKey) {
+	var filterElement = newTag("li")
+	filterElement.innerHTML = filterKey
+	filterElement.onclick = function(){
+		delete filters[filterKey]
+		update()
+	}
+	return filterElement
 }
 
 function createPokemonListElement(pokemon) {
