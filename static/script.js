@@ -10,7 +10,7 @@ function update(){
             var move = pokemons[i].moves[j].name
             if(!moves[move].pokemons)
                 moves[move].pokemons = []
-            moves[move].push({id: pokemons[i].id, form: pokemons[i].form})
+            moves[move].pokemons.push({id: pokemons[i].id, form: pokemons[i].form})
         }
     }
     var result = "{<br>"
