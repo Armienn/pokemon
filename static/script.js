@@ -6,25 +6,18 @@ var moves = []
 
 function update(){
     for(var i in pokemons){
-        var pokemon = pokemons[i]
-        if(pokemon.name == pokemon.form)
-            pokemon.form = "Base"
-        else if(pokemon.form.startsWith("Mega")) {
-            pokemon.form = "Mega"
-            if(pokemon.form.endsWith("X"))
-                pokemon.form += " X"
-            if(pokemon.form.endsWith("Y"))
-                pokemon.form += " Y"
-        }
-        else if(pokemon.form.startsWith("Alolan")) {
-            pokemon.form = "Alola"
+        for(var j in pokemons[i].moves){
+            var move = pokemons[i].moves[j].name
+            if(!moves[move].pokemons)
+                moves[move].pokemons = []
+            moves[move].push({id: pokemons[i].id, form: pokemons[i].form})
         }
     }
-    var result = "[<br>"
-    for(var i in pokemons){
-        result += JSON.stringify(pokemons[i]) + ",<br>"
+    var result = "{<br>"
+    for(var i in moves){
+        result += "\"" + i + "\":" + JSON.stringify(moves[i]) + ",<br>"
     }
-    element.innerHTML = result + "]"
+    element.innerHTML = result + "}"
 }
 
 function request(url, callback) {
