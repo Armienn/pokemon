@@ -1,38 +1,16 @@
+var filterAdder = document.getElementById("filter-adder")
 var filterlist = document.getElementById("filter-list")
 var currentfilterlist = document.getElementById("current-filter-list")
 var pokelist = document.getElementById("pokemon-list")
 var pokeinfo = document.getElementById("pokemon-info")
 
+//setColors("#222", "#eee", "red", "rgba(50, 50, 50,0.5)")
+setColors("whitesmoke", "black", "#ff3a23", "rgba(50, 50, 50,0.5)")
+
 var pokemonColumns = [
 	{ getColumnHeader: function(){ return "" },
 		getColumn: function(pokemon){
-			var name = pokemon.name.toLowerCase().replace(" ", "-").replace("♀","-f").replace("♂","-m").replace("'","").replace(".","").replace("ébé","ebe").replace(":","")
-			var formname
-			if(pokemon.form == "Alolan")
-				formname = "alola"
-			else if(pokemon.form == "10% Forme")
-				formname = "10-percent"
-			else if(["Altered Forme","Land Forme","Red-Striped","Standard Mode","Incarnate Forme","Ordinary Forme","Aria Forme","Shield Forme","50% Forme","Male","Female"].indexOf(pokemon.form) > -1)
-				formname = false
-			else if(pokemon.form.indexOf("Forme") > -1)
-				formname = pokemon.form.split(" Forme")[0].toLowerCase()
-			else if(pokemon.form == "Zen Mode")
-				formname = "zen"
-			else if(pokemon.form == "Ash-Greninja")
-				formname = "ash"
-			else if(pokemon.form.indexOf("Size") > -1)
-				formname = false
-			else if(pokemon.form.indexOf("Style") > -1)
-				formname = false
-			else if(pokemon.form.indexOf("Form") > -1)
-				formname = false
-			else if(pokemon.form != "Base")
-				formname = pokemon.form.toLowerCase().replace(" ", "-")
-			if(formname && name != "deoxys" && name != "wormadam" && name != "hoopa")
-				name += "-" + formname
-			else if(name == "meowstic" && pokemon.form == "Female")
-				name = "female/" + name
-			return "<img src='https://raw.githubusercontent.com/msikma/pokesprite/master/icons/pokemon/regular/" + name + ".png'/>"
+			return "<img src='https://raw.githubusercontent.com/msikma/pokesprite/master/icons/pokemon/regular/" + pokemonSimpleName(pokemon) + ".png'/>"
 		}
 	},
 	{ getColumnHeader: function(){ return "Pokemon" },
@@ -47,18 +25,6 @@ var pokemonColumns = [
 	}
 ]
 
-function setUpTableHeader(){
-	var tableHeader = newTag("tr", pokelist.children[0])
-	for(var i in pokemonColumns){
-		var element = newTag("th", tableHeader)
-		element.innerHTML = pokemonColumns[i].getColumnHeader()
-	}
-}
-
-var pokes = []
-var nextPoke = 0
-var nextLimit = 50
-
 function update(){
 	nextPoke = 0
 	nextLimit = 50
@@ -70,6 +36,15 @@ function update(){
 	addNextPokemonEntry()
 }
 
+onload = ()=>{
+	update()
+	setInterval(loadMoreWhenScrolledDown,500)
+}
+
+var pokes = []
+var nextPoke = 0
+var nextLimit = 50
+
 function addNextPokemonEntry(){
 	if(nextPoke > nextLimit){
 		nextLimit += 50
@@ -79,9 +54,28 @@ function addNextPokemonEntry(){
 		nextPoke = 0
 		return
 	}
-	pokelist.children[1].appendChild(createPokemonListElement(pokes[nextPoke]))
+	var color = nextPoke%2?"80":"180"
+	var element = createPokemonListElement(pokes[nextPoke])
+	element.style.backgroundColor = "rgba("+color+","+color+","+color+",0.2)"
+	pokelist.children[1].appendChild(element)
 	nextPoke++
 	setTimeout(addNextPokemonEntry(),0)
+}
+
+function setColors(backgroundColor, textColor, headerColor, tableHeaderColor){
+	document.getElementsByTagName("body")[0].style.backgroundColor = backgroundColor
+	document.getElementsByTagName("body")[0].style.color = textColor
+	document.getElementsByTagName("section")[0].style.backgroundColor = headerColor
+	document.getElementsByTagName("header")[0].style.backgroundColor = headerColor
+	document.getElementsByTagName("thead")[0].style.backgroundColor = tableHeaderColor
+}
+
+function setUpTableHeader(){
+	var tableHeader = newTag("tr", pokelist.children[0])
+	for(var i in pokemonColumns){
+		var element = newTag("th", tableHeader)
+		element.innerHTML = pokemonColumns[i].getColumnHeader()
+	}
 }
 
 function loadMoreWhenScrolledDown(){
@@ -90,11 +84,6 @@ function loadMoreWhenScrolledDown(){
 		if(nextPoke)
 			addNextPokemonEntry()
 	}
-}
-
-onload = ()=>{
-	update()
-	setInterval(loadMoreWhenScrolledDown,500)
 }
 
 function clearInterface(){
@@ -119,18 +108,46 @@ function createPokemonListElement(pokemon) {
 }
 
 function addSearch(label){
-	var filterElement = newTag("li", filterlist)
-	var labelElement = newTag("label", filterElement)
-	labelElement.innerHTML = label
+	var filterElement = newTag("li", filterAdder, true)
 	var inputElement = newTag("input", filterElement)
+	inputElement.placeholder = label
+	inputElement.style.width = "15rem"
 	inputElement.oninput = function(){
 		searchFilter = getSearchFilter(inputElement.value)
 		update()
 	}
 }
 
+function addFilterChooser(label){
+	var filterElement = newTag("li", filterAdder, true)
+	var labelElement = newTag("label", filterElement)
+	labelElement.innerHTML = label
+	var selectElement = newTag("select", filterElement)
+	newTag("option", selectElement)
+	for(var i=0;i<filterlist.children.length;i++){
+		var child = filterlist.children[i]
+		var optionElement = newTag("option", selectElement)
+		optionElement.value = child.children[0].innerHTML
+		optionElement.innerHTML = child.children[0].innerHTML
+	}
+	selectElement.onchange = selectFilter
+}
+
+function selectFilter(){
+	var selected
+	for(var i=0;i<filterlist.children.length;i++){
+		var child = filterlist.children[i]
+		child.style.display = "none"
+		if(child.children[0].innerHTML == this.value)
+			selected = child
+	}
+	if(selected)
+		selected.style.display = "inline-block"
+}
+
 function addFilterEntry(label, filterFunction){
 	var filterElement = newTag("li", filterlist)
+	filterElement.style.display = "none"
 	var labelElement = newTag("label", filterElement)
 	labelElement.innerHTML = label
 	var inputElement = newTag("input", filterElement)
@@ -138,6 +155,7 @@ function addFilterEntry(label, filterFunction){
 	addElement.innerHTML = "Add"
 	addElement.onclick = function(){
 		addFilter(label, inputElement.value, filterFunction)
+		inputElement.value = ""
 		update()
 	}
 }
@@ -164,15 +182,19 @@ function updatePokemonInfo(pokemon){
 	pokeinfo.innerHTML = JSON.stringify(pokemon)
 }
 
-function newTag(tag, parentElement){
+function newTag(tag, parentElement, first){
 	var newElement = document.createElement(tag)
-	if(parentElement)
-		parentElement.appendChild(newElement)
+	if(parentElement){
+		if(first)
+			parentElement.insertBefore(newElement, parentElement.firstChild)
+		else
+			parentElement.appendChild(newElement)
+	}
 	return newElement
 }
-
-addSearch("Search:")
-addFilterEntry("Type filter:", hasItemInFilter("types"))
-addFilterEntry("Ability filter:", hasItemInFilter("abilities"))
-addFilterEntry("Move filter:", hasItemInFilter("moves"))
-addFilterEntry("Egg group filter:", hasItemInFilter("eggGroups"))
+addFilterEntry("Type:", hasItemInFilter("types"))
+addFilterEntry("Ability:", hasItemInFilter("abilities"))
+addFilterEntry("Move:", hasItemInFilter("moves"))
+addFilterEntry("Egg group:", hasItemInFilter("eggGroups"))
+addFilterChooser("Add filter:")
+addSearch("Search")

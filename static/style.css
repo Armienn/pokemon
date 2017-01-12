@@ -17,16 +17,31 @@ time, mark, audio, video {
     font-size:100%;
     font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
     vertical-align:baseline;
-    background:transparent;
     list-style-type: none;
     font-weight: unset;
+    border: none;
 }
 
-section{
-    width: calc(100% - 2rem);
-    margin-left: 1rem;
-    margin-top: 1rem;
+article{
+    width: 100vw;
+    height: 100vh;
+    overflow:auto;
+    overflow-x: hidden;
 }
+
+section,header {
+    width: calc(100% - 2rem);
+    padding: 1rem 1rem 1rem 1rem;
+}
+
+th{
+    vertical-align: middle;
+}
+
+#filter-list {
+    display: inline-block;
+}
+
 
 #pokemon-list {
     width: 100%;
@@ -34,23 +49,25 @@ section{
 
 #pokemon-list tr {
     height: 2rem;
-    text-align: center;
 }
 
-#filter-list {
-    text-align: center;
-}
-
-#filter-list li {
+li {
     display: inline-block;
     padding: 0.5rem;
 }
 
-#current-filter-list {
+ul {
     text-align: center;
 }
 
-#current-filter-list li {
-    display: inline-block;
-    padding: 0.5rem;
+input, select {
+    border: none;
+    padding: 0.3rem;
+    margin: 0 0.3rem;
+}
+
+button{
+    border: none;
+    padding: 0.2rem;
+    margin: 0 0.3rem;
 }

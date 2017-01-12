@@ -34,6 +34,36 @@ function pokemonFormName(pokemon){
 	}
 }
 
+function pokemonSimpleName(pokemon){
+			var name = pokemon.name.toLowerCase().replace(" ", "-").replace("♀","-f").replace("♂","-m").replace("'","").replace(".","").replace("ébé","ebe").replace(":","")
+			var formname
+			if(pokemon.form == "Alolan")
+				formname = "alola"
+			else if(pokemon.form == "10% Forme")
+				formname = "10-percent"
+			else if(["Altered Forme","Land Forme","Red-Striped","Standard Mode","Incarnate Forme","Ordinary Forme","Aria Forme","Shield Forme","50% Forme","Male","Female"].indexOf(pokemon.form) > -1)
+				formname = false
+			else if(pokemon.form.indexOf("Forme") > -1)
+				formname = pokemon.form.split(" Forme")[0].toLowerCase()
+			else if(pokemon.form == "Zen Mode")
+				formname = "zen"
+			else if(pokemon.form == "Ash-Greninja")
+				formname = "ash"
+			else if(pokemon.form.indexOf("Size") > -1)
+				formname = false
+			else if(pokemon.form.indexOf("Style") > -1)
+				formname = false
+			else if(pokemon.form.indexOf("Form") > -1)
+				formname = false
+			else if(pokemon.form != "Base")
+				formname = pokemon.form.toLowerCase().replace(" ", "-")
+			if(formname && name != "deoxys" && name != "wormadam" && name != "hoopa")
+				name += "-" + formname
+			else if(name == "meowstic" && pokemon.form == "Female")
+				name = "female/" + name
+			return name
+		}
+
 function hasItemInFilter(listKey) {
     return function (...items){
         return function(pokemon) {
