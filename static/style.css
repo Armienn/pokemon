@@ -15,6 +15,29 @@ time, mark, audio, video {
     border:0;
     outline:0;
     font-size:100%;
+    font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
     vertical-align:baseline;
     background:transparent;
+    list-style-type: none;
+}
+
+section{
+    width: calc(100% - 2rem);
+    margin-left: 1rem;
+    margin-top: 1rem;
+}
+
+#pokemon-list li {
+    height: 2rem;
+    text-align: center;
+}
+
+#filter-list li {
+    display: inline-block;
+    padding: 0.5rem;
+}
+
+#current-filter-list li {
+    display: inline-block;
+    padding: 0.5rem;
 }
