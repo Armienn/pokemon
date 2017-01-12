@@ -4,16 +4,25 @@ var pokelist = document.getElementById("pokemon-list")
 var pokeinfo = document.getElementById("pokemon-info")
 
 var pokemonColumns = [
-	{ getColumnHeader: function(){
-			return "Pokemon"
-		},
+	{ getColumnHeader: function(){ return "" },
+		getColumn: function(pokemon){
+			var name = pokemon.name.toLowerCase().replace(" ", "-").replace("♀","-f").replace("♂","-m").replace("'","").replace(".","").replace("ébé","ebe").replace(":","")
+			var formname
+			if(pokemon.form == "Alolan")
+				forname = "alola"
+			if(pokemon.form != "Base")
+				forname = pokemon.form.toLowerCase().replace(" ", "-")
+			if(formname)
+				name += "-" + formname
+			return "<img src='https://raw.githubusercontent.com/msikma/pokesprite/master/icons/pokemon/regular/" + name + ".png'/>"
+		}
+	},
+	{ getColumnHeader: function(){ return "Pokemon" },
 		getColumn: function(pokemon){
 			return pokemonFormName(pokemon)
 		}
 	},
-	{ getColumnHeader: function(){
-			return "Types"
-		},
+	{ getColumnHeader: function(){ return "Types" },
 		getColumn: function(pokemon){
 			return pokemon.types[0] + (pokemon.types[1] ? " / " + pokemon.types[1] : "")
 		}

@@ -19,6 +19,7 @@ time, mark, audio, video {
     vertical-align:baseline;
     background:transparent;
     list-style-type: none;
+    font-weight: unset;
 }
 
 section{
