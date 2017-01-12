@@ -36,9 +36,17 @@ section{
     text-align: center;
 }
 
+#filter-list {
+    text-align: center;
+}
+
 #filter-list li {
     display: inline-block;
     padding: 0.5rem;
+}
+
+#current-filter-list {
+    text-align: center;
 }
 
 #current-filter-list li {
