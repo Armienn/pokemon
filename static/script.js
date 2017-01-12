@@ -58,7 +58,7 @@ function createFilterListElement(filterKey) {
 
 function createPokemonListElement(pokemon) {
 	var pokeElement = newTag("li")
-	pokeElement.innerHTML = (pokemon.form == "Base" ? "" : pokemon.form + " " ) + pokemon.name
+	pokeElement.innerHTML = pokemonFormName(pokemon)
 	pokeElement.onclick = function(){
 		updatePokemonInfo(pokemon)
 	}
@@ -67,6 +67,10 @@ function createPokemonListElement(pokemon) {
 
 function updatePokemonInfo(pokemon){
 	pokeinfo.innerHTML = JSON.stringify(pokemon)
+}
+
+function pokemonFormName(pokemon){
+    return (pokemon.form == "Base" ? "" : pokemon.form + " " ) + pokemon.name
 }
 
 function textifyPokemons(pokemons){
@@ -78,24 +82,20 @@ function textifyPokemons(pokemons){
 	return result
 }
 
-function hasMoveAmongFilter(...moves) {
-	return function(pokemon) {
-		for(var i in moves){
-			if(pokemon.moves.filter(e => e.name.toLowerCase() == moves[i].toLowerCase()).length)
-				return true
-		}
-		return false
-	}
-}
-
-function hasAbilityAmongFilter(...abilities) {
-	return function(pokemon) {
-		for(var i in abilities){
-			if(pokemon.abilities.filter(e => e ? e.toLowerCase() == abilities[i].toLowerCase() : false).length)
-				return true
-		}
-		return false
-	}
+function hasItemInFilter(listKey) {
+    return function (...items){
+        return function(pokemon) {
+            for(var i in items){
+                if(!pokemon[listKey]) {
+                    console.log("Pokemon missing " + listKey + ": " + pokemonFormName(pokemon))
+                    return false
+                }
+                if(pokemon[listKey].filter(e => e ? (e.toLowerCase ? e.toLowerCase() : e.name.toLowerCase()) == items[i].toLowerCase() : false).length)
+                    return true
+            }
+            return false
+        }
+    }
 }
 
 function newTag(tag, parentElement){
@@ -129,5 +129,7 @@ function getPokemons(response){
 
 request("https://armienn.github.io/pokemon/static/moves.json", getMoves)
 request("https://armienn.github.io/pokemon/static/pokemons-small.json", getPokemons)
-addFilterEntry("Move filter:", hasMoveAmongFilter)
-addFilterEntry("Ability filter:", hasAbilityAmongFilter)
+addFilterEntry("Type filter:", hasItemInFilter("types"))
+addFilterEntry("Ability filter:", hasItemInFilter("abilities"))
+addFilterEntry("Move filter:", hasItemInFilter("moves"))
+addFilterEntry("Egg group filter:", hasItemInFilter("eggGroups"))
