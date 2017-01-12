@@ -27,7 +27,11 @@ section{
     margin-top: 1rem;
 }
 
-#pokemon-list li {
+#pokemon-list {
+    width: 100%;
+}
+
+#pokemon-list tr {
     height: 2rem;
     text-align: center;
 }

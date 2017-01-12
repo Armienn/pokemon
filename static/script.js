@@ -17,13 +17,15 @@ function update(){
 	if(searchFilter)
 		pokes = pokes.filter(searchFilter)
 	for(var i in pokes){
-		pokelist.appendChild(createPokemonListElement(pokes[i]))
+		pokelist.children[1].appendChild(createPokemonListElement(pokes[i]))
 	}
 }
 
 function clearInterface(){
-	while (pokelist.firstChild)
-		pokelist.removeChild(pokelist.firstChild)
+	while (pokelist.children[0].firstChild)
+		pokelist.children[0].removeChild(pokelist.children[0].firstChild)
+	while (pokelist.children[0].firstChild)
+		pokelist.children[1].removeChild(pokelist.children[1].firstChild)
 	while (currentfilterlist.firstChild)
 		currentfilterlist.removeChild(currentfilterlist.firstChild)
 }
@@ -74,7 +76,7 @@ function createFilterListElement(filterKey) {
 }
 
 function createPokemonListElement(pokemon) {
-	var pokeElement = newTag("li")
+	var pokeElement = newTag("tr")
 	pokeElement.innerHTML = pokemonFormName(pokemon)
 	pokeElement.onclick = function(){
 		updatePokemonInfo(pokemon)
