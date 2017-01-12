@@ -57,18 +57,24 @@ function setUpTableHeader(){
 
 var pokes = []
 var nextPoke = 0
+var nextLimit = 50
 
 function update(){
-	var pokes = getFilteredPokemons()
+	nextPoke = 0
+	nextLimit = 50
+	pokes = getFilteredPokemons()
 	clearInterface()
 	setUpTableHeader()
 	for(var i in filters)
 		currentfilterlist.appendChild(createFilterListElement(i))
-	for(var i in pokes)
-		pokelist.children[1].appendChild(createPokemonListElement(pokes[i]))
+	addNextPokemonEntry()
 }
 
 function addNextPokemonEntry(){
+	if(nextPoke > nextLimit){
+		nextLimit += 50
+		return
+	}
 	if(!pokes[nextPoke]){
 		nextPoke = 0
 		return
@@ -78,7 +84,18 @@ function addNextPokemonEntry(){
 	setTimeout(addNextPokemonEntry(),0)
 }
 
-onload = update
+function loadMoreWhenScrolledDown(){
+	var main = document.getElementById("main")
+	if(main.scrollTop > main.scrollHeight-main.clientHeight-200){
+		if(nextPoke)
+			addNextPokemonEntry()
+	}
+}
+
+onload = ()=>{
+	update()
+	setInterval(loadMoreWhenScrolledDown,500)
+}
 
 function clearInterface(){
 	while (pokelist.children[0].firstChild)
