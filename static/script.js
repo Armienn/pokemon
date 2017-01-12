@@ -5,6 +5,7 @@ var pokeinfo = document.getElementById("pokemon-info")
 var pokemons = []
 var moves = []
 var filters = {}
+var searchFilter
 
 function update(){
 	var pokes = pokemons
@@ -13,6 +14,8 @@ function update(){
 		pokes = pokes.filter(filters[i])
 		currentfilterlist.appendChild(createFilterListElement(i))
 	}
+	if(searchFilter)
+		pokes = pokes.filter(searchFilter)
 	for(var i in pokes){
 		pokelist.appendChild(createPokemonListElement(pokes[i]))
 	}
@@ -23,6 +26,20 @@ function clearInterface(){
 		pokelist.removeChild(pokelist.firstChild)
 	while (currentfilterlist.firstChild)
 		currentfilterlist.removeChild(currentfilterlist.firstChild)
+}
+
+function addSearch(label){
+	var filterElement = newTag("li", filterlist)
+	var labelElement = newTag("label", filterElement)
+	labelElement.innerHTML = label
+	var inputElement = newTag("input", filterElement)
+	inputElement.oninput = function(){
+		searchFilter = function(pokemon) {
+			var query = inputElement.value.trim().toLowerCase()
+			return pokemonFormName(pokemon).toLowerCase().indexOf(query) > -1
+		}
+		update()
+	}
 }
 
 function addFilterEntry(label, filterFunction){
@@ -70,7 +87,16 @@ function updatePokemonInfo(pokemon){
 }
 
 function pokemonFormName(pokemon){
-    return (pokemon.form == "Base" ? "" : pokemon.form + " " ) + pokemon.name
+	switch(pokemon.form){
+	case "Base":
+		return pokemon.name
+	case "Mega X":
+		return "Mega " + pokemon.name + " X"
+	case "Mega Y":
+		return "Mega " + pokemon.name + " Y"
+	default:
+		return pokemon.form + " " + pokemon.name
+	}
 }
 
 function textifyPokemons(pokemons){
@@ -129,6 +155,7 @@ function getPokemons(response){
 
 request("https://armienn.github.io/pokemon/static/moves.json", getMoves)
 request("https://armienn.github.io/pokemon/static/pokemons-small.json", getPokemons)
+addSearch("Search:")
 addFilterEntry("Type filter:", hasItemInFilter("types"))
 addFilterEntry("Ability filter:", hasItemInFilter("abilities"))
 addFilterEntry("Move filter:", hasItemInFilter("moves"))
