@@ -1,7 +1,9 @@
 var nameHeader = document.getElementById("name-header")
 var imageSection = document.getElementById("image-section")
 var infoSection = document.getElementById("info-section")
+var infoSectionTable = document.getElementById("info-section").children[0].children[1]
 var statSection = document.getElementById("stat-section")
+var statSectionTable = document.getElementById("stat-section").children[0].children[1]
 var movesSection = document.getElementById("moves-section")
 
 typeColors = {
@@ -84,30 +86,32 @@ function showImageSection(pokemon){
 }
 
 function showInfoSection(pokemon){
-	var element = newTag("li", infoSection)
-	element.innerHTML = getTypesText(pokemon)
-	element = newTag("li", infoSection)
-	element.innerHTML = pokemon.classification
-	element = newTag("li", infoSection)
-	element.innerHTML = pokemon.ratio
-	element = newTag("li", infoSection)
-	element.innerHTML = getAbilitiesText(pokemon)
-	element = newTag("li", infoSection)
-	element.innerHTML = getEggGroupsText(pokemon)
+	addInfoElement(pokemon, "Types |", getTypesText(pokemon))
+	addInfoElement(pokemon, "Classification |", pokemon.classification)
+	addInfoElement(pokemon, "Abilities |", getAbilitiesText(pokemon))
+	addInfoElement(pokemon, "Egg groups |", getEggGroupsText(pokemon))
+	addInfoElement(pokemon, "Gender ratio |", pokemon.ratio)
+}
+
+function addInfoElement(pokemon, headerText, content){
+	var row = newTag("tr", infoSectionTable)
+	var header = newTag("th", row)
+	var text = newTag("td", row)
+	header.innerHTML = headerText
+	text.innerHTML = content
 }
 
 function showStatSection(pokemon){
-	var element = statSection.children[0].children[1]
-	element.appendChild(getStatElement(pokemon, "hp", "HP"))
-	element.appendChild(getStatElement(pokemon, "atk", "Attack"))
-	element.appendChild(getStatElement(pokemon, "def", "Defense"))
-	element.appendChild(getStatElement(pokemon, "spa", "Sp. Atk"))
-	element.appendChild(getStatElement(pokemon, "spd", "Sp. Def"))
-	element.appendChild(getStatElement(pokemon, "spe", "Speed"))
+	addStatElement(pokemon, "HP |", "hp")
+	addStatElement(pokemon, "Attack |", "atk")
+	addStatElement(pokemon, "Defense |", "def")
+	addStatElement(pokemon, "Sp. Atk |", "spa")
+	addStatElement(pokemon, "Sp. Def |", "spd")
+	addStatElement(pokemon, "Speed |", "spe")
 }
 
-function getStatElement(pokemon, stat, headerText){
-	var row = newTag("tr")
+function addStatElement(pokemon, headerText, stat){
+	var row = newTag("tr", statSectionTable)
 	var header = newTag("th", row)
 	var text = newTag("td", row)
 	var barElement = newTag("td", row)
@@ -127,7 +131,6 @@ function getStatElement(pokemon, stat, headerText){
 	bar = newTag("div", barElement)
 	bar.className = "stat-bar ev-bar"
 	bar.style.width = evBase/4 + "px"
-	return row
 }
 
 function showMovesSection(pokemon){
@@ -135,10 +138,10 @@ function showMovesSection(pokemon){
 }
 
 function clearPokemonInfo(){
-	while (statSection.children[0].children[1].firstChild)
-		statSection.children[0].children[1].removeChild(statSection.children[0].children[1].firstChild)
-	while (infoSection.firstChild)
-		infoSection.removeChild(infoSection.firstChild)
+	while (statSectionTable.firstChild)
+		statSectionTable.removeChild(statSectionTable.firstChild)
+	while (infoSectionTable.firstChild)
+		infoSectionTable.removeChild(infoSectionTable.firstChild)
 }
 
 function getTypeText(type){

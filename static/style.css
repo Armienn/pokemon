@@ -155,9 +155,9 @@ button{
     width: auto;
 }
 
-#pokemon-info li {
-    display: block;
-    text-align: center;
+#pokemon-info th {
+    text-align: right;
+    color: #888;
 }
 
 #pokemon-info td{
