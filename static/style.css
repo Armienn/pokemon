@@ -118,3 +118,16 @@ button{
 #mode-night, #mode-day {
     font-size: 1.2rem;
 }
+
+#pokemon-info{
+    width: 100%;
+    overflow: hidden;
+}
+.hidden-info {
+    max-height: 0;
+    transition: max-height 0.5s ease;
+}
+.shown-info {
+    max-height: 100vh;
+    transition: max-height 1s ease;
+}

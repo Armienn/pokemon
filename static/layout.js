@@ -15,6 +15,7 @@ var colors = {
 }
 
 var mode = "table"
+var currentPokemon
 
 setColors(...colors.night)
 
@@ -240,7 +241,17 @@ function createFilterListElement(filterKey) {
 }
 
 function updatePokemonInfo(pokemon){
-	pokemonInfo.innerHTML = JSON.stringify(pokemon)
+	if(currentPokemon){
+		currentPokemon = null
+		pokemonInfo.className = "hidden-info"
+		setTimeout(function(){
+			updatePokemonInfo(pokemon)
+		},500)
+		return
+	}
+	currentPokemon = pokemon
+	pokemonInfo.innerHTML = JSON.stringify(currentPokemon)
+	pokemonInfo.className = "shown-info"
 }
 
 function newTag(tag, parentElement, first){
