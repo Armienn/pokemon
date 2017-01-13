@@ -63,7 +63,7 @@ var pokemonColumns = [
 	},
 	{ getColumnHeader: function(){ return "Types" },
 		getColumn: function(pokemon){
-			return pokemon.types[0] + (pokemon.types[1] ? " / " + pokemon.types[1] : "")
+			return getTypesText(pokemon)
 		}
 	}
 ]
