@@ -38,15 +38,6 @@ section section {
     padding: 0rem 1rem 0rem 1rem;
 }
 
-section section section {
-    float: left;
-    width: auto;
-}
-
-section section section li {
-    display: block;
-}
-
 h1{
     font-size: 2rem;
     font-weight: bold;
@@ -157,6 +148,16 @@ button{
 .shown-info {
     max-height: 100vh;
     transition: max-height 1s ease;
+}
+
+#pokemon-info section section {
+    float: left;
+    width: auto;
+}
+
+#pokemon-info li {
+    display: block;
+    text-align: center;
 }
 
 #pokemon-info td{

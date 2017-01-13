@@ -91,7 +91,9 @@ function showInfoSection(pokemon){
 	element = newTag("li", infoSection)
 	element.innerHTML = pokemon.ratio
 	element = newTag("li", infoSection)
-	element.innerHTML = pokemon.eggCycles
+	element.innerHTML = getAbilitiesText(pokemon)
+	element = newTag("li", infoSection)
+	element.innerHTML = getEggGroupsText(pokemon)
 }
 
 function showStatSection(pokemon){
@@ -121,10 +123,10 @@ function getStatElement(pokemon, stat, headerText){
 	bar.style.width = statBase*2 + "px"
 	bar = newTag("div", barElement)
 	bar.className = "stat-bar iv-bar"
-	bar.style.width = ivBase*2 + "px"
+	bar.style.width = ivBase + "px"
 	bar = newTag("div", barElement)
 	bar.className = "stat-bar ev-bar"
-	bar.style.width = evBase*2 + "px"
+	bar.style.width = evBase/4 + "px"
 	return row
 }
 
@@ -145,4 +147,29 @@ function getTypeText(type){
 
 function getTypesText(pokemon){
 	return getTypeText(pokemon.types[0]) + (pokemon.types[1] ? " / " + getTypeText(pokemon.types[1]) : "")
+}
+
+function getAbilityText(ability, hidden){
+	return "<span" + (hidden ? " style='font-style: italic;'" : "") + ">"+ ability + "</span>"
+}
+
+function getAbilitiesText(pokemon){
+	var text = getAbilityText(pokemon.abilities[0])
+	if(pokemon.abilities[1])
+		text += " / " + getAbilityText(pokemon.abilities[1])
+	if(pokemon.abilities[2])
+		text += " / " + getAbilityText(pokemon.abilities[2], true)
+	return text
+}
+
+function getEggGroupText(eggGroup){
+	return "<span>"+ eggGroup + "</span>"
+}
+
+function getEggGroupsText(pokemon){
+	if(!pokemon.eggGroups) return "—"
+	var text = getEggGroupText(pokemon.eggGroups[0])
+	if(pokemon.eggGroups[1])
+		text += " / " + getEggGroupText(pokemon.eggGroups[1])
+	return text
 }
