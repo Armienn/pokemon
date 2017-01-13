@@ -155,6 +155,7 @@ function addPokemonListElement(pokemon) {
 	}
 	pokeElement.onclick = function(){
 		updatePokemonInfo(pokemon)
+		main.scrollTop = 0
 	}
 	pokeElement.className = nextPoke%2?"odd":"even"
 }
