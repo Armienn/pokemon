@@ -54,12 +54,20 @@ th, li{
 
 #pokemon-list tr {
     height: 2rem;
+    cursor: pointer;
+}
+#pokemon-list tr:hover {
+    background-color: rgba(255, 255, 255, 0.35);
 }
 
 #pokemon-grid li {
     display: inline-table;
     padding: 0;
     border: 1px solid rgba(128, 128, 128, 0.5);
+    cursor: pointer;
+}
+#pokemon-grid li:hover {
+    background-color: rgba(255, 255, 255, 0.35);
 }
 
 li {
@@ -69,6 +77,13 @@ li {
 
 ul {
     text-align: center;
+}
+
+.even{
+    background-color: rgba(180, 180, 180, 0.2);
+}
+.odd{
+    background-color: rgba(80, 80, 80, 0.2);
 }
 
 input, select {

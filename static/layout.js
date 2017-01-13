@@ -157,8 +157,7 @@ function addPokemonListElement(pokemon) {
 	pokeElement.onclick = function(){
 		updatePokemonInfo(pokemon)
 	}
-	var color = nextPoke%2?"80":"180"
-	pokeElement.style.backgroundColor = "rgba("+color+","+color+","+color+",0.2)"
+	pokeElement.className = nextPoke%2?"odd":"even"
 }
 
 function addPokemonGridElement(pokemon) {
