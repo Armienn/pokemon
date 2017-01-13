@@ -82,7 +82,23 @@ function showNameHeader(pokemon){
 }
 
 function showImageSection(pokemon){
-	imageSection.innerHTML = "<img src='https://raw.githubusercontent.com/msikma/pokesprite/master/icons/pokemon/regular/" + pokemonSimpleName(pokemon) + ".png'/>"
+	var zeroes = ""
+	if(pokemon.id < 10)
+		zeroes = "00"
+	else if(pokemon.id < 100)
+		zeroes = "0"
+	var form = ""
+	if(pokemon.form && pokemon.form != "Base"){
+		var allforms = pokemons.filter(e=>e.id == pokemon.id)
+		var index = allforms.indexOf(pokemon)
+		if(index == -1 || index == 0)
+			form = ""
+		else
+		form = "_f" + (index + 1)
+	}
+	var url = "http://assets.pokemon.com/assets/cms2/img/pokedex/full/" + zeroes + pokemon.id + form + ".png"
+	imageSection.innerHTML = "<img src='"+url+"' style='height: 13rem;'/>"
+	//"<img src='https://raw.githubusercontent.com/msikma/pokesprite/master/icons/pokemon/regular/" + pokemonSimpleName(pokemon) + ".png'/>"
 }
 
 function showInfoSection(pokemon){

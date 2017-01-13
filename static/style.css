@@ -140,6 +140,7 @@ button{
     width: 100%;
     overflow: hidden;
     padding: 0;
+    background-color: rgba(128, 128, 128, 0.1);
 }
 .hidden-info {
     max-height: 0;
