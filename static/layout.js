@@ -161,7 +161,7 @@ function addFilterEntry(label, filterFunction){
 }
 
 function addFilter(label, input, filterFunction){
-	var title = label + input
+	var title = label + " - " + input
 	var inputs = input.split(",")
 	for(var i in inputs)
 		inputs[i] = inputs[i].trim()
@@ -192,9 +192,9 @@ function newTag(tag, parentElement, first){
 	}
 	return newElement
 }
-addFilterEntry("Type:", hasItemInFilter("types"))
-addFilterEntry("Ability:", hasItemInFilter("abilities"))
-addFilterEntry("Move:", hasItemInFilter("moves"))
-addFilterEntry("Egg group:", hasItemInFilter("eggGroups"))
+addFilterEntry("Type", hasItemInFilter("types"))
+addFilterEntry("Ability", hasItemInFilter("abilities"))
+addFilterEntry("Move", hasItemInFilter("moves"))
+addFilterEntry("Egg group", hasItemInFilter("eggGroups"))
 addFilterChooser("Add filter:")
 addSearch("Search")
