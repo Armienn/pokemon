@@ -38,6 +38,11 @@ section section {
     padding: 0rem 1rem 0rem 1rem;
 }
 
+section section section {
+    float: left;
+    width: auto;
+}
+
 h1{
     font-size: 2rem;
     font-weight: bold;

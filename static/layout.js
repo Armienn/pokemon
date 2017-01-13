@@ -10,7 +10,7 @@ var modeNight = document.getElementById("mode-night")
 var modeDay = document.getElementById("mode-day")
 
 var colors = {
-	night: ["#222", "#eee", "red", "rgba(50, 50, 50,0.5)"],
+	night: ["#222", "#eee", "#cf0000", "rgba(50, 50, 50,0.5)"],
 	day: ["whitesmoke", "black", "#ff3a23", "rgba(50, 50, 50,0.5)"]
 }
 
