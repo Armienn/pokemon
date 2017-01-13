@@ -34,6 +34,23 @@ section,header {
     padding: 1rem 1rem 0rem 1rem;
 }
 
+section section {
+    padding: 0rem 1rem 0rem 1rem;
+}
+
+h1{
+    font-size: 2rem;
+    font-weight: bold;
+    text-align: center;
+}
+
+h2{
+    font-size: 1.5rem;
+    font-weight: bold;
+    text-align: center;
+    padding: 1rem 0rem 1rem 0rem;
+}
+
 th, li{
     vertical-align: middle;
 }
@@ -122,6 +139,7 @@ button{
 #pokemon-info{
     width: 100%;
     overflow: hidden;
+    padding: 0;
 }
 .hidden-info {
     max-height: 0;
