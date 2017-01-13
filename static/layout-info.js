@@ -107,6 +107,7 @@ function showInfoSection(pokemon){
 	addInfoElement(pokemon, "Abilities |", getAbilitiesText(pokemon))
 	addInfoElement(pokemon, "Egg groups |", getEggGroupsText(pokemon))
 	addInfoElement(pokemon, "Gender ratio |", pokemon.ratio)
+	addInfoElement(pokemon, "Weight/height |", getWeightHeightText(pokemon))
 }
 
 function addInfoElement(pokemon, headerText, content){
@@ -190,5 +191,17 @@ function getEggGroupsText(pokemon){
 	var text = getEggGroupText(pokemon.eggGroups[0])
 	if(pokemon.eggGroups[1])
 		text += " · " + getEggGroupText(pokemon.eggGroups[1])
+	return text
+}
+
+function getWeightHeightText(pokemon){
+	var text = "-"
+	if(pokemon.weight)
+		text = pokemon.weight
+	text += " / "
+	if(pokemon.height)
+		text += pokemon.height
+	else
+		text += "-"
 	return text
 }
