@@ -1,11 +1,55 @@
 var filterAdder = document.getElementById("filter-adder")
-var filterlist = document.getElementById("filter-list")
-var currentfilterlist = document.getElementById("current-filter-list")
-var pokelist = document.getElementById("pokemon-list")
-var pokeinfo = document.getElementById("pokemon-info")
+var filterList = document.getElementById("filter-list")
+var currentFilterList = document.getElementById("current-filter-list")
+var pokemonList = document.getElementById("pokemon-list")
+var pokemonGrid = document.getElementById("pokemon-grid")
+var pokemonInfo = document.getElementById("pokemon-info")
+var modeTable = document.getElementById("mode-table")
+var modeGrid = document.getElementById("mode-grid")
+var modeNight = document.getElementById("mode-night")
+var modeDay = document.getElementById("mode-day")
 
-//setColors("#222", "#eee", "red", "rgba(50, 50, 50,0.5)")
-setColors("whitesmoke", "black", "#ff3a23", "rgba(50, 50, 50,0.5)")
+var colors = {
+	night: ["#222", "#eee", "red", "rgba(50, 50, 50,0.5)"],
+	day: ["whitesmoke", "black", "#ff3a23", "rgba(50, 50, 50,0.5)"]
+}
+
+var mode = "table"
+
+setColors(...colors.night)
+
+function setupDayNightButtons(){
+	modeNight.onclick = function(){
+		setColors(...colors.night)
+		modeNight.className = "active"
+		modeDay.className = "inactive"
+	}
+	modeDay.onclick = function(){
+		setColors(...colors.day)
+		modeNight.className = "inactive"
+		modeDay.className = "active"
+	}
+}
+setupDayNightButtons()
+
+function setupTableGridButtons(){
+	modeTable.onclick = function(){
+		switchModeTo("table")
+		modeTable.className = "active"
+		modeGrid.className = "inactive"
+	}
+	modeGrid.onclick = function(){
+		switchModeTo("grid")
+		modeTable.className = "inactive"
+		modeGrid.className = "active"
+	}
+}
+setupTableGridButtons()
+
+function switchModeTo(newMode){
+	mode = newMode
+	update()
+}
 
 var pokemonColumns = [
 	{ getColumnHeader: function(){ return "" },
@@ -30,9 +74,16 @@ function update(){
 	nextLimit = 50
 	pokes = getFilteredPokemons()
 	clearInterface()
-	setUpTableHeader()
+	if(mode == "table"){
+		pokemonList.style.display = "initial"
+		pokemonGrid.style.display = "none"
+		setUpTableHeader()
+	} else {
+		pokemonList.style.display = "none"
+		pokemonGrid.style.display = "initial"
+	}
 	for(var i in filters)
-		currentfilterlist.appendChild(createFilterListElement(i))
+		currentFilterList.appendChild(createFilterListElement(i))
 	addNextPokemonEntry()
 }
 
@@ -46,18 +97,18 @@ var nextPoke = 0
 var nextLimit = 50
 
 function addNextPokemonEntry(){
-	if(nextPoke > nextLimit){
-		nextLimit += 50
-		return
-	}
 	if(!pokes[nextPoke]){
 		nextPoke = 0
 		return
 	}
-	var color = nextPoke%2?"80":"180"
-	var element = createPokemonListElement(pokes[nextPoke])
-	element.style.backgroundColor = "rgba("+color+","+color+","+color+",0.2)"
-	pokelist.children[1].appendChild(element)
+	if(nextPoke > nextLimit){
+		nextLimit += 50
+		return
+	}
+	if(mode == "table")
+		addPokemonListElement(pokes[nextPoke])
+	else
+		addPokemonGridElement(pokes[nextPoke])
 	nextPoke++
 	setTimeout(addNextPokemonEntry(),0)
 }
@@ -71,7 +122,7 @@ function setColors(backgroundColor, textColor, headerColor, tableHeaderColor){
 }
 
 function setUpTableHeader(){
-	var tableHeader = newTag("tr", pokelist.children[0])
+	var tableHeader = newTag("tr", pokemonList.children[0])
 	for(var i in pokemonColumns){
 		var element = newTag("th", tableHeader)
 		element.innerHTML = pokemonColumns[i].getColumnHeader()
@@ -87,16 +138,18 @@ function loadMoreWhenScrolledDown(){
 }
 
 function clearInterface(){
-	while (pokelist.children[0].firstChild)
-		pokelist.children[0].removeChild(pokelist.children[0].firstChild)
-	while (pokelist.children[1].firstChild)
-		pokelist.children[1].removeChild(pokelist.children[1].firstChild)
-	while (currentfilterlist.firstChild)
-		currentfilterlist.removeChild(currentfilterlist.firstChild)
+	while (pokemonList.children[0].firstChild)
+		pokemonList.children[0].removeChild(pokemonList.children[0].firstChild)
+	while (pokemonList.children[1].firstChild)
+		pokemonList.children[1].removeChild(pokemonList.children[1].firstChild)
+	while (pokemonGrid.firstChild)
+		pokemonGrid.removeChild(pokemonGrid.firstChild)
+	while (currentFilterList.firstChild)
+		currentFilterList.removeChild(currentFilterList.firstChild)
 }
 
-function createPokemonListElement(pokemon) {
-	var pokeElement = newTag("tr")
+function addPokemonListElement(pokemon) {
+	var pokeElement = newTag("tr", pokemonList.children[1])
 	for(var i in pokemonColumns){
 		var element = newTag("th", pokeElement)
 		element.innerHTML = pokemonColumns[i].getColumn(pokemon)
@@ -104,7 +157,16 @@ function createPokemonListElement(pokemon) {
 	pokeElement.onclick = function(){
 		updatePokemonInfo(pokemon)
 	}
-	return pokeElement
+	var color = nextPoke%2?"80":"180"
+	pokeElement.style.backgroundColor = "rgba("+color+","+color+","+color+",0.2)"
+}
+
+function addPokemonGridElement(pokemon) {
+	var pokeElement = newTag("li", pokemonGrid)
+	pokeElement.innerHTML = "<img src='https://raw.githubusercontent.com/msikma/pokesprite/master/icons/pokemon/regular/" + pokemonSimpleName(pokemon) + ".png'/>"
+	pokeElement.onclick = function(){
+		updatePokemonInfo(pokemon)
+	}
 }
 
 function addSearch(label){
@@ -124,8 +186,8 @@ function addFilterChooser(label){
 	labelElement.innerHTML = label
 	var selectElement = newTag("select", filterElement)
 	newTag("option", selectElement)
-	for(var i=0;i<filterlist.children.length;i++){
-		var child = filterlist.children[i]
+	for(var i=0;i<filterList.children.length;i++){
+		var child = filterList.children[i]
 		var optionElement = newTag("option", selectElement)
 		optionElement.value = child.children[0].innerHTML
 		optionElement.innerHTML = child.children[0].innerHTML
@@ -135,8 +197,8 @@ function addFilterChooser(label){
 
 function selectFilter(){
 	var selected
-	for(var i=0;i<filterlist.children.length;i++){
-		var child = filterlist.children[i]
+	for(var i=0;i<filterList.children.length;i++){
+		var child = filterList.children[i]
 		child.style.display = "none"
 		if(child.children[0].innerHTML == this.value)
 			selected = child
@@ -146,7 +208,7 @@ function selectFilter(){
 }
 
 function addFilterEntry(label, filterFunction){
-	var filterElement = newTag("li", filterlist)
+	var filterElement = newTag("li", filterList)
 	filterElement.style.display = "none"
 	var labelElement = newTag("label", filterElement)
 	labelElement.innerHTML = label
@@ -179,7 +241,7 @@ function createFilterListElement(filterKey) {
 }
 
 function updatePokemonInfo(pokemon){
-	pokeinfo.innerHTML = JSON.stringify(pokemon)
+	pokemonInfo.innerHTML = JSON.stringify(pokemon)
 }
 
 function newTag(tag, parentElement, first){

@@ -31,10 +31,10 @@ article{
 
 section,header {
     width: calc(100% - 2rem);
-    padding: 1rem 1rem 1rem 1rem;
+    padding: 1rem 1rem 0rem 1rem;
 }
 
-th{
+th, li{
     vertical-align: middle;
 }
 
@@ -45,7 +45,7 @@ th{
 #current-filter-list li {
     background-color: rgba(255, 255, 255, 0.35);
     border-radius: 3px;
-    margin: 0 0.5rem ;
+    margin: 0 0.5rem;
 }
 
 #pokemon-list {
@@ -75,4 +75,25 @@ button{
     border: none;
     padding: 0.2rem;
     margin: 0 0.3rem;
+}
+
+.active{
+    color: rgba(255, 255, 255, 1);
+}
+
+.inactive{
+    color: rgba(50, 50, 50, 0.5);
+}
+
+#nav-list li{
+    padding: 0 0.5rem;
+    cursor: pointer;
+}
+
+#mode-table, #mode-grid {
+    font-size: 2rem;
+}
+
+#mode-night, #mode-day {
+    font-size: 1.2rem;
 }
