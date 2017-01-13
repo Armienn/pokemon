@@ -159,7 +159,23 @@ button{
     transition: max-height 1s ease;
 }
 
+#pokemon-info td{
+    padding: 0.5rem;
+}
+
 .stat-bar{
     float: left;
     height: 1rem;
+}
+
+.base-bar{
+    background-color: #00ae00;
+}
+
+.iv-bar{
+    background-color: yellow;
+}
+
+.ev-bar{
+    background-color: orange;
 }

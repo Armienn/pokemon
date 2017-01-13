@@ -117,16 +117,13 @@ function getStatElement(pokemon, stat, headerText){
 	if(pokemon.ivs || pokemon.evs)
 		text.innerHTML += " · " + ivBase + " · " + evBase
 	var bar = newTag("div", barElement)
-	bar.className = "stat-bar"
-	bar.style.backgroundColor = "yellow"
+	bar.className = "stat-bar base-bar"
 	bar.style.width = statBase*2 + "px"
 	bar = newTag("div", barElement)
-	bar.className = "stat-bar"
-	bar.style.backgroundColor = "orange"
+	bar.className = "stat-bar iv-bar"
 	bar.style.width = ivBase*2 + "px"
 	bar = newTag("div", barElement)
-	bar.className = "stat-bar"
-	bar.style.backgroundColor = "red"
+	bar.className = "stat-bar ev-bar"
 	bar.style.width = evBase*2 + "px"
 	return row
 }
