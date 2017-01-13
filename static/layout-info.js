@@ -149,7 +149,7 @@ function getTypeText(type){
 }
 
 function getTypesText(pokemon){
-	return getTypeText(pokemon.types[0]) + (pokemon.types[1] ? " / " + getTypeText(pokemon.types[1]) : "")
+	return getTypeText(pokemon.types[0]) + (pokemon.types[1] ? " · " + getTypeText(pokemon.types[1]) : "")
 }
 
 function getAbilityText(ability, hidden){
@@ -159,9 +159,9 @@ function getAbilityText(ability, hidden){
 function getAbilitiesText(pokemon){
 	var text = getAbilityText(pokemon.abilities[0])
 	if(pokemon.abilities[1])
-		text += " / " + getAbilityText(pokemon.abilities[1])
+		text += " · " + getAbilityText(pokemon.abilities[1])
 	if(pokemon.abilities[2])
-		text += " / " + getAbilityText(pokemon.abilities[2], true)
+		text += " · " + getAbilityText(pokemon.abilities[2], true)
 	return text
 }
 
@@ -173,6 +173,6 @@ function getEggGroupsText(pokemon){
 	if(!pokemon.eggGroups) return "—"
 	var text = getEggGroupText(pokemon.eggGroups[0])
 	if(pokemon.eggGroups[1])
-		text += " / " + getEggGroupText(pokemon.eggGroups[1])
+		text += " · " + getEggGroupText(pokemon.eggGroups[1])
 	return text
 }
