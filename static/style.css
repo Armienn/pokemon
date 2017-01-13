@@ -56,6 +56,12 @@ th, li{
     height: 2rem;
 }
 
+#pokemon-grid li {
+    display: inline-table;
+    padding: 0;
+    border: 1px solid rgba(128, 128, 128, 0.5);
+}
+
 li {
     display: inline-block;
     padding: 0.5rem;

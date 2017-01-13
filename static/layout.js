@@ -75,7 +75,7 @@ function update(){
 	pokes = getFilteredPokemons()
 	clearInterface()
 	if(mode == "table"){
-		pokemonList.style.display = "initial"
+		pokemonList.style.display = "table"
 		pokemonGrid.style.display = "none"
 		setUpTableHeader()
 	} else {
