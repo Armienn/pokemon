@@ -43,6 +43,10 @@ section section section {
     width: auto;
 }
 
+section section section li {
+    display: block;
+}
+
 h1{
     font-size: 2rem;
     font-weight: bold;
@@ -153,4 +157,9 @@ button{
 .shown-info {
     max-height: 100vh;
     transition: max-height 1s ease;
+}
+
+.stat-bar{
+    float: left;
+    height: 1rem;
 }
