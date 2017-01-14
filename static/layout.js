@@ -50,7 +50,7 @@ function switchModeTo(newMode){
 	update()
 }
 
-var pokemonColumns = [
+var basePokemonColumns = [
 	{ getColumnHeader: function(){ return "" },
 		getColumn: function(pokemon){
 			return "<img src='" + getPokemonSpriteName(pokemon) + "'/>"
@@ -92,6 +92,57 @@ var pokemonColumns = [
 	{ getColumnHeader: function(){ return "Egg groups" },
 		getColumn: function(pokemon){
 			return getEggGroupsText(pokemon)
+		}
+	}
+]
+
+var tabPokemonColumns = [
+	{ getColumnHeader: function(){ return "" },
+		getColumn: function(pokemon){
+			return "<img src='" + getPokemonSpriteName(pokemon) + "'/>"
+		}
+	},
+	{ getColumnHeader: function(){ return "Pokemon" },
+		getColumn: function(pokemon){
+			return pokemonFormName(pokemon) + getAmountShinyText(pokemon)
+		}
+	},
+	{ getColumnHeader: function(){ return "Types" },
+		getColumn: function(pokemon){
+			return getTypesText(pokemon)
+		}
+	},
+	{ getColumnHeader: function(){ return "Ability" },
+		getColumn: function(pokemon){
+			return getAbilityText(pokemon.ability, pokemon.abilities[2].toLowerCase() == pokemon.ability.toLowerCase())
+		}
+	},
+	{ getColumnHeader: function(){ return "Nature" },
+		getColumn: function(pokemon){
+			return pokemon.nature
+		}
+	},
+	{ getColumnHeader: function(){ return "HP" },
+		getColumn: function(pokemon){ return getIVText("hp", pokemon) }
+	},
+	{ getColumnHeader: function(){ return "Atk" },
+		getColumn: function(pokemon){ return getIVText("atk", pokemon) }
+	},
+	{ getColumnHeader: function(){ return "Def" },
+		getColumn: function(pokemon){ return getIVText("def", pokemon) }
+	},
+	{ getColumnHeader: function(){ return "SpA" },
+		getColumn: function(pokemon){ return getIVText("spa", pokemon) }
+	},
+	{ getColumnHeader: function(){ return "SpD" },
+		getColumn: function(pokemon){ return getIVText("spd", pokemon) }
+	},
+	{ getColumnHeader: function(){ return "Spe" },
+		getColumn: function(pokemon){ return getIVText("spe", pokemon) }
+	},
+	{ getColumnHeader: function(){ return "Moves" },
+		getColumn: function(pokemon){
+			return pokemon.learntMoves.join(", ")
 		}
 	}
 ]
@@ -162,9 +213,12 @@ function setColors(backgroundColor, textColor, headerColor, tableHeaderColor){
 
 function setUpTableHeader(){
 	var tableHeader = newTag("tr", pokemonList.children[0])
-	for(var i in pokemonColumns){
+	var columns = basePokemonColumns
+	if(selectedTab)
+		columns = tabPokemonColumns
+	for(var i in columns){
 		var element = newTag("th", tableHeader)
-		element.innerHTML = pokemonColumns[i].getColumnHeader()
+		element.innerHTML = columns[i].getColumnHeader()
 	}
 }
 
@@ -189,9 +243,12 @@ function clearInterface(){
 
 function addPokemonListElement(pokemon) {
 	var pokeElement = newTag("tr", pokemonList.children[1])
-	for(var i in pokemonColumns){
+	var columns = basePokemonColumns
+	if(selectedTab)
+		columns = tabPokemonColumns
+	for(var i in columns){
 		var element = newTag("th", pokeElement)
-		element.innerHTML = pokemonColumns[i].getColumn(pokemon)
+		element.innerHTML = columns[i].getColumn(pokemon)
 	}
 	pokeElement.onclick = function(){
 		updatePokemonInfo(pokemon)

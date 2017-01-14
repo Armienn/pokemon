@@ -132,7 +132,7 @@ function loadPokemon(entry, tab){
 	pokemon.evs.spd = tryValues(["spdev", "spdefev", "evspdef", "evspd"], entry) || "x"
 	pokemon.evs.spe = tryValues(["speev", "speedev", "evspeed", "evspe"], entry) || "x"
 	pokemon.hiddenPower = tryValues(["hiddenpower", "hidden"], entry)
-	pokemon.moves = [
+	pokemon.learntMoves = [
 		tryValues(["move1", "eggmove1"], entry),
 		tryValues(["move2", "eggmove2"], entry),
 		tryValues(["move3", "eggmove3"], entry),

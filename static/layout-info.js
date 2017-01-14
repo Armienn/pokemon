@@ -358,6 +358,10 @@ function getAmountShinyText(pokemon){
 	return " " + (pokemon.shiny ? "<span style='color:#f11;'>★</span>" : "") + (pokemon.amount ? " (" + pokemon.amount + ")" : "")
 }
 
+function getIVText(iv, pokemon) {
+	return pokemon.ivs[iv]
+}
+
 function HSVtoRGB(h, s, v) {
 		var r, g, b, i, f, p, q, t
 		i = Math.floor(h * 6)
