@@ -193,7 +193,6 @@ function addMoveHeader(table, moveGroup, method){
 	var titleRow = newTag("td", row)
 	titleRow.innerHTML = title
 	titleRow.colSpan = "5"
-	titleRow.style.paddingTop = "1rem"
 	titleRow.style.fontWeight = "bold"
 	row = newTag("tr", table)
 	newTag("th", row).innerHTML = "Move"
@@ -232,6 +231,18 @@ function clearPokemonInfo(){
 		statSectionTable.removeChild(statSectionTable.firstChild)
 	while (infoSectionTable.firstChild)
 		infoSectionTable.removeChild(infoSectionTable.firstChild)
+	for(var i=0;i<2;i++){
+	while (movesLevelTable.children[i].firstChild)
+		movesLevelTable.children[i].removeChild(movesLevelTable.children[i].firstChild)
+	while (movesEvolutionTable.children[i].firstChild)
+		movesEvolutionTable.children[i].removeChild(movesEvolutionTable.children[i].firstChild)
+	while (movesEggTable.children[i].firstChild)
+		movesEggTable.children[i].removeChild(movesEggTable.children[i].firstChild)
+	while (movesTmTable.children[i].firstChild)
+		movesTmTable.children[i].removeChild(movesTmTable.children[i].firstChild)
+	while (movesTutorTable.children[i].firstChild)
+		movesTutorTable.children[i].removeChild(movesTutorTable.children[i].firstChild)
+	}
 }
 
 function getTypeText(type){
