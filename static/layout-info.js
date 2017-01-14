@@ -133,7 +133,7 @@ function showInfoSection(pokemon){
 	else
 		addInfoElement(pokemon, "Classification |", pokemon.classification)
 	if(pokemon.ability)
-		addInfoElement(pokemon, "Ability |", getAbilityText(pokemon.ability, pokemon.abilities[2].toLowerCase() == pokemon.ability.toLowerCase()))
+		addInfoElement(pokemon, "Ability |", getAbilityText(pokemon.ability, pokemon.abilities[2] ? pokemon.abilities[2].toLowerCase() == pokemon.ability.toLowerCase() : false))
 	else
 		addInfoElement(pokemon, "Abilities |", getAbilitiesText(pokemon))
 	if(pokemon.nature)

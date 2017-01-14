@@ -114,7 +114,7 @@ var tabPokemonColumns = [
 	},
 	{ getColumnHeader: function(){ return "Ability" },
 		getColumn: function(pokemon){
-			return getAbilityText(pokemon.ability, pokemon.abilities[2].toLowerCase() == pokemon.ability.toLowerCase())
+			return getAbilityText(pokemon.ability, pokemon.abilities[2] ? pokemon.abilities[2].toLowerCase() == pokemon.ability.toLowerCase() : false)
 		}
 	},
 	{ getColumnHeader: function(){ return "Nature" },
