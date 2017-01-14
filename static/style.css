@@ -198,6 +198,7 @@ nav li{
     display: table;
     text-align: center;
     cursor: pointer;
+    padding: 0.5rem 0;
 }
 
 #moves-header:hover, #close-header:hover {

@@ -7,6 +7,8 @@ if(window.location.search)
 var pokemonInventories = []
 var pokemonLookingFor = []
 
+var selectedTab
+
 function getWorksheetUrl(spreadsheetId, worksheetId) {
     return "https://spreadsheets.google.com/feeds/list/" + spreadsheetId + "/" + worksheetId + "/public/values?alt=json";
 }
@@ -47,6 +49,8 @@ function parseSpreadsheet(response){
 			for(var i=0; i<navInventory.children.length; i++)
 				navInventory.children[i].className = "inactive"
 			navAll.className = "active"
+			selectedTab = undefined
+			update()
 		}
 	}
 	tryLoad()
@@ -83,6 +87,8 @@ function selectTab(tab){
 		navInventory.children[i].className = "inactive"
 	navAll.className = "inactive"
 	tab.navEntry.className = "active"
+	selectedTab = tab
+	update()
 }
 
 function parseSheet(tab){
@@ -93,8 +99,20 @@ function parseSheet(tab){
 	}
 }
 
+
+
 function loadPokemon(entry, tab){
-	var pokemon = {}
+	var pokemon = {
+		get stats() {return this.base.stats },
+		get abilities() {return this.base.abilities },
+		get classification() {return this.base.classification },
+		get eggGroups() {return this.base.eggGroups },
+		get height() {return this.base.height },
+		get weight() {return this.base.weight },
+		get moves() {return this.base.moves },
+		get ratio() {return this.base.ratio },
+		get types() {return this.base.types }
+	}
 	if(!identifyPokemon(entry, pokemon))
 		return
 	pokemon.nature = getValue(entry.gsx$nature)

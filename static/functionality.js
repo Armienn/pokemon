@@ -7,6 +7,8 @@ var onload
 
 function getFilteredPokemons(){
 	var pokes = pokemons
+	if(selectedTab)
+		pokes = selectedTab.pokemons
 	for(var i in filters)
 		pokes = pokes.filter(filters[i])
 	if(searchFilter)
