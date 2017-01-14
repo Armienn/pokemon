@@ -122,27 +122,31 @@ function hasItemInFilter(listKey) {
 	}
 }
 
-function request(url, callback) {
+function requestJSON(url, callback) {
 	var xmlHttp = new XMLHttpRequest();
 	xmlHttp.onreadystatechange = function() { 
 		if (xmlHttp.readyState == 4 && xmlHttp.status == 200)
-			callback(xmlHttp.responseText)
+			callback(JSON.parse(xmlHttp.responseText))
 	}
 	xmlHttp.open("GET", url, true)
 	xmlHttp.send()
 }
 
 function getMoves(response){
-	moves = JSON.parse(response)
-	if(moves && Object.keys(moves).length && pokemons && pokemons.length)
+	moves = response
+	if(isEverythingLoaded())
 		onPokeLoad()
 }
 
 function getPokemons(response){
-	pokemons = JSON.parse(response)
-	if(moves && Object.keys(moves).length && pokemons && pokemons.length)
+	pokemons = response
+	if(isEverythingLoaded())
 		onPokeLoad()
 }
 
-request("https://armienn.github.io/pokemon/static/moves.json", getMoves)
-request("https://armienn.github.io/pokemon/static/pokemons-small.json", getPokemons)
+function isEverythingLoaded(){
+	return moves && Object.keys(moves).length && pokemons && pokemons.length && spreadsheetId ? pokemonInventories.length : true
+}
+
+requestJSON("https://armienn.github.io/pokemon/static/moves.json", getMoves)
+requestJSON("https://armienn.github.io/pokemon/static/pokemons-small.json", getPokemons)
