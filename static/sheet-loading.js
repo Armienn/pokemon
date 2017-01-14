@@ -141,10 +141,10 @@ function loadPokemon(entry, tab){
 	pokemon.gender = tryValues(["gender", "sex"], entry)
 	switch (pokemon.base.ratio) {
 	case "1:0":
-		pokemon.gender = '♀'
+		pokemon.gender = '♂'
 		break;
 	case "0:1":
-		pokemon.gender = '♂'
+		pokemon.gender = '♀'
 		break;
 	case "—":
 		pokemon.gender = '—'

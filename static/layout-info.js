@@ -85,10 +85,16 @@ function updatePokemonInfo(pokemon){
 	currentPokemon = pokemon
 	showPokemonInfo(currentPokemon)
 	pokemonInfo.className = "shown-info"
+	setTimeout(function(){
+		pokemonInfo.style.maxHeight = "none"
+	},500)
 }
 function deselectPokemon(){
 		currentPokemon = null
-		pokemonInfo.className = "hidden-info"
+		pokemonInfo.style.maxHeight = ""
+		setTimeout(function(){
+			pokemonInfo.className = "hidden-info"
+		},0)
 		if(showMoves)
 			toggleShowMoves()
 		main.scrollTop = 0
@@ -105,7 +111,10 @@ function showPokemonInfo(pokemon){
 }
 
 function showNameHeader(pokemon){
-	nameHeader.innerHTML = "#" + pokemon.id + " - " + pokemon.name
+	if(pokemon.base)
+		nameHeader.innerHTML =  pokemon.name + getAmountShinyText(pokemon)
+	else
+		nameHeader.innerHTML = "#" + pokemon.id + " - " + pokemon.name
 	if(pokemon.form && pokemon.form != "Base")
 		nameHeader.innerHTML += " (" + pokemon.form + ")"
 	var colorA = typeColors[pokemon.types[0]]
@@ -316,7 +325,7 @@ function getGenderText(pokemon){
 		if(pokemon.gender == "♂" || pokemon.gender.toLowerCase() == "m" || pokemon.gender.toLowerCase() == "male")
 			return "<span style='color: #34d1ba;'>♂</span>"
 		if(pokemon.gender == "♀" || pokemon.gender.toLowerCase() == "f" || pokemon.gender.toLowerCase() == "female")
-			return "<span style='color: #34d1ba;'>♀</span>"
+			return "<span style='color: #f97272;'>♀</span>"
 		if((pokemon.ratio || pokemon.ratio == "—") && pokemon.gender == "—" || pokemon.gender.toLowerCase() == "-" || pokemon.gender.toLowerCase() == "none")
 			return "—"
 	}
@@ -343,6 +352,10 @@ function getStatText(stat){
 
 function getStatColor(stat){
 	return "rgb("+HSVtoRGB(0.6*stat/255, 1, 1)+")"
+}
+
+function getAmountShinyText(pokemon){
+	return " " + (pokemon.shiny ? "<span style='color:#f11;'>★</span>" : "") + (pokemon.amount ? " (" + pokemon.amount + ")" : "")
 }
 
 function HSVtoRGB(h, s, v) {
