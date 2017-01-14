@@ -142,6 +142,7 @@ function addStatElement(pokemon, headerText, stat){
 	var bar = newTag("div", barElement)
 	bar.className = "stat-bar base-bar"
 	bar.style.width = statBase*2 + "px"
+	bar.style.background = "linear-gradient(to right, rgb("+HSVtoRGB(0, 1, 1)+"),rgb("+HSVtoRGB(statBase/(255*2), 1, 1)+"))"
 	bar = newTag("div", barElement)
 	bar.className = "stat-bar iv-bar"
 	bar.style.width = ivBase + "px"
@@ -205,3 +206,21 @@ function getWeightHeightText(pokemon){
 		text += "-"
 	return text
 }
+
+function HSVtoRGB(h, s, v) {
+		var r, g, b, i, f, p, q, t
+		i = Math.floor(h * 6)
+		f = h * 6 - i
+		p = v * (1 - s)
+		q = v * (1 - f * s)
+		t = v * (1 - (1 - f) * s)
+		switch (i % 6) {
+			case 0: r = v, g = t, b = p; break;
+			case 1: r = q, g = v, b = p; break;
+			case 2: r = p, g = v, b = t; break;
+			case 3: r = p, g = q, b = v; break;
+			case 4: r = t, g = p, b = v; break;
+			case 5: r = v, g = p, b = q; break;
+		}
+		return Math.round(r * 255) + "," + Math.round(g * 255) + "," + Math.round(b * 255)
+	}
