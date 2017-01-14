@@ -4,7 +4,13 @@ var infoSection = document.getElementById("info-section")
 var infoSectionTable = document.getElementById("info-section").children[0].children[1]
 var statSection = document.getElementById("stat-section")
 var statSectionTable = document.getElementById("stat-section").children[0].children[1]
+var movesHeader = document.getElementById("moves-header")
 var movesSection = document.getElementById("moves-section")
+var movesLevelTable = document.getElementById("moves-level")
+var movesEvolutionTable = document.getElementById("moves-evolution")
+var movesEggTable = document.getElementById("moves-egg")
+var movesTmTable = document.getElementById("moves-tm")
+var movesTutorTable = document.getElementById("moves-tutor")
 
 typeColors = {
 	Bug: "#A8B820",
@@ -48,6 +54,7 @@ typeDarkColors = {
 }
 
 var currentPokemon
+var showMoves = false
 
 function updatePokemonInfo(pokemon){
 	if(currentPokemon){
@@ -152,8 +159,47 @@ function addStatElement(pokemon, headerText, stat){
 }
 
 function showMovesSection(pokemon){
-	
+	var moveGroups = {}
+	for(var i in pokemon.moves){
+		var method = pokemon.moves[i].method
+		var level = +method
+		if(level)
+			method = "level"
+		if(!moveGroups[method])
+			moveGroups[method] = []
+		moveGroups[method].push({move: moves[pokemon.moves[i].name], level: level})
+	}
+	for(var key in moveGroups)
+		fillMoveTable(document.getElementById("moves-" + key), moveGroups[key])
 }
+
+function fillMoveTable(table, moveGroup){
+	for(var i in moveGroup){
+		addMoveRow(table.children[1], moveGroup[i].move, moveGroup[i].level)
+	}
+}
+
+function addMoveRow(table, move, level){
+	var row = newTag("tr", table)
+	var name = newTag("th", row)
+	name.innerHTML = move.name
+	var text = newTag("td", row)
+	text.innerHTML = getTypeText(move.type)
+}
+
+function toggleShowMoves(){
+	showMoves = !showMoves
+	if(showMoves){
+		movesHeader.innerHTML = "Moves ▼"
+		movesSection.className = "shown-moves"
+		pokemonInfo.style.maxHeight = "1000rem"
+	} else {
+		movesHeader.innerHTML = "Moves ▶"
+		movesSection.className = "hidden-moves"
+		pokemonInfo.style.maxHeight = ""
+	}
+}
+movesHeader.onclick = toggleShowMoves
 
 function clearPokemonInfo(){
 	while (statSectionTable.firstChild)
