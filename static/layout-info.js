@@ -119,11 +119,26 @@ function showImageSection(pokemon){
 
 function showInfoSection(pokemon){
 	addInfoElement(pokemon, "Types |", getTypesText(pokemon))
-	addInfoElement(pokemon, "Classification |", pokemon.classification)
-	addInfoElement(pokemon, "Abilities |", getAbilitiesText(pokemon))
-	addInfoElement(pokemon, "Egg groups |", getEggGroupsText(pokemon))
-	addInfoElement(pokemon, "Gender ratio |", getGenderText(pokemon))
-	addInfoElement(pokemon, "Weight/height |", getWeightHeightText(pokemon))
+	if(pokemon.nickname)
+		addInfoElement(pokemon, "Nickname |", pokemon.nickname)
+	else
+		addInfoElement(pokemon, "Classification |", pokemon.classification)
+	if(pokemon.ability)
+		addInfoElement(pokemon, "Ability |", getAbilityText(pokemon.ability, pokemon.abilities[2].toLowerCase() == pokemon.ability.toLowerCase()))
+	else
+		addInfoElement(pokemon, "Abilities |", getAbilitiesText(pokemon))
+	if(pokemon.nature)
+		addInfoElement(pokemon, "Nature |", pokemon.nature)
+	else
+		addInfoElement(pokemon, "Egg groups |", getEggGroupsText(pokemon))
+	if(pokemon.gender)
+		addInfoElement(pokemon, "Gender |", getGenderText(pokemon))
+	else
+		addInfoElement(pokemon, "Gender ratio |", getGenderText(pokemon))
+	if(pokemon.hiddenPower)
+		addInfoElement(pokemon, "Hidden power |", getTypeText(pokemon.hiddenPower))
+	else
+		addInfoElement(pokemon, "Weight/height |", getWeightHeightText(pokemon))
 }
 
 function addInfoElement(pokemon, headerText, content){
@@ -153,18 +168,19 @@ function addStatElement(pokemon, headerText, stat){
 	var ivBase = pokemon.ivs ? pokemon.ivs[stat] : 0
 	var evBase = pokemon.evs ? pokemon.evs[stat] : 0
 	text.innerHTML = statBase
-	if(pokemon.ivs || pokemon.evs)
-		text.innerHTML += " · " + ivBase + " · " + evBase
 	var bar = newTag("div", barElement)
 	bar.className = "stat-bar base-bar"
 	bar.style.width = statBase*2 + "px"
 	bar.style.background = "linear-gradient(to right, red, "+getStatColor(statBase)+")"
-	bar = newTag("div", barElement)
-	bar.className = "stat-bar iv-bar"
-	bar.style.width = ivBase + "px"
-	bar = newTag("div", barElement)
-	bar.className = "stat-bar ev-bar"
-	bar.style.width = evBase/4 + "px"
+	if(pokemon.ivs || pokemon.evs){
+		text.innerHTML += " · " + ivBase + " · " + evBase
+		bar = newTag("div", barElement)
+		bar.className = "stat-bar iv-bar"
+		bar.style.width = ivBase + "px"
+		bar = newTag("div", barElement)
+		bar.className = "stat-bar ev-bar"
+		bar.style.width = evBase/4 + "px"
+	}
 }
 
 function showMovesSection(pokemon){
@@ -296,6 +312,14 @@ function getEggGroupsText(pokemon){
 }
 
 function getGenderText(pokemon){
+	if(pokemon.gender){
+		if(pokemon.gender == "♂" || pokemon.gender.toLowerCase() == "m" || pokemon.gender.toLowerCase() == "male")
+			return "<span style='color: #34d1ba;'>♂</span>"
+		if(pokemon.gender == "♀" || pokemon.gender.toLowerCase() == "f" || pokemon.gender.toLowerCase() == "female")
+			return "<span style='color: #34d1ba;'>♀</span>"
+		if((pokemon.ratio || pokemon.ratio == "—") && pokemon.gender == "—" || pokemon.gender.toLowerCase() == "-" || pokemon.gender.toLowerCase() == "none")
+			return "—"
+	}
 	if(!pokemon.ratio || pokemon.ratio == "—") return "—"
 	var things = pokemon.ratio.split(":")
 	return "<span style='color: #34d1ba;'>"+ things[0] + "♂</span>:<span style='color: #f97272;'>"+ things[1] + "♀</span>"
