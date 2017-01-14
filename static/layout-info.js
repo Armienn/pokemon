@@ -326,7 +326,7 @@ function getStatText(stat){
 }
 
 function getStatColor(stat){
-	return "rgb("+HSVtoRGB(stat/(255*2), 1, 1)+")"
+	return "rgb("+HSVtoRGB(0.6*stat/255, 1, 1)+")"
 }
 
 function HSVtoRGB(h, s, v) {
