@@ -170,21 +170,47 @@ function showMovesSection(pokemon){
 		moveGroups[method].push({move: moves[pokemon.moves[i].name], level: level})
 	}
 	for(var key in moveGroups)
-		fillMoveTable(document.getElementById("moves-" + key), moveGroups[key])
+		fillMoveTable(document.getElementById("moves-" + key), moveGroups[key], key)
 }
 
-function fillMoveTable(table, moveGroup){
+function fillMoveTable(table, moveGroup, method){
+	addMoveHeader(table.children[0], moveGroup, method)
 	for(var i in moveGroup){
-		addMoveRow(table.children[1], moveGroup[i].move, moveGroup[i].level)
+		addMoveRow(table.children[1], moveGroup[i].move, moveGroup[i].level, i)
 	}
 }
 
-function addMoveRow(table, move, level){
+function addMoveHeader(table, moveGroup, method){
 	var row = newTag("tr", table)
-	var name = newTag("th", row)
-	name.innerHTML = move.name
-	var text = newTag("td", row)
-	text.innerHTML = getTypeText(move.type)
+	var title = "Learnt somehow"
+	switch(method){
+		case "level": title = "Learnt by level up:"; break;
+		case "evolution": title = "Learnt by evolution:"; break;
+		case "egg": title = "Learnt as egg move:"; break;
+		case "tm": title = "Learnt by TM:"; break;
+		case "tutor": title = "Learnt by tutor:"; break;
+	}
+	var titleRow = newTag("td", row)
+	titleRow.innerHTML = title
+	titleRow.colSpan = "5"
+	titleRow.style.paddingTop = "1rem"
+	titleRow.style.fontWeight = "bold"
+	row = newTag("tr", table)
+	newTag("th", row).innerHTML = "Move"
+	newTag("td", row).innerHTML = "Type"
+	newTag("td", row).innerHTML = "Category"
+	newTag("td", row).innerHTML = "Power"
+	newTag("td", row).innerHTML = "Accuracy"
+}
+
+function addMoveRow(table, move, level, i){
+	var row = newTag("tr", table)
+	newTag("th", row).innerHTML = move.name
+	newTag("td", row).innerHTML = getTypeText(move.type)
+	newTag("td", row).innerHTML = move.category
+	newTag("td", row).innerHTML = move.power
+	newTag("td", row).innerHTML = move.accuracy
+	row.className = i%2?"odd":"even"
 }
 
 function toggleShowMoves(){
