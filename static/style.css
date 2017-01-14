@@ -238,8 +238,10 @@ nav li{
 
 .iv-bar{
     background-color: yellow;
+    border-left: 1px solid black;
 }
 
 .ev-bar{
     background-color: orange;
+    border-left: 1px solid black;
 }

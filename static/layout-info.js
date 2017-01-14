@@ -201,23 +201,31 @@ function addMoveHeader(table, moveGroup, method){
 	}
 	var titleRow = newTag("td", row)
 	titleRow.innerHTML = title
-	titleRow.colSpan = "5"
+	titleRow.colSpan = "8"
 	titleRow.style.fontWeight = "bold"
 	row = newTag("tr", table)
-	newTag("th", row).innerHTML = "Move"
+	newTag("td", row).innerHTML = "Move"
 	newTag("td", row).innerHTML = "Type"
 	newTag("td", row).innerHTML = "Category"
 	newTag("td", row).innerHTML = "Power"
 	newTag("td", row).innerHTML = "Accuracy"
+	newTag("td", row).innerHTML = "Priority"
+	newTag("td", row).innerHTML = "PP"
+	newTag("td", row).innerHTML = "Summary"
 }
 
 function addMoveRow(table, move, level, i){
 	var row = newTag("tr", table)
-	newTag("th", row).innerHTML = move.name
+	var head = newTag("td", row)
+	head.innerHTML = move.name
+	head.style.fontWeight = "bold"
 	newTag("td", row).innerHTML = getTypeText(move.type)
 	newTag("td", row).innerHTML = move.category
 	newTag("td", row).innerHTML = move.power
 	newTag("td", row).innerHTML = move.accuracy
+	newTag("td", row).innerHTML = move.priority
+	newTag("td", row).innerHTML = move.pp.split(" ")[0]
+	newTag("td", row).innerHTML = move.gameDescription
 	row.className = i%2?"odd":"even"
 }
 
