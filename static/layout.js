@@ -53,7 +53,7 @@ function switchModeTo(newMode){
 var pokemonColumns = [
 	{ getColumnHeader: function(){ return "" },
 		getColumn: function(pokemon){
-			return "<img src='https://raw.githubusercontent.com/msikma/pokesprite/master/icons/pokemon/regular/" + pokemonSimpleName(pokemon) + ".png'/>"
+			return "<img src='" + getPokemonSpriteName(pokemon) + "'/>"
 		}
 	},
 	{ getColumnHeader: function(){ return "Pokemon" },
@@ -127,7 +127,7 @@ onPokeLoad = ()=>{
 
 var pokes = []
 var nextPoke = 0
-var nextLimit = 50
+var nextLimit = 25
 
 function addNextPokemonEntry(){
 	if(!pokes[nextPoke]){
@@ -135,7 +135,7 @@ function addNextPokemonEntry(){
 		return
 	}
 	if(nextPoke > nextLimit){
-		nextLimit += 50
+		nextLimit += 25
 		return
 	}
 	if(mode == "table")
@@ -196,7 +196,7 @@ function addPokemonListElement(pokemon) {
 
 function addPokemonGridElement(pokemon) {
 	var pokeElement = newTag("li", pokemonGrid)
-	pokeElement.innerHTML = "<img src='https://raw.githubusercontent.com/msikma/pokesprite/master/icons/pokemon/regular/" + pokemonSimpleName(pokemon) + ".png'/>"
+	pokeElement.innerHTML = "<img src='" + getPokemonSpriteName(pokemon) + "'/>"
 	pokeElement.onclick = function(){
 		updatePokemonInfo(pokemon)
 	}

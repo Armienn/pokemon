@@ -34,50 +34,92 @@ function pokemonFormName(pokemon){
 	}
 }
 
-function pokemonSimpleName(pokemon){
-			var name = pokemon.name.toLowerCase().replace(" ", "-").replace("♀","-f").replace("♂","-m").replace("'","").replace(".","").replace("ébé","ebe").replace(":","")
-			var formname
-			if(pokemon.form == "Alolan")
-				formname = "alola"
-			else if(pokemon.form == "10% Forme")
-				formname = "10-percent"
-			else if(["Altered Forme","Land Forme","Red-Striped","Standard Mode","Incarnate Forme","Ordinary Forme","Aria Forme","Shield Forme","50% Forme","Male","Female"].indexOf(pokemon.form) > -1)
-				formname = false
-			else if(pokemon.form.indexOf("Forme") > -1)
-				formname = pokemon.form.split(" Forme")[0].toLowerCase()
-			else if(pokemon.form == "Zen Mode")
-				formname = "zen"
-			else if(pokemon.form == "Ash-Greninja")
-				formname = "ash"
-			else if(pokemon.form.indexOf("Size") > -1)
-				formname = false
-			else if(pokemon.form.indexOf("Style") > -1)
-				formname = false
-			else if(pokemon.form.indexOf("Form") > -1)
-				formname = false
-			else if(pokemon.form != "Base")
-				formname = pokemon.form.toLowerCase().replace(" ", "-")
-			if(formname && name != "deoxys" && name != "wormadam" && name != "hoopa")
-				name += "-" + formname
-			else if(name == "meowstic" && pokemon.form == "Female")
-				name = "female/" + name
-			return name
-		}
+function getPokemonSpriteName(pokemon){
+	var name = pokemon.name.toLowerCase().replace(" ", "-").replace("♀","-f").replace("♂","-m").replace("'","").replace(".","").replace("ébé","ebe").replace(":","")
+	var formname
+	if(pokemon.form == "Alolan")
+		formname = "alola"
+	else if(pokemon.form == "10% Forme")
+		formname = "10-percent"
+	else if(pokemon.form == "Core Form")
+		formname = "core-yellow"
+	else if([
+		"Altered Forme",
+		"Land Forme",
+		"Red-Striped",
+		"Standard Mode",
+		"Incarnate Forme",
+		"Ordinary Forme",
+		"Aria Forme",
+		"Shield Forme",
+		"50% Forme",
+		"Normal Forme",
+		"Solo Form",
+		"Midday Form",
+		"Meteor Form",
+		"Plant Cloak",
+		"Baile Style",
+		"Confined",
+		"Male",
+		"Female"].indexOf(pokemon.form) > -1)
+		formname = false
+	else if(pokemon.form.indexOf("Forme") > -1)
+		formname = pokemon.form.split(" Forme")[0].toLowerCase()
+	else if(pokemon.form.indexOf("Cloak") > -1)
+		formname = pokemon.form.split(" Cloak")[0].toLowerCase()
+	else if(pokemon.form.indexOf("Style") > -1)
+		formname = pokemon.form.split(" Style")[0].toLowerCase()
+	else if(pokemon.form.indexOf("Form") > -1)
+		formname = pokemon.form.split(" Form")[0].toLowerCase()
+	else if(pokemon.form == "Zen Mode")
+		formname = "zen"
+	else if(pokemon.form == "Ash-Greninja")
+		formname = "ash"
+	else if(pokemon.form.indexOf("Size") > -1)
+		formname = false
+	else if(pokemon.form != "Base")
+		formname = pokemon.form
+	if(formname)
+		name += "-" + formname.toLowerCase().replace(" ", "-").replace("'", "-")
+	if(name == "meowstic" && pokemon.form == "Female")
+		name = "female/" + name
+	return "https://raw.githubusercontent.com/msikma/pokesprite/master/icons/pokemon/" +
+	 (pokemon.shiny ? "shiny":"regular") +
+	  "/" + name + ".png"
+}
+
+function getPokemonImageName(pokemon){
+	var zeroes = ""
+	if(pokemon.id < 10)
+		zeroes = "00"
+	else if(pokemon.id < 100)
+		zeroes = "0"
+	var form = ""
+	if(pokemon.form && pokemon.form != "Base"){
+		var allforms = pokemons.filter(e=>e.id == pokemon.id)
+		var index = allforms.indexOf(pokemon)
+		if(index == -1 || index == 0)
+			form = ""
+		else
+		form = "_f" + (index + 1)
+	}
+	return "http://assets.pokemon.com/assets/cms2/img/pokedex/full/" + zeroes + pokemon.id + form + ".png"
+}
 
 function hasItemInFilter(listKey) {
-    return function (...items){
-        return function(pokemon) {
-            for(var i in items){
-                if(!pokemon[listKey]) {
-                    console.log("Pokemon missing " + listKey + ": " + pokemonFormName(pokemon))
-                    return false
-                }
-                if(pokemon[listKey].filter(e => e ? (e.toLowerCase ? e.toLowerCase() : e.name.toLowerCase()) == items[i].toLowerCase() : false).length)
-                    return true
-            }
-            return false
-        }
-    }
+	return function (...items){
+		return function(pokemon) {
+			for(var i in items){
+				if(!pokemon[listKey]) {
+					console.log("Pokemon missing " + listKey + ": " + pokemonFormName(pokemon))
+					return false
+				}
+				if(pokemon[listKey].filter(e => e ? (e.toLowerCase ? e.toLowerCase() : e.name.toLowerCase()) == items[i].toLowerCase() : false).length)
+					return true
+			}
+			return false
+		}
+	}
 }
 
 function request(url, callback) {
