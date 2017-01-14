@@ -114,7 +114,13 @@ function update(){
 	addNextPokemonEntry()
 }
 
-onPokeLoad = ()=>{
+var loaded = false
+function tryLoad(){
+	if(!isEverythingLoaded())
+		return
+	if(loaded)
+		return
+	loaded = true
 	addFilterEntry("Type", hasItemInFilter("types"), typeNames)
 	addFilterEntry("Ability", hasItemInFilter("abilities"))
 	addFilterEntry("Move", hasItemInFilter("moves"), Object.keys(moves))

@@ -134,18 +134,18 @@ function requestJSON(url, callback) {
 
 function getMoves(response){
 	moves = response
-	if(isEverythingLoaded())
-		onPokeLoad()
+	tryLoad()
 }
 
 function getPokemons(response){
 	pokemons = response
-	if(isEverythingLoaded())
-		onPokeLoad()
+	tryLoad()
 }
 
 function isEverythingLoaded(){
-	return moves && Object.keys(moves).length && pokemons && pokemons.length && spreadsheetId ? pokemonInventories.length : true
+	return moves && Object.keys(moves).length &&
+		pokemons && pokemons.length &&
+		(spreadsheetId ? pokemonInventories.length : true)
 }
 
 requestJSON("https://armienn.github.io/pokemon/static/moves.json", getMoves)

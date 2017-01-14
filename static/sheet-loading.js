@@ -1,3 +1,6 @@
+var navAll = document.getElementById("nav-all")
+var navInventory = document.getElementById("nav-inventory")
+var navLookingFor = document.getElementById("nav-looking-for")
 var spreadsheetId = 0
 if(window.location.search)
 	spreadsheetId = window.location.search.substring(1)
@@ -24,30 +27,38 @@ function tryValues(values, entry){
 function parseSpreadsheet(response){
 	for(var i in response.feed.entry){
 		var entry = response.feed.entry[i]
-		var title = getValue(entry.title)
+		var title = getValue(entry.title).trim()
 		if(title.toLowerCase().indexOf("item") > -1 ||
 			title.toLowerCase().indexOf("template") > -1 ||
 			title.toLowerCase().indexOf("config") > -1 ||
 			title.toLowerCase().indexOf("database") > -1 ||
-			title.toLowerCase().indexOf("resource") > -1
+			title.toLowerCase().indexOf("resource") > -1 ||
+			title.toLowerCase() == "db"
 		){
 			continue
 		}
-		var inventory = pokemonInventories
-		if(title.toLowerCase().startsWith("lf") ||
-			title.toLowerCase().startsWith("looking for")
-		){
-			inventory = pokemonLookingFor
-		}
+		navAll.style.display = ""
 		var tab = {}
 		tab.title = title
 		tab.id = (+i) + 1
 		tab.pokemons = []
-		inventory.push(tab)
+		var navEntry
+		if(title.toLowerCase().startsWith("lf") ||
+			title.toLowerCase().startsWith("looking for")
+		){
+			pokemonLookingFor.push(tab)
+			navEntry = newTag("li", navLookingFor)
+			navLookingFor.style.display = ""
+		} else {
+			pokemonInventories.push(tab)
+			navEntry = newTag("li", navInventory)
+			navInventory.style.display = ""
+		}
+		navEntry.innerHTML = tab.title
+		navEntry.className = "inactive"
 		requestJSON(getWorksheetUrl(spreadsheetId, tab.id), parseSheet(tab))
 	}
-	if(isEverythingLoaded())
-		onPokeLoad()
+	tryLoad()
 }
 
 function parseSheet(tab){

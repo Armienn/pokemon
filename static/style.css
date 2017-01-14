@@ -134,6 +134,14 @@ button{
     margin: 0 0.3rem;
 }
 
+nav ul li{
+    display: inline-block;
+    font-weight: bold;
+}
+nav ul ul{
+    display: inline-block;
+}
+
 .active{
     color: rgba(255, 255, 255, 1);
 }
@@ -142,13 +150,14 @@ button{
     color: rgba(50, 50, 50, 0.5);
 }
 
-#nav-list li{
+nav li{
     padding: 0 0.5rem;
     cursor: pointer;
 }
 
 #mode-table, #mode-grid {
     font-size: 2rem;
+    font-weight: initial;
 }
 
 #mode-night, #mode-day {
