@@ -206,12 +206,12 @@ function selectFilter(){
 		selected.style.display = "inline-block"
 }
 
-function addFilterEntry(label, filterFunction){
+function addFilterEntry(label, filterFunction, datalist){
 	var filterElement = newTag("li", filterList)
 	filterElement.style.display = "none"
-	var labelElement = newTag("label", filterElement)
-	labelElement.innerHTML = label
+	newTag("label", filterElement).innerHTML = label
 	var inputElement = newTag("input", filterElement)
+	inputElement.type = "text"
 	var addElement = newTag("button", filterElement)
 	addElement.innerHTML = "Add"
 	addElement.onclick = function(){
@@ -219,11 +219,24 @@ function addFilterEntry(label, filterFunction){
 		inputElement.value = ""
 		update()
 	}
+	if(datalist){
+		var datalistElement = newTag("datalist", filterElement)
+		datalistElement.id = "datalist" + label.replace(" ","-")
+		inputElement.setAttribute("list", "datalist" + label.replace(" ","-"))
+		for(var i in datalist){
+			newTag("option", datalistElement).value = datalist[i]
+		}
+	}
 }
 
 function addFilter(label, input, filterFunction){
-	var title = label + " - " + input
+	var title = label + ": "
 	var inputs = input.split(",")
+	if(label == "Type")
+		for(var i in inputs)
+			title += getTypeText(inputs[i].trim()) + (i<inputs.length - 1? ", " : "")
+	else
+		title += input
 	for(var i in inputs)
 		inputs[i] = inputs[i].trim()
 	filters[title] = filterFunction(...inputs)
@@ -250,9 +263,9 @@ function newTag(tag, parentElement, first){
 	return newElement
 }
 
-addFilterEntry("Type", hasItemInFilter("types"))
+addFilterEntry("Type", hasItemInFilter("types"), typeNames)
 addFilterEntry("Ability", hasItemInFilter("abilities"))
-addFilterEntry("Move", hasItemInFilter("moves"))
-addFilterEntry("Egg group", hasItemInFilter("eggGroups"))
+addFilterEntry("Move", hasItemInFilter("moves"), Object.keys(moves))
+addFilterEntry("Egg group", hasItemInFilter("eggGroups"), eggGroupNames)
 addFilterChooser("Add filter:")
 addSearch("Search")

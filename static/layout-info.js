@@ -13,7 +13,7 @@ var movesTmTable = document.getElementById("moves-tm")
 var movesTutorTable = document.getElementById("moves-tutor")
 var closeElement = document.getElementById("close-header")
 
-typeColors = {
+var typeColors = {
 	Bug: "#A8B820",
 	Dark: "#705848",
 	Dragon: "#7038F8",
@@ -33,26 +33,43 @@ typeColors = {
 	Steel: "#B8B8D0",
 	Water: "#6890F0"
 }
-typeDarkColors = {
-	Bug: "#6D7815",
-	Dark: "#49392F",
-	Dragon: "#4924A1",
-	Electric: "#A1871F",
-	Fairy: "#9B6470",
-	Fighting: "#7D1F1A",
-	Fire: "#9C531F",
-	Flying: "#6D5E9C",
-	Ghost: "#493963",
-	Grass: "#4E8234",
-	Ground: "#927D44",
-	Ice: "#638D8D",
-	Normal: "#6D6D4E",
-	Poison: "#682A68",
-	Psychic: "#A13959",
-	Rock: "#786824",
-	Steel: "#787887",
-	Water: "#445E9C"
-}
+var typeNames = [
+	"Bug",
+	"Dark",
+	"Dragon",
+	"Electric",
+	"Fairy",
+	"Fighting",
+	"Fire",
+	"Flying",
+	"Ghost",
+	"Grass",
+	"Ground",
+	"Ice",
+	"Normal",
+	"Poison",
+	"Psychic",
+	"Rock",
+	"Steel",
+	"Water"
+]
+var eggGroupNames = [
+	"Monster",
+	"Water 1",
+	"Water 2",
+	"Water 3",
+	"Human-Like",
+	"Bug",
+	"Mineral",
+	"Flying",
+	"Amorphous",
+	"Field",
+	"Fairy",
+	"Ditto",
+	"Grass",
+	"Dragon",
+	"Undiscovered"
+]
 
 var currentPokemon
 var showMoves = false
