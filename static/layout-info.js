@@ -106,7 +106,7 @@ function showInfoSection(pokemon){
 	addInfoElement(pokemon, "Classification |", pokemon.classification)
 	addInfoElement(pokemon, "Abilities |", getAbilitiesText(pokemon))
 	addInfoElement(pokemon, "Egg groups |", getEggGroupsText(pokemon))
-	addInfoElement(pokemon, "Gender ratio |", pokemon.ratio)
+	addInfoElement(pokemon, "Gender ratio |", getGenderText(pokemon))
 	addInfoElement(pokemon, "Weight/height |", getWeightHeightText(pokemon))
 }
 
@@ -193,6 +193,12 @@ function getEggGroupsText(pokemon){
 	if(pokemon.eggGroups[1])
 		text += " · " + getEggGroupText(pokemon.eggGroups[1])
 	return text
+}
+
+function getGenderText(pokemon){
+	if(!pokemon.ratio || pokemon.ratio == "—") return "—"
+	var things = pokemon.ratio.split(":")
+	return "<span style='color: #34d1ba;'>"+ things[0] + "♂</span>:<span style='color: #f97272;'>"+ things[1] + "♀</span>"
 }
 
 function getWeightHeightText(pokemon){
