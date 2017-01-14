@@ -114,7 +114,13 @@ function update(){
 	addNextPokemonEntry()
 }
 
-onload = ()=>{
+onPokeLoad = ()=>{
+	addFilterEntry("Type", hasItemInFilter("types"), typeNames)
+	addFilterEntry("Ability", hasItemInFilter("abilities"))
+	addFilterEntry("Move", hasItemInFilter("moves"), Object.keys(moves))
+	addFilterEntry("Egg group", hasItemInFilter("eggGroups"), eggGroupNames)
+	addFilterChooser("Add filter:")
+	addSearch("Search")
 	update()
 	setInterval(loadMoreWhenScrolledDown,500)
 }
@@ -209,8 +215,8 @@ function addSearch(label){
 
 function addFilterChooser(label){
 	var filterElement = newTag("li", filterAdder, true)
-	var labelElement = newTag("label", filterElement)
-	labelElement.innerHTML = label
+	filterElement.title = "Filters remove pokemons that do not fit the filter"
+	newTag("label", filterElement).innerHTML = label
 	var selectElement = newTag("select", filterElement)
 	newTag("option", selectElement)
 	for(var i=0;i<filterList.children.length;i++){
@@ -237,6 +243,7 @@ function selectFilter(){
 function addFilterEntry(label, filterFunction, datalist){
 	var filterElement = newTag("li", filterList)
 	filterElement.style.display = "none"
+	filterElement.title = "A comma-separated list of acceptable values"
 	newTag("label", filterElement).innerHTML = label
 	var inputElement = newTag("input", filterElement)
 	inputElement.type = "text"
@@ -265,6 +272,7 @@ function addFilter(label, input, filterFunction){
 			title += getTypeText(inputs[i].trim()) + (i<inputs.length - 1? ", " : "")
 	else
 		title += input
+	title += " <span class='close-mark'>❌</span>"
 	for(var i in inputs)
 		inputs[i] = inputs[i].trim()
 	filters[title] = filterFunction(...inputs)
@@ -290,10 +298,3 @@ function newTag(tag, parentElement, first){
 	}
 	return newElement
 }
-
-addFilterEntry("Type", hasItemInFilter("types"), typeNames)
-addFilterEntry("Ability", hasItemInFilter("abilities"))
-addFilterEntry("Move", hasItemInFilter("moves"), Object.keys(moves))
-addFilterEntry("Egg group", hasItemInFilter("eggGroups"), eggGroupNames)
-addFilterChooser("Add filter:")
-addSearch("Search")

@@ -92,14 +92,14 @@ function request(url, callback) {
 
 function getMoves(response){
 	moves = JSON.parse(response)
-	if(moves && pokemons)
-		onload()
+	if(moves && Object.keys(moves).length && pokemons && pokemons.length)
+		onPokeLoad()
 }
 
 function getPokemons(response){
 	pokemons = JSON.parse(response)
-	if(moves && pokemons)
-		onload()
+	if(moves && Object.keys(moves).length && pokemons && pokemons.length)
+		onPokeLoad()
 }
 
 request("https://armienn.github.io/pokemon/static/moves.json", getMoves)
