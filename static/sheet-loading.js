@@ -37,28 +37,52 @@ function parseSpreadsheet(response){
 		){
 			continue
 		}
+		addNewTab(title, i)
+	}
+	if(pokemonLookingFor.length || pokemonInventories.length){
 		navAll.style.display = ""
-		var tab = {}
-		tab.title = title
-		tab.id = (+i) + 1
-		tab.pokemons = []
-		var navEntry
-		if(title.toLowerCase().startsWith("lf") ||
-			title.toLowerCase().startsWith("looking for")
-		){
-			pokemonLookingFor.push(tab)
-			navEntry = newTag("li", navLookingFor)
-			navLookingFor.style.display = ""
-		} else {
-			pokemonInventories.push(tab)
-			navEntry = newTag("li", navInventory)
-			navInventory.style.display = ""
+		navAll.onclick = function(){
+			for(var i=0; i<navLookingFor.children.length; i++)
+				navLookingFor.children[i].className = "inactive"
+			for(var i=0; i<navInventory.children.length; i++)
+				navInventory.children[i].className = "inactive"
+			navAll.className = "active"
 		}
-		navEntry.innerHTML = tab.title
-		navEntry.className = "inactive"
-		requestJSON(getWorksheetUrl(spreadsheetId, tab.id), parseSheet(tab))
 	}
 	tryLoad()
+}
+
+function addNewTab(title, index){
+	var tab = {}
+	tab.title = title
+	tab.id = (+index) + 1
+	tab.pokemons = []
+	if(title.toLowerCase().startsWith("lf") ||
+		title.toLowerCase().startsWith("looking for")
+	){
+		pokemonLookingFor.push(tab)
+		tab.navEntry = newTag("li", navLookingFor)
+		navLookingFor.style.display = ""
+	} else {
+		pokemonInventories.push(tab)
+		tab.navEntry = newTag("li", navInventory)
+		navInventory.style.display = ""
+	}
+	tab.navEntry.innerHTML = tab.title
+	tab.navEntry.className = "inactive"
+	tab.navEntry.onclick = function(){
+		selectTab(tab)
+	}
+	requestJSON(getWorksheetUrl(spreadsheetId, tab.id), parseSheet(tab))
+}
+
+function selectTab(tab){
+	for(var i=0; i<navLookingFor.children.length; i++)
+		navLookingFor.children[i].className = "inactive"
+	for(var i=0; i<navInventory.children.length; i++)
+		navInventory.children[i].className = "inactive"
+	navAll.className = "inactive"
+	tab.navEntry.className = "active"
 }
 
 function parseSheet(tab){
