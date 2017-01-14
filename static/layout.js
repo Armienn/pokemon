@@ -65,6 +65,34 @@ var pokemonColumns = [
 		getColumn: function(pokemon){
 			return getTypesText(pokemon)
 		}
+	},
+	{ getColumnHeader: function(){ return "Abilities" },
+		getColumn: function(pokemon){
+			return getAbilitiesText(pokemon)
+		}
+	},
+	{ getColumnHeader: function(){ return "HP" },
+		getColumn: function(pokemon){ return getStatText(pokemon.stats.hp) }
+	},
+	{ getColumnHeader: function(){ return "Atk" },
+		getColumn: function(pokemon){ return getStatText(pokemon.stats.atk) }
+	},
+	{ getColumnHeader: function(){ return "Def" },
+		getColumn: function(pokemon){ return getStatText(pokemon.stats.def) }
+	},
+	{ getColumnHeader: function(){ return "SpA" },
+		getColumn: function(pokemon){ return getStatText(pokemon.stats.spa) }
+	},
+	{ getColumnHeader: function(){ return "SpD" },
+		getColumn: function(pokemon){ return getStatText(pokemon.stats.spd) }
+	},
+	{ getColumnHeader: function(){ return "Spe" },
+		getColumn: function(pokemon){ return getStatText(pokemon.stats.spe) }
+	},
+	{ getColumnHeader: function(){ return "Egg groups" },
+		getColumn: function(pokemon){
+			return getEggGroupsText(pokemon)
+		}
 	}
 ]
 
