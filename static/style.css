@@ -154,7 +154,7 @@ button{
     transition: max-height 0.5s ease;
 }
 .shown-info {
-    max-height: 22rem;
+    max-height: 25rem;
     transition: max-height 1s ease;
 }
 
@@ -172,15 +172,20 @@ button{
     padding: 0.5rem;
 }
 
-#moves-header {
+#moves-header, #close-header {
     width: 100%;
     display: table;
     text-align: center;
     cursor: pointer;
 }
 
+#moves-header:hover, #close-header:hover {
+    background-color: rgba(128, 128, 128, 0.1);
+}
+
 #moves-section {
     text-align: center;
+    overflow: hidden;
 }
 
 #moves-section table {

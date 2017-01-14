@@ -11,6 +11,7 @@ var movesEvolutionTable = document.getElementById("moves-evolution")
 var movesEggTable = document.getElementById("moves-egg")
 var movesTmTable = document.getElementById("moves-tm")
 var movesTutorTable = document.getElementById("moves-tutor")
+var closeElement = document.getElementById("close-header")
 
 typeColors = {
 	Bug: "#A8B820",
@@ -58,8 +59,7 @@ var showMoves = false
 
 function updatePokemonInfo(pokemon){
 	if(currentPokemon){
-		currentPokemon = null
-		pokemonInfo.className = "hidden-info"
+		deselectPokemon()
 		setTimeout(function(){
 			updatePokemonInfo(pokemon)
 		},500)
@@ -69,6 +69,14 @@ function updatePokemonInfo(pokemon){
 	showPokemonInfo(currentPokemon)
 	pokemonInfo.className = "shown-info"
 }
+function deselectPokemon(){
+		currentPokemon = null
+		pokemonInfo.className = "hidden-info"
+		if(showMoves)
+			toggleShowMoves()
+		main.scrollTop = 0
+}
+closeElement.onclick = deselectPokemon
 
 function showPokemonInfo(pokemon){
 	clearPokemonInfo()
