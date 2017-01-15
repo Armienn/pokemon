@@ -345,7 +345,7 @@ function toggleShowMoves(){
 	} else {
 		movesHeader.innerHTML = "Moves ▶"
 		movesSection.className = "hidden-moves"
-		pokemonInfo.style.maxHeight = ""
+		pokemonInfo.style.maxHeight = "none"
 	}
 }
 movesHeader.onclick = toggleShowMoves
