@@ -103,6 +103,7 @@ function parseSheet(tab){
 
 function loadPokemon(entry, tab){
 	var pokemon = {
+		get forms() {return this.base.forms },
 		get stats() {return this.base.stats },
 		get abilities() {return this.base.abilities },
 		get classification() {return this.base.classification },

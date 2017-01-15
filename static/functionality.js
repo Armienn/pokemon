@@ -36,54 +36,36 @@ function pokemonFormName(pokemon){
 	}
 }
 
+function textContains(text, substring){
+	return text.toLowerCase().indexOf(substring.toLowerCase()) > -1
+}
+
 function getPokemonSpriteName(pokemon){
 	var name = pokemon.name.toLowerCase().replace(" ", "-").replace("♀","-f").replace("♂","-m").replace("'","").replace(".","").replace("ébé","ebe").replace(":","")
-	var formname
-	if(pokemon.form == "Alolan")
-		formname = "alola"
-	else if(pokemon.form == "10% Forme")
-		formname = "10-percent"
-	else if(pokemon.form == "Core Form")
-		formname = "core-yellow"
-	else if([
-		"Altered Forme",
-		"Land Forme",
-		"Red-Striped",
-		"Standard Mode",
-		"Incarnate Forme",
-		"Ordinary Forme",
-		"Aria Forme",
-		"Shield Forme",
-		"50% Forme",
-		"Normal Forme",
-		"Solo Form",
-		"Midday Form",
-		"Meteor Form",
-		"Plant Cloak",
-		"Baile Style",
-		"Confined",
-		"Male",
-		"Female"].indexOf(pokemon.form) > -1)
-		formname = false
-	else if(pokemon.form.indexOf("Forme") > -1)
-		formname = pokemon.form.split(" Forme")[0].toLowerCase()
-	else if(pokemon.form.indexOf("Cloak") > -1)
-		formname = pokemon.form.split(" Cloak")[0].toLowerCase()
-	else if(pokemon.form.indexOf("Style") > -1)
-		formname = pokemon.form.split(" Style")[0].toLowerCase()
-	else if(pokemon.form.indexOf("Form") > -1)
-		formname = pokemon.form.split(" Form")[0].toLowerCase()
-	else if(pokemon.form == "Zen Mode")
-		formname = "zen"
-	else if(pokemon.form == "Ash-Greninja")
-		formname = "ash"
-	else if(pokemon.form.indexOf("Size") > -1)
-		formname = false
-	else if(pokemon.form != "Base")
-		formname = pokemon.form
-	if(formname)
-		name += "-" + formname.toLowerCase().replace(" ", "-").replace("'", "-")
-	if(name == "meowstic" && pokemon.form == "Female")
+	if(pokemon.forms && pokemon.form && !textContains(pokemon.form, pokemon.forms[0])){
+		var formname
+		if(textContains(pokemon.form, "alola"))
+			formname = "alola"
+		else if(textContains(pokemon.form, "10%"))
+			formname = "10-percent"
+		else if(pokemon.form.toLowerCase() == "core form")
+			formname = "core-yellow"
+		else if(pokemon.form.toLowerCase() == "female")
+			formname = false
+		else if(textContains(pokemon.form, "size"))
+			formname = false
+		else if(textContains(pokemon.form, "mega"))
+			formname = pokemon.form.replace(" ", "-")
+		else if(textContains(pokemon.form, "core"))
+			formname = pokemon.form.replace(" ", "-")
+		else if(pokemon.form == "Ash-Greninja")
+			formname = "ash"
+		else if(!textContains(pokemon.form, "base"))
+			formname = pokemon.form
+		if(formname)
+			name += "-" + formname.split(" ")[0].toLowerCase().replace(" ", "-").replace("'", "-")
+	}
+	if(!formname && pokemon.forms && pokemon.forms[0] == "Male" && (pokemon.form.toLowerCase() == "female" || pokemon.gender == "♀"))
 		name = "female/" + name
 	return "https://raw.githubusercontent.com/msikma/pokesprite/master/icons/pokemon/" +
 	 (pokemon.shiny ? "shiny":"regular") +
@@ -97,14 +79,16 @@ function getPokemonImageName(pokemon){
 	else if(pokemon.id < 100)
 		zeroes = "0"
 	var form = ""
-	if(pokemon.form && pokemon.form != "Base"){
-		var allforms = pokemons.filter(e=>e.id == pokemon.id)
-		var index = allforms.indexOf(pokemon)
-		if(index == -1 || index == 0)
-			form = ""
-		else
-		form = "_f" + (index + 1)
+	if(pokemon.form && pokemon.form != "Base" && pokemon.forms && !textContains(pokemon.form, pokemon.forms[0])){
+		for(var i in pokemon.forms){
+			if(textContains(pokemon.form, pokemon.forms[i])){
+				form = "_f" + (+i + (pokemon.name == "Zygarde" ? 2 : 1) )
+				break
+			}
+		}
 	}
+	if(pokemon.form == "Core Form")
+		form = "_f2"
 	return "http://assets.pokemon.com/assets/cms2/img/pokedex/full/" + zeroes + pokemon.id + form + ".png"
 }
 
