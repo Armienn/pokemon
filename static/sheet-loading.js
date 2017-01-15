@@ -119,15 +119,15 @@ function deselectTabs(){
 function parseConfig(response){
 	var entry = response.feed.entry[0]
 	var name = tryValues(["ingamename"],entry)
-	if(name)
-		document.getElementById("nav-all-mine").innerHTML = name + "'s Pokémon"
 	var friendcode = tryValues(["friendcode"],entry)
 	var contactUrl = tryValues(["contacturl"],entry)
 	var hideBreedables = tryValues(["showbreedables"],entry)
 	if(contactUrl && name)
-		name = "<a href=\"" + contactUrl + "\">" + name + "</a>'s <a href=\"https://docs.google.com/spreadsheets/d/" + spreadsheetId + "\">Pokémon</a>"
+		document.getElementById("main-title").innerHTML = "<a href=\"" + contactUrl + "\">" + name + "</a>'s <a href=\"https://docs.google.com/spreadsheets/d/" + spreadsheetId + "\">Pokémon</a>"
+	else if(name)
+		document.getElementById("main-title").innerHTML = name + "'s Pokémon"
 	if(name)
-		document.getElementById("main-title").innerHTML = name
+		document.getElementById("nav-all-mine").innerHTML = name + "'s Pokémon"
 	if(friendcode){
 		document.getElementById("sub-title").innerHTML = "FC: " + friendcode
 		document.getElementById("sub-title").style.display = ""
