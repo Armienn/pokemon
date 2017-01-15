@@ -165,7 +165,7 @@ nav li{
 }
 
 #pokemon-info{
-    width: 100%;
+    width: calc(100vw - 3rem);
     overflow: hidden;
     padding: 0;
     background-color: rgba(128, 128, 128, 0.1);
@@ -183,6 +183,10 @@ nav li{
     float: left;
     width: auto;
     height: 14rem;
+}
+#pokemon-info tr:hover {
+    background-color: transparent;
+    cursor: default;
 }
 
 #pokemon-info th {

@@ -256,8 +256,7 @@ function addPokemonListElement(pokemon) {
 		element.innerHTML = columns[i].getColumn(pokemon)
 	}
 	pokeElement.onclick = function(){
-		updatePokemonInfo(pokemon)
-		main.scrollTop = 0
+		selectPokemon(pokemon, pokeElement)
 	}
 	pokeElement.className = nextPoke%2?"odd":"even"
 }
@@ -266,7 +265,7 @@ function addPokemonGridElement(pokemon) {
 	var pokeElement = newTag("li", pokemonGrid)
 	pokeElement.innerHTML = "<img src='" + getPokemonSpriteName(pokemon) + "'/>"
 	pokeElement.onclick = function(){
-		updatePokemonInfo(pokemon)
+		selectPokemon(pokemon)
 	}
 }
 

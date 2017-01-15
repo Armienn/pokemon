@@ -13,6 +13,7 @@ var movesEggTable = document.getElementById("moves-egg")
 var movesTmTable = document.getElementById("moves-tm")
 var movesTutorTable = document.getElementById("moves-tutor")
 var closeElement = document.getElementById("close-header")
+var pokeInfoRow = document.getElementById("pokemon-info-row")
 
 var typeColors = {
 	Bug: "#A8B820",
@@ -102,32 +103,58 @@ var natures = {
 var currentPokemon
 var showMoves = false
 
-function updatePokemonInfo(pokemon){
+function selectPokemon(pokemon, element){
+	if(!pokemon){
+		infoSlideAway(function(){ infoMove() })
+		return
+	}
 	if(currentPokemon){
-		deselectPokemon()
-		setTimeout(function(){
-			updatePokemonInfo(pokemon)
-		},500)
+		currentPokemon = null
+		infoSlideAway(function(){ selectPokemon(pokemon, element) })
 		return
 	}
 	currentPokemon = pokemon
+	infoMove(element)
 	showPokemonInfo(currentPokemon)
-	pokemonInfo.className = "shown-info"
+	infoSlideIn()
+}
+closeElement.onclick = ()=>{selectPokemon()}
+
+function infoSlideAway(onDone){
+	pokemonInfo.style.maxHeight = ""
+	setTimeout(function(){
+		pokemonInfo.className = "hidden-info"
+	},50)
+	if(showMoves)
+		toggleShowMoves()
+	setTimeout(function(){
+		pokeInfoRow.style.display = "none"
+		infoMove()
+		if(onDone)
+			onDone()
+	},500)
+}
+
+function infoSlideIn(){
+	pokeInfoRow.style.display = ""
+	setTimeout(function(){
+		pokemonInfo.className = "shown-info"
+	},50)
 	setTimeout(function(){
 		pokemonInfo.style.maxHeight = "none"
 	},500)
 }
-function deselectPokemon(){
-		currentPokemon = null
-		pokemonInfo.style.maxHeight = ""
-		setTimeout(function(){
-			pokemonInfo.className = "hidden-info"
-		},0)
-		if(showMoves)
-			toggleShowMoves()
-		main.scrollTop = 0
+
+function infoMove(element){
+	if(pokeInfoRow.parentNode)
+		pokeInfoRow.parentNode.removeChild(pokeInfoRow)
+	if(element && element.parentNode){
+		element.parentNode.insertBefore(pokeInfoRow, element)
+		pokeInfoRow.children[0].colSpan = element.children.length
+		return
+	}
+	document.getElementById("pokemon-info-base").appendChild(pokeInfoRow)
 }
-closeElement.onclick = deselectPokemon
 
 function showPokemonInfo(pokemon){
 	clearPokemonInfo()
@@ -233,6 +260,7 @@ function addStatElement(pokemon, headerText, stat){
 	}
 }
 
+var groupsStuff = []
 function showMovesSection(pokemon){
 	var moveGroups = {}
 	for(var i in pokemon.moves){
@@ -245,7 +273,18 @@ function showMovesSection(pokemon){
 		moveGroups[method].push({move: moves[pokemon.moves[i].name], level: level})
 	}
 	for(var key in moveGroups)
-		fillMoveTable(document.getElementById("moves-" + key), moveGroups[key], key)
+		groupsStuff.push({key:key, group: moveGroups[key]})
+	setTimeout(addMoveGroup, 0)
+}
+
+var nextMoveGroup = 0
+
+function addMoveGroup(){
+	if(!groupsStuff[nextMoveGroup]) return
+	var moveThing = groupsStuff[nextMoveGroup]
+	fillMoveTable(document.getElementById("moves-" + moveThing.key), moveThing.group, moveThing.key)
+	nextMoveGroup++
+	setTimeout(addMoveGroup, 0)
 }
 
 function fillMoveTable(table, moveGroup, method){

@@ -49,6 +49,7 @@ function parseSpreadsheet(response){
 		navAll.onclick = function(){
 			deselectTabs()
 			navAll.className = "active"
+			infoMove()
 			update()
 		}
 		navMine.style.display = ""
@@ -56,12 +57,14 @@ function parseSpreadsheet(response){
 			deselectTabs()
 			navAllMine.className = "active"
 			selectedTab = "mine"
+			infoMove()
 			update()
 		}
 		navBreedables.onclick = function(){
 			deselectTabs()
 			navBreedables.className = "active"
 			selectedTab = "breedables"
+			infoMove()
 			update()
 		}
 	}
@@ -87,6 +90,7 @@ function addNewTab(title, index){
 	tab.navEntry.innerHTML = tab.title
 	tab.navEntry.className = "inactive"
 	tab.navEntry.onclick = function(){
+		infoMove()
 		selectTab(tab)
 	}
 	requestJSON(getWorksheetUrl(spreadsheetId, tab.id), parseSheet(tab))
