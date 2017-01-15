@@ -151,8 +151,10 @@ function infoMove(element){
 	if(element && element.parentNode){
 		element.parentNode.insertBefore(pokeInfoRow, element)
 		pokeInfoRow.children[0].colSpan = element.children.length
+		pokemonInfo.style.width = "100%"
 		return
 	}
+	pokemonInfo.style.width = ""
 	document.getElementById("pokemon-info-base").appendChild(pokeInfoRow)
 }
 
