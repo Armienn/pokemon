@@ -1,5 +1,6 @@
 var filterAdder = document.getElementById("filter-adder")
 var filterList = document.getElementById("filter-list")
+var filterIndividualList = document.getElementById("filter-individual-list")
 var currentFilterList = document.getElementById("current-filter-list")
 var pokemonList = document.getElementById("pokemon-list")
 var pokemonGrid = document.getElementById("pokemon-grid")
@@ -177,10 +178,11 @@ function tryLoad(){
 	if(loaded)
 		return
 	loaded = true
-	addFilterEntry("Type", hasItemInFilter("types"), typeNames)
-	addFilterEntry("Ability", hasItemInFilter("abilities"))
-	addFilterEntry("Move", hasItemInFilter("moves"), Object.keys(moves))
-	addFilterEntry("Egg group", hasItemInFilter("eggGroups"), eggGroupNames)
+	addFilterEntry(filterList, "Type", hasItemInFilter("types"), typeNames)
+	addFilterEntry(filterList, "Ability", hasItemInFilter("abilities"))
+	addFilterEntry(filterList, "Move", hasItemInFilter("moves"), Object.keys(moves))
+	addFilterEntry(filterList, "Egg group", hasItemInFilter("eggGroups"), eggGroupNames)
+	addFilterEntry(filterIndividualList, "Nature", hasItemInFilter("nature"), Object.keys(natures))
 	addFilterChooser("Add filter:")
 	addSearch("Search")
 	update()
@@ -292,6 +294,12 @@ function addFilterChooser(label){
 		optionElement.value = child.children[0].innerHTML
 		optionElement.innerHTML = child.children[0].innerHTML
 	}
+	for(var i=0;i<filterIndividualList.children.length;i++){
+		var child = filterIndividualList.children[i]
+		var optionElement = newTag("option", selectElement)
+		optionElement.value = child.children[0].innerHTML
+		optionElement.innerHTML = child.children[0].innerHTML
+	}
 	selectElement.onchange = selectFilter
 }
 
@@ -303,11 +311,17 @@ function selectFilter(){
 		if(child.children[0].innerHTML == this.value)
 			selected = child
 	}
+	for(var i=0;i<filterIndividualList.children.length;i++){
+		var child = filterIndividualList.children[i]
+		child.style.display = "none"
+		if(child.children[0].innerHTML == this.value)
+			selected = child
+	}
 	if(selected)
 		selected.style.display = "inline-block"
 }
 
-function addFilterEntry(label, filterFunction, datalist){
+function addFilterEntry(filterList, label, filterFunction, datalist){
 	var filterElement = newTag("li", filterList)
 	filterElement.style.display = "none"
 	filterElement.title = "A comma-separated list of acceptable values"

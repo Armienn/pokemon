@@ -159,7 +159,10 @@ function hasItemInFilter(listKey) {
 					console.log("Pokemon missing " + listKey + ": " + pokemonFormName(pokemon))
 					return false
 				}
-				if(pokemon[listKey].filter(e => e ? (e.toLowerCase ? e.toLowerCase() : e.name.toLowerCase()) == items[i].toLowerCase() : false).length)
+				if(typeof pokemon[listKey] == "string"){
+					if(pokemon[listKey] == items[i])
+						return true
+				} else if(pokemon[listKey].filter(e => e ? (e.toLowerCase ? e.toLowerCase() : e.name.toLowerCase()) == items[i].toLowerCase() : false).length)
 					return true
 			}
 			return false

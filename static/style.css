@@ -72,7 +72,7 @@ th, li{
     vertical-align: middle;
 }
 
-#filter-list {
+#filter-list, #filter-individual-list {
     display: inline-block;
 }
 
