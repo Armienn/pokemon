@@ -1,4 +1,7 @@
 var navAll = document.getElementById("nav-all")
+var navMine = document.getElementById("nav-mine")
+var navAllMine = document.getElementById("nav-all-mine")
+var navBreedables = document.getElementById("nav-breedables")
 var navInventory = document.getElementById("nav-inventory")
 var navLookingFor = document.getElementById("nav-looking-for")
 var spreadsheetId = 0
@@ -44,12 +47,21 @@ function parseSpreadsheet(response){
 	if(pokemonLookingFor.length || pokemonInventories.length){
 		navAll.style.display = ""
 		navAll.onclick = function(){
-			for(var i=0; i<navLookingFor.children.length; i++)
-				navLookingFor.children[i].className = "inactive"
-			for(var i=0; i<navInventory.children.length; i++)
-				navInventory.children[i].className = "inactive"
+			deselectTabs()
 			navAll.className = "active"
-			selectedTab = undefined
+			update()
+		}
+		navMine.style.display = ""
+		navAllMine.onclick = function(){
+			deselectTabs()
+			navAllMine.className = "active"
+			selectedTab = "mine"
+			update()
+		}
+		navBreedables.onclick = function(){
+			deselectTabs()
+			navBreedables.className = "active"
+			selectedTab = "breedables"
 			update()
 		}
 	}
@@ -81,14 +93,21 @@ function addNewTab(title, index){
 }
 
 function selectTab(tab){
+	deselectTabs()
+	tab.navEntry.className = "active"
+	selectedTab = tab
+	update()
+}
+
+function deselectTabs(){
 	for(var i=0; i<navLookingFor.children.length; i++)
 		navLookingFor.children[i].className = "inactive"
 	for(var i=0; i<navInventory.children.length; i++)
 		navInventory.children[i].className = "inactive"
 	navAll.className = "inactive"
-	tab.navEntry.className = "active"
-	selectedTab = tab
-	update()
+	navAllMine.className = "inactive"
+	navBreedables.className = "inactive"
+	selectedTab = undefined
 }
 
 function parseSheet(tab){

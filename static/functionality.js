@@ -7,7 +7,15 @@ var onload
 
 function getFilteredPokemons(){
 	var pokes = pokemons
-	if(selectedTab)
+	if(selectedTab == "mine"){
+		pokes = []
+		for(var i in pokemonInventories)
+			pokes = pokes.concat(pokemonInventories[i].pokemons)
+	} else if(selectedTab == "breedables"){
+		pokes = []
+		for(var i in pokemonInventories)
+			pokes = pokes.concat(pokemonInventories[i].pokemons)
+	} else if(selectedTab)
 		pokes = selectedTab.pokemons
 	for(var i in filters)
 		pokes = pokes.filter(filters[i])
