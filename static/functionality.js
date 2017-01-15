@@ -118,7 +118,7 @@ function getPokemonSpriteName(pokemon){
 		else if(textContains(pokemon.form, "mega"))
 			formname = pokemon.form.replace(" ", "-")
 		else if(textContains(pokemon.form, "core"))
-			formname = pokemon.form.replace(" ", "-")
+			formname = "core-"+pokemon.form.replace(" ", "").toLowerCase().split("core")[0]
 		else if(pokemon.form == "Ash-Greninja")
 			formname = "ash"
 		else if(!textContains(pokemon.form, "base"))
@@ -142,7 +142,10 @@ function getPokemonImageName(pokemon){
 	var form = ""
 	if(pokemon.form && pokemon.form != "Base" && pokemon.forms && !textContains(pokemon.form, pokemon.forms[0])){
 		for(var i in pokemon.forms){
-			if(textContains(pokemon.form, pokemon.forms[i])){
+			var temp = pokemon.forms[i]
+			if(pokemon.name == "Minior" && pokemon.forms[i] != "Meteor Form")
+				temp = "Core"
+			if(textContains(pokemon.form, temp)){
 				form = "_f" + (+i + (pokemon.name == "Zygarde" ? 2 : 1) )
 				break
 			}

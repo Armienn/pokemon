@@ -180,7 +180,7 @@ function loadPokemon(entry, tab){
 	pokemon.language = tryValues(["language","lang"], entry)
 	pokemon.notes = tryValues(["notes","note","comments","comment"], entry)
 	pokemon.balls = [tryValues(["pokeball","ball"], entry)].filter(e=>e)
-	if(!pokemon.balls.length){
+	if(pokemon.balls.length == 0){
 		if (getValue(entry.gsx$poke)) pokemon.balls.push("Poké Ball")
 		if (getValue(entry.gsx$great)) pokemon.balls.push("Great Ball")
 		if (getValue(entry.gsx$Ultra)) pokemon.balls.push("Ultra Ball")
@@ -207,6 +207,34 @@ function loadPokemon(entry, tab){
 		if (getValue(entry.gsx$cherish)) pokemon.balls.push("Cherish Ball")
 		if (getValue(entry.gsx$dream)) pokemon.balls.push("Dream Ball")
 		if (getValue(entry.gsx$beast)) pokemon.balls.push("Beast Ball")
+	}
+	if(pokemon.balls.length == 0) { // compatibility with richi3f's sheet
+		if (entry.gsx$_dcgjs) pokemon.balls.push("Poké Ball")
+		if (entry.gsx$_ddv49) pokemon.balls.push("Great Ball")
+		if (entry.gsx$_d415a) pokemon.balls.push("Ultra Ball")
+		if (entry.gsx$_d5fpr) pokemon.balls.push("Master Ball")
+		if (entry.gsx$_d6ua4) pokemon.balls.push("Safari Ball")
+		if (entry.gsx$_d88ul) pokemon.balls.push("Level Ball")
+		if (entry.gsx$_dkvya) pokemon.balls.push("Lure Ball")
+		if (entry.gsx$_dmair) pokemon.balls.push("Moon Ball")
+		if (entry.gsx$_dnp34) pokemon.balls.push("Friend Ball")
+		if (entry.gsx$_dp3nl) pokemon.balls.push("Love Ball")
+		if (entry.gsx$_df9om) pokemon.balls.push("Heavy Ball")
+		if (entry.gsx$_dgo93) pokemon.balls.push("Fast Ball")
+		if (entry.gsx$_di2tg) pokemon.balls.push("Sport Ball")
+		if (entry.gsx$_djhdx) pokemon.balls.push("Premier Ball")
+		if (entry.gsx$_dw4je) pokemon.balls.push("Repeat Ball")
+		if (entry.gsx$_dxj3v) pokemon.balls.push("Timer Ball")
+		if (entry.gsx$_dyxo8) pokemon.balls.push("Nest Ball")
+		if (entry.gsx$_e0c8p) pokemon.balls.push("Net Ball")
+		if (entry.gsx$_dqi9q) pokemon.balls.push("Dive Ball")
+		if (entry.gsx$_drwu7) pokemon.balls.push("Luxury Ball")
+		if (entry.gsx$_dtbek) pokemon.balls.push("Heal Ball")
+		if (entry.gsx$_dupz1) pokemon.balls.push("Quick Ball")
+		if (entry.gsx$_e7d2q) pokemon.balls.push("Dusk Ball")
+		if (entry.gsx$_e8rn7) pokemon.balls.push("Cherish Ball")
+		if (entry.gsx$_ea67k) pokemon.balls.push("Dream Ball")
+		if (entry.gsx$_ebks1) pokemon.balls.push("Beast Ball")
 	}
 	tab.pokemons.push(pokemon)
 }
