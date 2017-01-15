@@ -70,6 +70,33 @@ var eggGroupNames = [
 	"Dragon",
 	"Undiscovered"
 ]
+var natures = {
+	"Adamant":{"positive":"Attack","negative":"Sp. Atk"},
+	"Bashful":{"positive":"Sp. Atk","negative":"Sp. Atk"},
+	"Bold":{"positive":"Defense","negative":"Attack"},
+	"Brave":{"positive":"Attack","negative":"Speed"},
+	"Calm":{"positive":"Sp. Def","negative":"Attack"},
+	"Careful":{"positive":"Sp. Def","negative":"Sp. Atk"},
+	"Docile":{"positive":"Defense","negative":"Defense"},
+	"Gentle":{"positive":"Sp. Def","negative":"Defense"},
+	"Hardy":{"positive":"Attack","negative":"Attack"},
+	"Hasty":{"positive":"Speed","negative":"Defense"},
+	"Impish":{"positive":"Defense","negative":"Sp. Atk"},
+	"Jolly":{"positive":"Speed","negative":"Sp. Atk"},
+	"Lax":{"positive":"Defense","negative":"Sp. Def"},
+	"Lonely":{"positive":"Attack","negative":"Defense"},
+	"Mild":{"positive":"Sp. Atk","negative":"Defense"},
+	"Modest":{"positive":"Sp. Atk","negative":"Attack"},
+	"Naive":{"positive":"Speed","negative":"Sp. Def"},
+	"Naughty":{"positive":"Attack","negative":"Sp. Def"},
+	"Quiet":{"positive":"Sp. Atk","negative":"Speed"},
+	"Quirky":{"positive":"Sp. Def","negative":"Sp. Def"},
+	"Rash":{"positive":"Sp. Atk","negative":"Sp. Def"},
+	"Relaxed":{"positive":"Defense","negative":"Speed"},
+	"Sassy":{"positive":"Sp. Def","negative":"Speed"},
+	"Serious":{"positive":"Speed","negative":"Speed"},
+	"Timid":{"positive":"Speed","negative":"Attack"}
+}
 
 var currentPokemon
 var showMoves = false
@@ -177,6 +204,7 @@ function addStatElement(pokemon, headerText, stat){
 	var ivBase = pokemon.ivs ? pokemon.ivs[stat] : 0
 	var evBase = pokemon.evs ? pokemon.evs[stat] : 0
 	text.innerHTML = statBase
+	text.className = pokemon.nature ? getNatureCssClass(stat,pokemon) : ""
 	var bar = newTag("div", barElement)
 	bar.className = "stat-bar base-bar"
 	bar.style.width = statBase*2 + "px"
@@ -359,7 +387,33 @@ function getAmountShinyText(pokemon){
 }
 
 function getIVText(iv, pokemon) {
-	return pokemon.ivs[iv]
+	var cssClass = getNatureCssClass(iv,pokemon)
+	return "<span class='"+cssClass+"'>"+pokemon.ivs[iv]+"</span>"
+}
+
+function getNatureCssClass(stat,pokemon){
+	var nature = natures[pokemon.nature]
+	if(nature.positive == nature.negative)
+		return ""
+	else if(stat == parseStatType(nature.positive))
+		return "positive-nature"
+	else if(stat == parseStatType(nature.negative))
+		return "negative-nature"
+}
+
+function parseStatType(text){
+	if(["hp","health"].indexOf(text.trim().toLowerCase())>-1)
+		return "hp"
+	if(["atk","attack"].indexOf(text.trim().toLowerCase())>-1)
+		return "atk"
+	if(["def","defense"].indexOf(text.trim().toLowerCase())>-1)
+		return "def"
+	if(["spa","sp. atk","sp. attack","special attack"].indexOf(text.trim().toLowerCase())>-1)
+		return "spa"
+	if(["spd","sp. def","sp. defense","special defense"].indexOf(text.trim().toLowerCase())>-1)
+		return "spd"
+	if(["spe","speed"].indexOf(text.trim().toLowerCase()))
+		return "spe"
 }
 
 function HSVtoRGB(h, s, v) {

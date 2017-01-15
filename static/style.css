@@ -245,3 +245,11 @@ nav li{
     background-color: orange;
     border-left: 1px solid black;
 }
+
+.negative-nature{
+    color: #2ab9b9;
+}
+
+.positive-nature{
+    color: #d66;
+}
