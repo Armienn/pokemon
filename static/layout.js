@@ -144,6 +144,11 @@ var tabPokemonColumns = [
 		getColumn: function(pokemon){
 			return pokemon.learntMoves.join(", ")
 		}
+	},
+	{ getColumnHeader: function(){ return "Ball" },
+		getColumn: function(pokemon){
+			return getBallsText(pokemon)
+		}
 	}
 ]
 

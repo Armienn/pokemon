@@ -177,34 +177,36 @@ function loadPokemon(entry, tab){
 	pokemon.ot = tryValues(["ot"], entry)
 	pokemon.tid = tryValues(["tid"], entry)
 	pokemon.level = tryValues(["level","lvl","lv"], entry)
-	pokemon.ball = tryValues(["pokeball","ball"], entry)
-	if(!pokemon.ball){
-		if (getValue(this.gsx$poke)) pokemon.ball = "Poké Ball"
-		if (getValue(this.gsx$great)) pokemon.ball = "Great Ball"
-		if (getValue(this.gsx$Ultra)) pokemon.ball = "Ultra Ball"
-		if (getValue(this.gsx$master)) pokemon.ball = "Master Ball"
-		if (getValue(this.gsx$safari)) pokemon.ball = "Safari Ball"
-		if (getValue(this.gsx$level)) pokemon.ball = "Level Ball"
-		if (getValue(this.gsx$lure)) pokemon.ball = "Lure Ball"
-		if (getValue(this.gsx$moon)) pokemon.ball = "Moon Ball"
-		if (getValue(this.gsx$friend)) pokemon.ball = "Friend Ball"
-		if (getValue(this.gsx$love)) pokemon.ball = "Love Ball"
-		if (getValue(this.gsx$heavy)) pokemon.ball = "Heavy Ball"
-		if (getValue(this.gsx$fast)) pokemon.ball = "Fast Ball"
-		if (getValue(this.gsx$sport)) pokemon.ball = "Sport Ball"
-		if (getValue(this.gsx$premier)) pokemon.ball = "Premier Ball"
-		if (getValue(this.gsx$repeat)) pokemon.ball = "Repeat Ball"
-		if (getValue(this.gsx$timer)) pokemon.ball = "Timer Ball"
-		if (getValue(this.gsx$nest)) pokemon.ball = "Nest Ball"
-		if (getValue(this.gsx$net)) pokemon.ball = "Net Ball"
-		if (getValue(this.gsx$dive)) pokemon.ball = "Dive Ball"
-		if (getValue(this.gsx$luxury)) pokemon.ball = "Luxury Ball"
-		if (getValue(this.gsx$heal)) pokemon.ball = "Heal Ball"
-		if (getValue(this.gsx$quick)) pokemon.ball = "Quick Ball"
-		if (getValue(this.gsx$dusk)) pokemon.ball = "Dusk Ball"
-		if (getValue(this.gsx$cherish)) pokemon.ball = "Cherish Ball"
-		if (getValue(this.gsx$dream)) pokemon.ball = "Dream Ball"
-		if (getValue(this.gsx$beast)) pokemon.ball = "Beast Ball"
+	pokemon.language = tryValues(["language","lang"], entry)
+	pokemon.notes = tryValues(["notes","note","comments","comment"], entry)
+	pokemon.balls = [tryValues(["pokeball","ball"], entry)].filter(e=>e)
+	if(!pokemon.balls.length){
+		if (getValue(entry.gsx$poke)) pokemon.balls.push("Poké Ball")
+		if (getValue(entry.gsx$great)) pokemon.balls.push("Great Ball")
+		if (getValue(entry.gsx$Ultra)) pokemon.balls.push("Ultra Ball")
+		if (getValue(entry.gsx$master)) pokemon.balls.push("Master Ball")
+		if (getValue(entry.gsx$safari)) pokemon.balls.push("Safari Ball")
+		if (getValue(entry.gsx$level)) pokemon.balls.push("Level Ball")
+		if (getValue(entry.gsx$lure)) pokemon.balls.push("Lure Ball")
+		if (getValue(entry.gsx$moon)) pokemon.balls.push("Moon Ball")
+		if (getValue(entry.gsx$friend)) pokemon.balls.push("Friend Ball")
+		if (getValue(entry.gsx$love)) pokemon.balls.push("Love Ball")
+		if (getValue(entry.gsx$heavy)) pokemon.balls.push("Heavy Ball")
+		if (getValue(entry.gsx$fast)) pokemon.balls.push("Fast Ball")
+		if (getValue(entry.gsx$sport)) pokemon.balls.push("Sport Ball")
+		if (getValue(entry.gsx$premier)) pokemon.balls.push("Premier Ball")
+		if (getValue(entry.gsx$repeat)) pokemon.balls.push("Repeat Ball")
+		if (getValue(entry.gsx$timer)) pokemon.balls.push("Timer Ball")
+		if (getValue(entry.gsx$nest)) pokemon.balls.push("Nest Ball")
+		if (getValue(entry.gsx$net)) pokemon.balls.push("Net Ball")
+		if (getValue(entry.gsx$dive)) pokemon.balls.push("Dive Ball")
+		if (getValue(entry.gsx$luxury)) pokemon.balls.push("Luxury Ball")
+		if (getValue(entry.gsx$heal)) pokemon.balls.push("Heal Ball")
+		if (getValue(entry.gsx$quick)) pokemon.balls.push("Quick Ball")
+		if (getValue(entry.gsx$dusk)) pokemon.balls.push("Dusk Ball")
+		if (getValue(entry.gsx$cherish)) pokemon.balls.push("Cherish Ball")
+		if (getValue(entry.gsx$dream)) pokemon.balls.push("Dream Ball")
+		if (getValue(entry.gsx$beast)) pokemon.balls.push("Beast Ball")
 	}
 	tab.pokemons.push(pokemon)
 }

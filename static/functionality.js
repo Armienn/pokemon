@@ -60,6 +60,7 @@ function getBreedables(parentPokemons){
 				baby.nature = pokemon.nature
 				baby.ability = pokemon.ability
 				baby.learntMoves = []
+				baby.balls = []
 				breedables.push(baby)
 			}
 		}

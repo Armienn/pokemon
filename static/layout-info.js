@@ -2,6 +2,7 @@ var nameHeader = document.getElementById("name-header")
 var imageSection = document.getElementById("image-section")
 var infoSection = document.getElementById("info-section")
 var infoSectionTable = document.getElementById("info-section").children[0].children[1]
+var infoBSectionTable = document.getElementById("info-b-section").children[0].children[1]
 var statSection = document.getElementById("stat-section")
 var statSectionTable = document.getElementById("stat-section").children[0].children[1]
 var movesHeader = document.getElementById("moves-header")
@@ -133,6 +134,7 @@ function showPokemonInfo(pokemon){
 	showNameHeader(pokemon)
 	showImageSection(pokemon)
 	showInfoSection(pokemon)
+	showInfoBSection(pokemon)
 	showStatSection(pokemon)
 	showMovesSection(pokemon)
 }
@@ -154,35 +156,46 @@ function showImageSection(pokemon){
 }
 
 function showInfoSection(pokemon){
-	addInfoElement(pokemon, "Types |", getTypesText(pokemon))
+	addInfoElement(infoSectionTable, pokemon, "Types |", getTypesText(pokemon))
 	if(pokemon.nickname)
-		addInfoElement(pokemon, "Nickname |", pokemon.nickname)
+		addInfoElement(infoSectionTable, pokemon, "Nickname |", pokemon.nickname)
 	else
-		addInfoElement(pokemon, "Classification |", pokemon.classification)
+		addInfoElement(infoSectionTable, pokemon, "Classification |", pokemon.classification)
 	if(pokemon.ability)
-		addInfoElement(pokemon, "Ability |", getAbilityText(pokemon.ability, pokemon.abilities[2] ? pokemon.abilities[2].toLowerCase() == pokemon.ability.toLowerCase() : false))
+		addInfoElement(infoSectionTable, pokemon, "Ability |", getAbilityText(pokemon.ability, pokemon.abilities[2] ? pokemon.abilities[2].toLowerCase() == pokemon.ability.toLowerCase() : false))
 	else
-		addInfoElement(pokemon, "Abilities |", getAbilitiesText(pokemon))
+		addInfoElement(infoSectionTable, pokemon, "Abilities |", getAbilitiesText(pokemon))
 	if(pokemon.nature)
-		addInfoElement(pokemon, "Nature |", pokemon.nature)
+		addInfoElement(infoSectionTable, pokemon, "Nature |", pokemon.nature)
 	else
-		addInfoElement(pokemon, "Egg groups |", getEggGroupsText(pokemon))
+		addInfoElement(infoSectionTable, pokemon, "Egg groups |", getEggGroupsText(pokemon))
 	if(pokemon.gender)
-		addInfoElement(pokemon, "Gender |", getGenderText(pokemon))
+		addInfoElement(infoSectionTable, pokemon, "Gender |", getGenderText(pokemon))
 	else
-		addInfoElement(pokemon, "Gender ratio |", getGenderText(pokemon))
+		addInfoElement(infoSectionTable, pokemon, "Gender ratio |", getGenderText(pokemon))
 	if(pokemon.hiddenPower)
-		addInfoElement(pokemon, "Hidden power |", getTypeText(pokemon.hiddenPower))
+		addInfoElement(infoSectionTable, pokemon, "Hidden power |", getTypeText(pokemon.hiddenPower))
 	else
-		addInfoElement(pokemon, "Weight/height |", getWeightHeightText(pokemon))
+		addInfoElement(infoSectionTable, pokemon, "Weight/height |", getWeightHeightText(pokemon))
 }
 
-function addInfoElement(pokemon, headerText, content){
-	var row = newTag("tr", infoSectionTable)
+function showInfoBSection(pokemon){
+	if(!pokemon.base) return
+	if(pokemon.ot || pokemon.tid)
+		addInfoElement(infoBSectionTable, pokemon, "OT |", pokemon.ot + " (" + pokemon.tid + ")" )
+	for(var i in pokemon.learntMoves)
+		addInfoElement(infoBSectionTable, pokemon, "Move |", pokemon.learntMoves[i])
+	if(pokemon.balls.length)
+		addInfoElement(infoBSectionTable, pokemon, "Ball |", getBallsText(pokemon)).style.padding = "0"
+}
+
+function addInfoElement(table, pokemon, headerText, content){
+	var row = newTag("tr", table)
 	var header = newTag("th", row)
 	var text = newTag("td", row)
 	header.innerHTML = headerText
 	text.innerHTML = content
+	return text
 }
 
 function showStatSection(pokemon){
@@ -301,6 +314,8 @@ function clearPokemonInfo(){
 		statSectionTable.removeChild(statSectionTable.firstChild)
 	while (infoSectionTable.firstChild)
 		infoSectionTable.removeChild(infoSectionTable.firstChild)
+	while (infoBSectionTable.firstChild)
+		infoBSectionTable.removeChild(infoBSectionTable.firstChild)
 	for(var i=0;i<2;i++){
 	while (movesLevelTable.children[i].firstChild)
 		movesLevelTable.children[i].removeChild(movesLevelTable.children[i].firstChild)
@@ -371,6 +386,17 @@ function getWeightHeightText(pokemon){
 		text += pokemon.height
 	else
 		text += "-"
+	return text
+}
+
+function getBallsText(pokemon){
+	var text = ""
+	for(var i in pokemon.balls){
+		var ball = pokemon.balls[i].split(" ")[0].toLowerCase()
+		ball = ball.split("ball")[0].replace("é","e")
+		var url = "https://raw.githubusercontent.com/msikma/pokesprite/master/icons/pokeball/"+ball+".png"
+		text += "<img src='"+url+"' title='" + pokemon.balls[i] + "'></img>"
+	}
 	return text
 }
 

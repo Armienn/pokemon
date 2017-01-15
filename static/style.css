@@ -182,6 +182,7 @@ nav li{
 #pokemon-info section section {
     float: left;
     width: auto;
+    height: 14rem;
 }
 
 #pokemon-info th {
