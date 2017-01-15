@@ -134,11 +134,6 @@ function getPokemonSpriteName(pokemon){
 }
 
 function getPokemonImageName(pokemon){
-	var zeroes = ""
-	if(pokemon.id < 10)
-		zeroes = "00"
-	else if(pokemon.id < 100)
-		zeroes = "0"
 	var form = ""
 	if(pokemon.form && pokemon.form != "Base" && pokemon.forms && !textContains(pokemon.form, pokemon.forms[0])){
 		for(var i in pokemon.forms){
@@ -153,7 +148,7 @@ function getPokemonImageName(pokemon){
 	}
 	if(pokemon.form == "Core Form")
 		form = "_f2"
-	return "http://assets.pokemon.com/assets/cms2/img/pokedex/full/" + zeroes + pokemon.id + form + ".png"
+	return "http://assets.pokemon.com/assets/cms2/img/pokedex/full/" + prependZeroes(pokemon.id, 3) + form + ".png"
 }
 
 function hasItemInFilter(listKey) {
@@ -180,6 +175,14 @@ function requestJSON(url, callback) {
 	}
 	xmlHttp.open("GET", url, true)
 	xmlHttp.send()
+}
+
+function prependZeroes(number, characters){
+	number = number.toString()
+	while(number.length < characters){
+		number = "0" + number
+	}
+	return number
 }
 
 function getMoves(response){
