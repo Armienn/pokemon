@@ -1,3 +1,5 @@
+//Nooo, don't look at me, I'm hideous!
+
 var nameHeader = document.getElementById("name-header")
 var imageSection = document.getElementById("image-section")
 var infoSection = document.getElementById("info-section")
@@ -292,7 +294,7 @@ function addMoveGroup(){
 function fillMoveTable(table, moveGroup, method){
 	addMoveHeader(table.children[0], moveGroup, method)
 	for(var i in moveGroup){
-		addMoveRow(table.children[1], moveGroup[i].move, moveGroup[i].level, i)
+		addMoveRow(table.children[1], moveGroup[i].move, moveGroup[i].level, i, method)
 	}
 }
 
@@ -312,6 +314,10 @@ function addMoveHeader(table, moveGroup, method){
 	titleRow.style.fontWeight = "bold"
 	row = newTag("tr", table)
 	newTag("td", row).innerHTML = "Move"
+	if(method == "level")
+		newTag("td", row).innerHTML = "Level"
+	if(method == "tm")
+		newTag("td", row).innerHTML = "TM"
 	newTag("td", row).innerHTML = "Type"
 	newTag("td", row).innerHTML = "Category"
 	newTag("td", row).innerHTML = "Power"
@@ -321,11 +327,15 @@ function addMoveHeader(table, moveGroup, method){
 	newTag("td", row).innerHTML = "Summary"
 }
 
-function addMoveRow(table, move, level, i){
+function addMoveRow(table, move, level, i, method){
 	var row = newTag("tr", table)
 	var head = newTag("td", row)
 	head.innerHTML = move.name
 	head.style.fontWeight = "bold"
+	if(method == "level")
+		newTag("td", row).innerHTML = level
+	if(method == "tm")
+		newTag("td", row).innerHTML = move.gameDescription
 	newTag("td", row).innerHTML = getTypeText(move.type)
 	newTag("td", row).innerHTML = move.category
 	newTag("td", row).innerHTML = move.power
