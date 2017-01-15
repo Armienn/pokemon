@@ -15,6 +15,7 @@ function getFilteredPokemons(){
 		pokes = []
 		for(var i in pokemonInventories)
 			pokes = pokes.concat(pokemonInventories[i].pokemons)
+		pokes = getBreedables(pokes)
 	} else if(selectedTab)
 		pokes = selectedTab.pokemons
 	for(var i in filters)
@@ -22,6 +23,57 @@ function getFilteredPokemons(){
 	if(searchFilter)
 		pokes = pokes.filter(searchFilter)
 	return pokes
+}
+
+function getBreedables(parentPokemons){
+	var breedables = []
+	for(var n in parentPokemons){
+		var pokemon = parentPokemons[n]
+		if(!pokemon.eggs)
+			continue
+		for(var i in pokemon.eggs){
+			var babies = pokemons.filter(e=> (e.id == pokemon.eggs[i].id && e.form.toLowerCase().indexOf("mega") == -1))
+			if(pokemon.eggs[i].forms == "same"){
+				var filtered = babies.filter(e=>e.form == pokemon.form)
+				if(filtered.length == 0)
+					filtered = [babies[0]]
+				babies = filtered
+			}
+			for(var j in babies){
+				var baby = {
+					get forms() {return this.base.forms },
+					get stats() {return this.base.stats },
+					get abilities() {return this.base.abilities },
+					get classification() {return this.base.classification },
+					get eggGroups() {return this.base.eggGroups },
+					get height() {return this.base.height },
+					get weight() {return this.base.weight },
+					get moves() {return this.base.moves },
+					get ratio() {return this.base.ratio },
+					get types() {return this.base.types }
+				}
+				baby.base = babies[j]
+				baby.id = babies[j].id
+				baby.name = babies[j].name
+				baby.form = babies[j].form
+				baby.ivs = pokemon.ivs
+				baby.nature = pokemon.nature
+				baby.ability = pokemon.ability
+				baby.learntMoves = []
+				breedables.push(baby)
+			}
+		}
+	}
+	breedables = uniqueBy(breedables, e => e.id + e.form)
+	return breedables
+}
+
+function uniqueBy(list, key) {
+	var seen = {};
+	return list.filter(function(item) {
+		var k = key(item);
+		return seen.hasOwnProperty(k) ? false : (seen[k] = true);
+	})
 }
 
 function getSearchFilter(query) {

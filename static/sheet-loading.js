@@ -127,6 +127,7 @@ function loadPokemon(entry, tab){
 		get abilities() {return this.base.abilities },
 		get classification() {return this.base.classification },
 		get eggGroups() {return this.base.eggGroups },
+		get eggs() {return this.base.eggs },
 		get height() {return this.base.height },
 		get weight() {return this.base.weight },
 		get moves() {return this.base.moves },
