@@ -40,6 +40,8 @@ function parseSpreadsheet(response){
 			title.toLowerCase().indexOf("resource") > -1 ||
 			title.toLowerCase() == "db"
 		){
+			if(i=="0")
+				requestJSON(getWorksheetUrl(spreadsheetId, 1), parseConfig)
 			continue
 		}
 		addNewTab(title, i)
@@ -112,6 +114,26 @@ function deselectTabs(){
 	navAllMine.className = "inactive"
 	navBreedables.className = "inactive"
 	selectedTab = undefined
+}
+
+function parseConfig(response){
+	var entry = response.feed.entry[0]
+	var name = tryValues(["ingamename"],entry)
+	if(name)
+		document.getElementById("nav-all-mine").innerHTML = name + "'s Pokémon"
+	var friendcode = tryValues(["friendcode"],entry)
+	var contactUrl = tryValues(["contacturl"],entry)
+	var hideBreedables = tryValues(["showbreedables"],entry)
+	if(contactUrl && name)
+		name = "<a href=\"" + contactUrl + "\">" + name + "</a>'s <a href=\"https://docs.google.com/spreadsheets/d/" + spreadsheetId + "\">Pokémon</a>"
+	if(name)
+		document.getElementById("main-title").innerHTML = name
+	if(friendcode){
+		document.getElementById("sub-title").innerHTML = "FC: " + friendcode
+		document.getElementById("sub-title").style.display = ""
+	}
+	if(hideBreedables)
+		document.getElementById("nav-breedables").style.display = "none"
 }
 
 function parseSheet(tab){
