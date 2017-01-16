@@ -88,6 +88,7 @@ function selectTab(tab){
 	deselectTabs()
 	tab.navEntry.className = "active"
 	selectedTab = tab
+	window.location.hash = tab.id
 	update()
 }
 
@@ -127,6 +128,8 @@ function parseSheet(tab){
 		for(var i in response.feed.entry){
 			loadPokemon(response.feed.entry[i], tab)
 		}
+		if(tab.id == destination)
+			selectTab(tab)
 	}
 }
 

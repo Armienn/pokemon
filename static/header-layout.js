@@ -61,6 +61,8 @@ function tryLoad(){
 	addFilterChooser("Add filter:")
 	addSearch("Search")
 	update()
+	if(!spreadsheetId && destination)
+		selectPokemonBasedOn(destination)
 	setInterval(loadMoreWhenScrolledDown,500)
 }
 

@@ -13,6 +13,18 @@ function selectPokemon(pokemon, element){
 	showPokemonInfo(currentPokemon)
 	infoSlideIn()
 }
+
+function selectPokemonBasedOn(destination){
+	for(var n in pokemons){
+		var pokemon = pokemons[n]
+		var name = pokemon.name.toLowerCase().replace(" ", "-").replace("♀","-f").replace("♂","-m").replace("'","").replace(".","").replace("ébé","ebe").replace(":","")
+		if(pokemon.id == destination || name == destination){
+			selectPokemon(pokemon)
+			return
+		}
+	}
+}
+
 function infoSlideAway(onDone){
 	pokemonInfo.style.maxHeight = ""
 	setTimeout(function(){
@@ -366,6 +378,8 @@ function getIVText(iv, pokemon) {
 
 function getNatureCssClass(stat,pokemon){
 	var nature = natures[pokemon.nature]
+	if(!nature)
+		return ""
 	if(nature.positive == nature.negative)
 		return ""
 	else if(stat == parseStatType(nature.positive))

@@ -146,6 +146,9 @@ var navLookingFor = document.getElementById("nav-looking-for")
 var spreadsheetId = 0
 if(window.location.search)
 	spreadsheetId = window.location.search.substring(1)
+var destination = false
+if(window.location.hash)
+	destination = window.location.hash.substring(1)
 var pokemonInventories = []
 var pokemonLookingFor = []
 
