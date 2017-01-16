@@ -205,4 +205,4 @@ function isEverythingLoaded(){
 }
 
 requestJSON("https://armienn.github.io/pokemon/static/moves.json", getMoves)
-requestJSON("https://armienn.github.io/pokemon/static/pokemons-small.json", getPokemons)
+requestJSON("https://armienn.github.io/pokemon/static/pokemons.json", getPokemons)
