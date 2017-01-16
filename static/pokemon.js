@@ -1,10 +1,3 @@
-var pokemons = []
-var moves = []
-var filters = {}
-var searchFilter
-
-var onload
-
 function getFilteredPokemons(){
 	var pokes = pokemons
 	if(selectedTab == "mine"){
@@ -234,6 +227,3 @@ function isEverythingLoaded(){
 		pokemons && pokemons.length &&
 		(spreadsheetId ? pokemonInventories.length : true)
 }
-
-requestJSON("https://armienn.github.io/pokemon/static/moves.json", getMoves)
-requestJSON("https://armienn.github.io/pokemon/static/pokemons.json", getPokemons)

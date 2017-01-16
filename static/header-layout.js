@@ -1,22 +1,3 @@
-var filterAdder = document.getElementById("filter-adder")
-var filterList = document.getElementById("filter-list")
-var filterIndividualList = document.getElementById("filter-individual-list")
-var currentFilterList = document.getElementById("current-filter-list")
-var pokemonList = document.getElementById("pokemon-list")
-var pokemonGrid = document.getElementById("pokemon-grid")
-var pokemonInfo = document.getElementById("pokemon-info")
-var modeTable = document.getElementById("mode-table")
-var modeGrid = document.getElementById("mode-grid")
-var modeNight = document.getElementById("mode-night")
-var modeDay = document.getElementById("mode-day")
-
-var colors = {
-	night: ["#222", "#eee", "#cf0000", "rgba(50, 50, 50,0.5)"],
-	day: ["whitesmoke", "black", "#ff3a23", "rgba(50, 50, 50,0.5)"]
-}
-
-var mode = "table"
-setColors(...colors.night)
 
 function setupDayNightButtons(){
 	modeNight.onclick = function(){
@@ -30,8 +11,6 @@ function setupDayNightButtons(){
 		modeDay.className = "active"
 	}
 }
-setupDayNightButtons()
-
 function setupTableGridButtons(){
 	modeTable.onclick = function(){
 		switchModeTo("table")
@@ -44,115 +23,6 @@ function setupTableGridButtons(){
 		modeGrid.className = "active"
 	}
 }
-setupTableGridButtons()
-
-function switchModeTo(newMode){
-	mode = newMode
-	update()
-}
-
-var basePokemonColumns = [
-	{ getColumnHeader: function(){ return "" },
-		getColumn: function(pokemon){
-			return "<img src='" + getPokemonSpriteName(pokemon) + "'/>"
-		}
-	},
-	{ getColumnHeader: function(){ return "Pokemon" },
-		getColumn: function(pokemon){
-			return pokemonFormName(pokemon)
-		}
-	},
-	{ getColumnHeader: function(){ return "Types" },
-		getColumn: function(pokemon){
-			return getTypesText(pokemon)
-		}
-	},
-	{ getColumnHeader: function(){ return "Abilities" },
-		getColumn: function(pokemon){
-			return getAbilitiesText(pokemon)
-		}
-	},
-	{ getColumnHeader: function(){ return "HP" },
-		getColumn: function(pokemon){ return getStatText(pokemon.stats.hp) }
-	},
-	{ getColumnHeader: function(){ return "Atk" },
-		getColumn: function(pokemon){ return getStatText(pokemon.stats.atk) }
-	},
-	{ getColumnHeader: function(){ return "Def" },
-		getColumn: function(pokemon){ return getStatText(pokemon.stats.def) }
-	},
-	{ getColumnHeader: function(){ return "SpA" },
-		getColumn: function(pokemon){ return getStatText(pokemon.stats.spa) }
-	},
-	{ getColumnHeader: function(){ return "SpD" },
-		getColumn: function(pokemon){ return getStatText(pokemon.stats.spd) }
-	},
-	{ getColumnHeader: function(){ return "Spe" },
-		getColumn: function(pokemon){ return getStatText(pokemon.stats.spe) }
-	},
-	{ getColumnHeader: function(){ return "Egg groups" },
-		getColumn: function(pokemon){
-			return getEggGroupsText(pokemon)
-		}
-	}
-]
-
-var tabPokemonColumns = [
-	{ getColumnHeader: function(){ return "" },
-		getColumn: function(pokemon){
-			return "<img src='" + getPokemonSpriteName(pokemon) + "'/>"
-		}
-	},
-	{ getColumnHeader: function(){ return "Pokemon" },
-		getColumn: function(pokemon){
-			return pokemonFormName(pokemon) + getAmountShinyText(pokemon)
-		}
-	},
-	{ getColumnHeader: function(){ return "Types" },
-		getColumn: function(pokemon){
-			return getTypesText(pokemon)
-		}
-	},
-	{ getColumnHeader: function(){ return "Ability" },
-		getColumn: function(pokemon){
-			return getAbilityText(pokemon.ability, pokemon.abilities[2] ? pokemon.abilities[2].toLowerCase() == pokemon.ability.toLowerCase() : false)
-		}
-	},
-	{ getColumnHeader: function(){ return "Nature" },
-		getColumn: function(pokemon){
-			return pokemon.nature
-		}
-	},
-	{ getColumnHeader: function(){ return "HP" },
-		getColumn: function(pokemon){ return getIVText("hp", pokemon) }
-	},
-	{ getColumnHeader: function(){ return "Atk" },
-		getColumn: function(pokemon){ return getIVText("atk", pokemon) }
-	},
-	{ getColumnHeader: function(){ return "Def" },
-		getColumn: function(pokemon){ return getIVText("def", pokemon) }
-	},
-	{ getColumnHeader: function(){ return "SpA" },
-		getColumn: function(pokemon){ return getIVText("spa", pokemon) }
-	},
-	{ getColumnHeader: function(){ return "SpD" },
-		getColumn: function(pokemon){ return getIVText("spd", pokemon) }
-	},
-	{ getColumnHeader: function(){ return "Spe" },
-		getColumn: function(pokemon){ return getIVText("spe", pokemon) }
-	},
-	{ getColumnHeader: function(){ return "Moves" },
-		getColumn: function(pokemon){
-			return pokemon.learntMoves.join(", ")
-		}
-	},
-	{ getColumnHeader: function(){ return "Ball" },
-		getColumn: function(pokemon){
-			return getBallsText(pokemon)
-		}
-	}
-]
-
 function update(){
 	nextPoke = 0
 	nextLimit = 50
@@ -171,7 +41,6 @@ function update(){
 	addNextPokemonEntry()
 }
 
-var loaded = false
 function tryLoad(){
 	if(!isEverythingLoaded())
 		return
@@ -193,86 +62,12 @@ function tryLoad(){
 	setInterval(loadMoreWhenScrolledDown,500)
 }
 
-var pokes = []
-var nextPoke = 0
-var nextLimit = 25
-
-function addNextPokemonEntry(){
-	if(!pokes[nextPoke]){
-		nextPoke = 0
-		return
-	}
-	if(nextPoke > nextLimit){
-		nextLimit += 25
-		return
-	}
-	if(mode == "table")
-		addPokemonListElement(pokes[nextPoke])
-	else
-		addPokemonGridElement(pokes[nextPoke])
-	nextPoke++
-	setTimeout(addNextPokemonEntry(),0)
-}
-
 function setColors(backgroundColor, textColor, headerColor, tableHeaderColor){
 	document.getElementsByTagName("body")[0].style.backgroundColor = backgroundColor
 	document.getElementsByTagName("body")[0].style.color = textColor
 	document.getElementsByTagName("section")[0].style.backgroundColor = headerColor
 	document.getElementsByTagName("header")[0].style.backgroundColor = headerColor
 	document.getElementsByTagName("thead")[0].style.backgroundColor = tableHeaderColor
-}
-
-function setUpTableHeader(){
-	var tableHeader = newTag("tr", pokemonList.children[0])
-	var columns = basePokemonColumns
-	if(selectedTab)
-		columns = tabPokemonColumns
-	for(var i in columns){
-		var element = newTag("th", tableHeader)
-		element.innerHTML = columns[i].getColumnHeader()
-	}
-}
-
-function loadMoreWhenScrolledDown(){
-	var main = document.getElementById("main")
-	if(main.scrollTop > main.scrollHeight-main.clientHeight-200){
-		if(nextPoke)
-			addNextPokemonEntry()
-	}
-}
-
-function clearInterface(){
-	while (pokemonList.children[0].firstChild)
-		pokemonList.children[0].removeChild(pokemonList.children[0].firstChild)
-	while (pokemonList.children[1].firstChild)
-		pokemonList.children[1].removeChild(pokemonList.children[1].firstChild)
-	while (pokemonGrid.firstChild)
-		pokemonGrid.removeChild(pokemonGrid.firstChild)
-	while (currentFilterList.firstChild)
-		currentFilterList.removeChild(currentFilterList.firstChild)
-}
-
-function addPokemonListElement(pokemon) {
-	var pokeElement = newTag("tr", pokemonList.children[1])
-	var columns = basePokemonColumns
-	if(selectedTab)
-		columns = tabPokemonColumns
-	for(var i in columns){
-		var element = newTag("th", pokeElement)
-		element.innerHTML = columns[i].getColumn(pokemon)
-	}
-	pokeElement.onclick = function(){
-		selectPokemon(pokemon, pokeElement)
-	}
-	pokeElement.className = nextPoke%2?"odd":"even"
-}
-
-function addPokemonGridElement(pokemon) {
-	var pokeElement = newTag("li", pokemonGrid)
-	pokeElement.innerHTML = "<img src='" + getPokemonSpriteName(pokemon) + "'/>"
-	pokeElement.onclick = function(){
-		selectPokemon(pokemon)
-	}
 }
 
 function addSearch(label){

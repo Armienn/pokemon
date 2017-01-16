@@ -1,17 +1,3 @@
-var navAll = document.getElementById("nav-all")
-var navMine = document.getElementById("nav-mine")
-var navAllMine = document.getElementById("nav-all-mine")
-var navBreedables = document.getElementById("nav-breedables")
-var navInventory = document.getElementById("nav-inventory")
-var navLookingFor = document.getElementById("nav-looking-for")
-var spreadsheetId = 0
-if(window.location.search)
-	spreadsheetId = window.location.search.substring(1)
-var pokemonInventories = []
-var pokemonLookingFor = []
-
-var selectedTab
-
 function getWorksheetUrl(spreadsheetId, worksheetId) {
     return "https://spreadsheets.google.com/feeds/list/" + spreadsheetId + "/" + worksheetId + "/public/values?alt=json";
 }
@@ -294,6 +280,3 @@ function identifyPokemon(entry, pokemon){
 	} else return false
 	return true
 }
-
-if(spreadsheetId)
-	requestJSON(getSpreadsheetUrl(spreadsheetId), parseSpreadsheet)
