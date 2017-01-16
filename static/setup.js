@@ -110,7 +110,6 @@ var nextMoveGroup = 0
 
 var filterAdder = document.getElementById("filter-adder")
 var filterList = document.getElementById("filter-list")
-var filterIndividualList = document.getElementById("filter-individual-list")
 var currentFilterList = document.getElementById("current-filter-list")
 var pokemonList = document.getElementById("pokemon-list")
 var pokemonGrid = document.getElementById("pokemon-grid")
