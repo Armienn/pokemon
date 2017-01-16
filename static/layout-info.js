@@ -1,6 +1,7 @@
 //Nooo, don't look at me, I'm hideous!
 
 var nameHeader = document.getElementById("name-header")
+var descriptionHeader = document.getElementById("description-header")
 var imageSection = document.getElementById("image-section")
 var infoSection = document.getElementById("info-section")
 var infoSectionTable = document.getElementById("info-section").children[0].children[1]
@@ -163,6 +164,7 @@ function infoMove(element){
 function showPokemonInfo(pokemon){
 	clearPokemonInfo()
 	showNameHeader(pokemon)
+	showDescriptionHeader(pokemon)
 	showImageSection(pokemon)
 	showInfoSection(pokemon)
 	showInfoBSection(pokemon)
@@ -180,6 +182,13 @@ function showNameHeader(pokemon){
 	var colorA = typeColors[pokemon.types[0]]
 	var colorB = pokemon.types[1] ? typeColors[pokemon.types[1]] : typeColors[pokemon.types[0]]
 	nameHeader.style.background = "linear-gradient(to right, " + colorA + ", " + colorB + ")"
+}
+
+function showDescriptionHeader(pokemon){
+	descriptionHeader.innerHTML = pokemon.description
+	descriptionHeader.title = pokemon.locations
+	if(pokemon.notes)
+		descriptionHeader.innerHTML = pokemon.notes
 }
 
 function showImageSection(pokemon){
