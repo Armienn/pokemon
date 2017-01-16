@@ -183,6 +183,7 @@ function tryLoad(){
 	addFilterEntry(filterList, "Move", hasItemInFilter("moves"), Object.keys(moves))
 	addFilterEntry(filterList, "Egg group", hasItemInFilter("eggGroups"), eggGroupNames)
 	addFilterMultiSelectEntry(filterList, "Gender ratios", hasItemInFilter("ratio"), ["7:1","3:1","1:1","1:3","1:7","—"])
+	addFilterMultiSelectEntry(filterList, "Generation", generationFilter, ["1","2","3","4","5","6","7"])
 	addFilterEntry(filterIndividualList, "Nature", hasItemInFilter("nature"), Object.keys(natures))
 	addFilterEntry(filterIndividualList, "Learnt moves", hasItemInFilter("learntMoves"), Object.keys(moves))
 	addFilterMultiSelectEntry(filterIndividualList, "Gender", hasItemInFilter("gender"), ["♂","♀","—","Undefined"])
