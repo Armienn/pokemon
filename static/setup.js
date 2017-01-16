@@ -23,6 +23,26 @@ var typeColors = {
 	Steel: "#B8B8D0",
 	Water: "#6890F0"
 }
+var types = {
+	Normal: { strengths: [], weaknesses: ["Fighting"], immunities: ["Ghost"] },
+	Fire: { strengths: ["Bug","Fairy","Fire","Grass","Ice","Steel"], weaknesses: ["Ground","Rock","Water"], immunities: [] },
+	Water: { strengths: ["Fire","Ice","Steel","Water"], weaknesses: ["Electric","Grass"], immunities: [] },
+	Electric: { strengths: ["Electric","Flying","Steel"], weaknesses: ["Ground"], immunities: [] },
+	Grass: { strengths: ["Electric","Grass","Water","Ground"], weaknesses: ["Bug","Fire","Flying","Ice","Poison"], immunities: [] },
+	Ice: { strengths: ["Ice"], weaknesses: ["Fighting","Fire","Rock","Steel"], immunities: [] },
+	Fighting: { strengths: ["Bug","Dark","Rock"], weaknesses: ["Fairy","Flying","Psychic"], immunities: [] },
+	Poison: { strengths: ["Bug","Fairy","Fighting","Grass","Poison"], weaknesses: ["Ground","Psychic"], immunities: [] },
+	Ground: { strengths: ["Poison","Rock"], weaknesses: ["Grass","Ice","Water"], immunities: ["Electric"] },
+	Flying: { strengths: ["Bug","Fighting","Grass"], weaknesses: ["Electric","Ice","Rock"], immunities: ["Ground"] },
+	Psychic: { strengths: ["Fighting","Psychic"], weaknesses: ["Bug","Dark","Ghost"], immunities: [] },
+	Bug: { strengths: ["Fighting","Grass","Ground"], weaknesses: ["Fire","Flying","Rock"], immunities: [] },
+	Rock: { strengths: ["Fire","Flying","Normal","Poison"], weaknesses: ["Fighting","Grass","Ground","Steel","Water"], immunities: [] },
+	Ghost: { strengths: ["Bug","Poison"], weaknesses: ["Dark","Ghost"], immunities: ["Fighting","Normal"] },
+	Dragon: { strengths: ["Electric","Fire","Grass","Water"], weaknesses: ["Dragon","Fairy","Ice"], immunities: [] },
+	Dark: { strengths: ["Dark","Ghost"], weaknesses: ["Bug","Fairy","Fighting"], immunities: ["Psychic"] },
+	Steel: { strengths: ["Bug","Dragon","Fairy","Flying","Grass","Ice","Normal","Psychic","Rock","Steel"], weaknesses: ["Fighting","Fire","Ground"], immunities: ["Poison"] },
+	Fairy: { strengths: ["Bug","Dark","Fighting"], weaknesses: ["Poison","Steel"], immunities: ["Dragon"] }
+}
 var typeNames = [
 	"Bug",
 	"Dark",
@@ -125,6 +145,7 @@ var imageSection = document.getElementById("image-section")
 var infoSection = document.getElementById("info-section")
 var infoSectionTable = document.getElementById("info-section").children[0].children[1]
 var infoBSectionTable = document.getElementById("info-b-section").children[0].children[1]
+var defensesSectionTable = document.getElementById("defenses-section")
 var statSection = document.getElementById("stat-section")
 var statSectionTable = document.getElementById("stat-section").children[0].children[1]
 var movesHeader = document.getElementById("moves-header")

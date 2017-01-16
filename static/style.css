@@ -214,6 +214,16 @@ nav li{
     padding: 0.5rem;
 }
 
+#defenses-section td{
+    padding-bottom: 0.05rem;
+    padding-top: 0.18rem;
+    text-align: center;
+}
+
+#defenses-section tr{
+    height: 1.33rem;
+}
+
 #moves-header, #close-header {
     width: 100%;
     display: table;

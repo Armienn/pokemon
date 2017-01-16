@@ -70,6 +70,7 @@ function showPokemonInfo(pokemon){
 	showImageSection(pokemon)
 	showInfoSection(pokemon)
 	showInfoBSection(pokemon)
+	showDefensesSection(pokemon)
 	showStatSection(pokemon)
 	showMovesSection(pokemon)
 }
@@ -130,6 +131,56 @@ function showInfoBSection(pokemon){
 		addInfoElement(infoBSectionTable, pokemon, "Move |", pokemon.learntMoves[i])
 	if(pokemon.balls.length)
 		addInfoElement(infoBSectionTable, pokemon, "Ball |", getBallsText(pokemon)).style.padding = "0"
+}
+
+function showDefensesSection(pokemon){
+	var typeNames = Object.keys(types)
+	for(var i=0; i<typeNames.length/2; i++){
+		addDefenseElement(defensesSectionTable, typeNames[i], getDefenseText(tallyDefense(typeNames[i], pokemon)), typeNames[i+9], getDefenseText(tallyDefense(typeNames[i+9], pokemon)))
+	}
+}
+
+function tallyDefense(attackType, pokemon){
+	var defense = 1
+	defense *= getTypeDefense(attackType, pokemon.types[0])
+	if(pokemon.types[1])
+		defense *= getTypeDefense(attackType, pokemon.types[1])
+	return defense
+}
+
+function getTypeDefense(attackType, defenseType){
+	if(types[defenseType].weaknesses.indexOf(attackType) > -1)
+		return 0.5
+	else if(types[defenseType].strengths.indexOf(attackType) > -1)
+		return 2
+	else if(types[defenseType].immunities.indexOf(attackType) > -1)
+		return 0
+	return 1
+}
+
+function addDefenseElement(table, typeA, defenseA, typeB, defenseB){
+	var row = newTag("tr", table)
+	newTag("th", row).innerHTML = getTypeText(typeA) + " |"
+	newTag("td", row).innerHTML = defenseA
+	newTag("td", row).innerHTML = defenseB
+	var endHeader = newTag("th", row)
+	endHeader.innerHTML = "| " + getTypeText(typeB)
+	endHeader.style.textAlign = "left"
+}
+
+function getDefenseText(defense){
+	if(defense == 4)
+		return "<span style='color:#10c210;'>4</span>"
+	if(defense == 2)
+		return "<span style='color:green;'>2</span>"
+	if(defense == 1)
+		return defense
+	if(defense == 0.5)
+		return "<span style='color:#ba2323;'>½</span>"
+	if(defense == 0.25)
+		return "<span style='color:#8c0101;'>¼</span>"
+	if(defense == 0)
+		return "<span style='color:#888888;'>0</span>"
 }
 
 function addInfoElement(table, pokemon, headerText, content){
@@ -275,6 +326,8 @@ function clearPokemonInfo(){
 		infoSectionTable.removeChild(infoSectionTable.firstChild)
 	while (infoBSectionTable.firstChild)
 		infoBSectionTable.removeChild(infoBSectionTable.firstChild)
+	while (defensesSectionTable.firstChild)
+		defensesSectionTable.removeChild(defensesSectionTable.firstChild)
 	for(var i=0;i<2;i++){
 	while (movesLevelTable.children[i].firstChild)
 		movesLevelTable.children[i].removeChild(movesLevelTable.children[i].firstChild)
