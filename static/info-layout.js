@@ -150,9 +150,9 @@ function tallyDefense(attackType, pokemon){
 
 function getTypeDefense(attackType, defenseType){
 	if(types[defenseType].weaknesses.indexOf(attackType) > -1)
-		return 0.5
-	else if(types[defenseType].strengths.indexOf(attackType) > -1)
 		return 2
+	else if(types[defenseType].strengths.indexOf(attackType) > -1)
+		return 0.5
 	else if(types[defenseType].immunities.indexOf(attackType) > -1)
 		return 0
 	return 1
