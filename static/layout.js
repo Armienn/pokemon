@@ -179,10 +179,13 @@ function tryLoad(){
 		return
 	loaded = true
 	addFilterEntry(filterList, "Type", hasItemInFilter("types"), typeNames)
-	addFilterEntry(filterList, "Ability", hasItemInFilter("abilities"))
+	addFilterEntry(filterList, "Ability", hasItemInFilter("ability","abilities"))
 	addFilterEntry(filterList, "Move", hasItemInFilter("moves"), Object.keys(moves))
 	addFilterEntry(filterList, "Egg group", hasItemInFilter("eggGroups"), eggGroupNames)
+	addFilterMultiSelectEntry(filterList, "Gender ratios", hasItemInFilter("ratio"), ["7:1","3:1","1:1","1:3","1:7","—"])
 	addFilterEntry(filterIndividualList, "Nature", hasItemInFilter("nature"), Object.keys(natures))
+	addFilterEntry(filterIndividualList, "Learnt moves", hasItemInFilter("learntMoves"), Object.keys(moves))
+	addFilterMultiSelectEntry(filterIndividualList, "Gender", hasItemInFilter("gender"), ["♂","♀","—","Undefined"])
 	addFilterChooser("Add filter:")
 	addSearch("Search")
 	update()
@@ -345,9 +348,47 @@ function addFilterEntry(filterList, label, filterFunction, datalist){
 	}
 }
 
+function addFilterMultiSelectEntry(filterList, label, filterFunction, options){
+	var filterElement = newTag("li", filterList)
+	filterElement.style.display = "none"
+	newTag("label", filterElement).innerHTML = label
+	var chosenOptions = []
+	for(var i in options)
+		addMultiSelectOption(filterElement, chosenOptions, options[i])
+	var addElement = newTag("button", filterElement)
+	addElement.innerHTML = "Add"
+	addElement.onclick = function(){
+		addFilter(label, chosenOptions, filterFunction)
+		update()
+	}
+}
+
+function addMultiSelectOption(filterElement, chosenOptions, option){
+	var element = newTag("li", filterElement)
+	element.className = "inactive"
+	element.style.cursor = "pointer"
+	element.style.fontWeight = "bold"
+	element.innerHTML = option
+	element.onclick = function(){
+		if(element.className == "active"){
+			element.className = "inactive"
+			var index = chosenOptions.indexOf(option)
+			if (index > -1)
+    		chosenOptions.splice(index, 1)
+		} else {
+			element.className = "active"
+			chosenOptions.push(option)
+		}
+	}
+}
+
 function addFilter(label, input, filterFunction){
 	var title = label + ": "
-	var inputs = input.split(",")
+	var inputs = []
+	if(typeof input == "string")
+		inputs = input.split(",")
+	else
+		inputs = input
 	if(label == "Type")
 		for(var i in inputs)
 			title += getTypeText(inputs[i].trim()) + (i<inputs.length - 1? ", " : "")

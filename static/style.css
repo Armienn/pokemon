@@ -147,6 +147,7 @@ button{
     border: none;
     padding: 0.2rem;
     margin: 0 0.3rem;
+    cursor: pointer;
 }
 
 nav ul li{

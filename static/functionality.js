@@ -151,18 +151,21 @@ function getPokemonImageName(pokemon){
 	return "http://assets.pokemon.com/assets/cms2/img/pokedex/full/" + prependZeroes(pokemon.id, 3) + form + ".png"
 }
 
-function hasItemInFilter(listKey) {
+function hasItemInFilter(key, fallbackKey) {
 	return function (...items){
 		return function(pokemon) {
+			var item = pokemon[key]
+			if(!item)
+				item = pokemon[fallbackKey]
 			for(var i in items){
-				if(!pokemon[listKey]) {
-					console.log("Pokemon missing " + listKey + ": " + pokemonFormName(pokemon))
-					return false
-				}
-				if(typeof pokemon[listKey] == "string"){
-					if(pokemon[listKey] == items[i])
+				if(!item && items[i]=="Undefined")
+					return true
+				else if(!item)
+					continue
+				if(typeof item == "string"){
+					if(item.toLowerCase() == items[i].toLowerCase())
 						return true
-				} else if(pokemon[listKey].filter(e => e ? (e.toLowerCase ? e.toLowerCase() : e.name.toLowerCase()) == items[i].toLowerCase() : false).length)
+				} else if(item.filter(e => e ? (e.toLowerCase ? e.toLowerCase() : e.name.toLowerCase()) == items[i].toLowerCase() : false).length)
 					return true
 			}
 			return false

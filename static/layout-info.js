@@ -186,7 +186,8 @@ function showNameHeader(pokemon){
 
 function showDescriptionHeader(pokemon){
 	descriptionHeader.innerHTML = pokemon.description
-	descriptionHeader.title = pokemon.locations
+	if(pokemon.locations)
+		descriptionHeader.title = pokemon.locations
 	if(pokemon.notes)
 		descriptionHeader.innerHTML = pokemon.notes
 }

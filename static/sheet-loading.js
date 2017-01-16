@@ -199,6 +199,15 @@ function loadPokemon(entry, tab){
 		pokemon.gender = '—'
 		break;
 	}
+	if(pokemon.gender){
+		if(pokemon.gender.indexOf("♂")>-1 || pokemon.gender.toLowerCase() == "m" || pokemon.gender.toLowerCase() == "male")
+			pokemon.gender = "♂"
+		if(pokemon.gender.indexOf("♀")>-1 || pokemon.gender.toLowerCase() == "f" || pokemon.gender.toLowerCase() == "female")
+			pokemon.gender = "♀"
+		if(pokemon.gender.toLowerCase() == "-" || pokemon.gender.toLowerCase() == "none")
+			pokemon.gender = '—'
+	}
+
 	pokemon.amount = tryValues(["amount", "count"], entry)
 	pokemon.shiny = tryValues(["shiny"], entry)
 	pokemon.nickname = tryValues(["nickname"], entry)
