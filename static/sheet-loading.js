@@ -110,11 +110,13 @@ function parseConfig(response){
 	var contactUrl = tryValues(["contacturl"],entry)
 	var hideBreedables = tryValues(["showbreedables"],entry)
 	if(contactUrl && name)
-		document.getElementById("main-title").innerHTML = "<a href=\"" + contactUrl + "\">" + name + "</a>'s <a href=\"https://docs.google.com/spreadsheets/d/" + spreadsheetId + "\">Pokémon</a>"
+		document.getElementById("main-title").innerHTML = "<a href=\"" + contactUrl + "\">" + name + "</a>'s <a href=\"https://docs.google.com/spreadsheets/d/" + spreadsheetId + "\">Pokémon</a> Stuff"
 	else if(name)
-		document.getElementById("main-title").innerHTML = name + "'s Pokémon"
-	if(name)
+		document.getElementById("main-title").innerHTML = name + "'s Pokémon Stuff"
+	if(name){
 		document.getElementById("nav-all-mine").innerHTML = name + "'s Pokémon"
+		document.title = name + "'s Pokémon Stuff"
+	}
 	if(friendcode){
 		document.getElementById("sub-title").innerHTML = "FC: " + friendcode
 		document.getElementById("sub-title").style.display = ""
