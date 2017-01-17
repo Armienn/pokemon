@@ -120,7 +120,7 @@ function addCustomFilterEntry(label){
 	newTag("label", filterElement).innerHTML = label
 	var inputElement = newTag("textarea", filterElement)
 	inputElement.type = "text"
-	inputElement.style.width = "16rem"
+	inputElement.style.width = "20rem"
 	inputElement.style.height = "1rem"
 	inputElement.value = "return pokemon.form.startsWith('Mega')"
 	var addElement = newTag("button", filterElement)
