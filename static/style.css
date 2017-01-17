@@ -73,6 +73,11 @@ a {
     color: unset;
 }
 
+footer {
+    padding: 1rem;
+    font-size: 0.8rem;
+}
+
 th, li{
     vertical-align: middle;
 }
