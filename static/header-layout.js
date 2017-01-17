@@ -122,7 +122,7 @@ function addCustomFilterEntry(label){
 	inputElement.type = "text"
 	inputElement.style.width = "16rem"
 	inputElement.style.height = "1rem"
-	inputElement.value = "return pokemon.name == 'Pikachu'"
+	inputElement.value = "return pokemon.form.startsWith('Mega')"
 	var addElement = newTag("button", filterElement)
 	addElement.innerHTML = "Add"
 	addElement.onclick = function(){
