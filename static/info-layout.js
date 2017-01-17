@@ -96,7 +96,8 @@ function showDescriptionHeader(pokemon){
 }
 
 function showImageSection(pokemon){
-	imageSection.innerHTML = "<img src='"+getPokemonImageName(pokemon)+"' style='height: 13rem;'/>"
+	var url = "http://bulbapedia.bulbagarden.net/wiki/"+pokemon.name+"_(Pok%C3%A9mon)"
+	imageSection.innerHTML = "<a href='" + url + "'><img src='"+getPokemonImageName(pokemon)+"' style='height: 13rem;'/></a>"
 }
 
 function showInfoSection(pokemon){
@@ -108,7 +109,7 @@ function showInfoSection(pokemon){
 	if(pokemon.ability)
 		addInfoElement(infoSectionTable, pokemon, "Ability |", getAbilityText(pokemon.ability, pokemon.abilities[2] ? pokemon.abilities[2].toLowerCase() == pokemon.ability.toLowerCase() : false))
 	else
-		addInfoElement(infoSectionTable, pokemon, "Abilities |", getAbilitiesText(pokemon))
+		addInfoElement(infoSectionTable, pokemon, "Abilities |", getAbilitiesText(pokemon, true))
 	if(pokemon.nature)
 		addInfoElement(infoSectionTable, pokemon, "Nature |", pokemon.nature)
 	else
@@ -290,7 +291,8 @@ function addMoveHeader(table, moveGroup, method){
 function addMoveRow(table, move, level, i, method){
 	var row = newTag("tr", table)
 	var head = newTag("td", row)
-	head.innerHTML = move.name
+	var url = "http://pokemondb.net/move/" + move.name.toLowerCase().replace(" ","-").replace("'","")
+	head.innerHTML = "<a href='" + url + "'>" + move.name + "</a>"
 	head.style.fontWeight = "bold"
 	if(method == "level")
 		newTag("td", row).innerHTML = level
@@ -350,17 +352,23 @@ function getTypesText(pokemon){
 	return getTypeText(pokemon.types[0]) + (pokemon.types[1] ? " · " + getTypeText(pokemon.types[1]) : "")
 }
 
-function getAbilityText(ability, hidden){
-	return "<span" + (hidden ? " style='font-style: italic;'" : "") + (abilities[ability] ? " title='"+abilities[ability].summary.replace("'","&#39;").replace("\"","&#34;")+"'" : "") + ">"+ ability + "</span>"
+function getAbilityText(ability, hidden, link){
+	return "<span" + (hidden ? " style='font-style: italic;'" : "") + (abilities[ability] ? " title='"+abilities[ability].summary.replace("'","&#39;").replace("\"","&#34;")+"'" : "") + ">"+ (link ? getAbilityLink(ability) : ability ) + "</span>"
 }
 
-function getAbilitiesText(pokemon){
-	var text = getAbilityText(pokemon.abilities[0])
+function getAbilitiesText(pokemon, link){
+	var text = getAbilityText(pokemon.abilities[0], false, link)
 	if(pokemon.abilities[1])
-		text += " · " + getAbilityText(pokemon.abilities[1])
+		text += " · " + getAbilityText(pokemon.abilities[1], false, link)
 	if(pokemon.abilities[2])
-		text += " · " + getAbilityText(pokemon.abilities[2], true)
+		text += " · " + getAbilityText(pokemon.abilities[2], true, link)
 	return text
+}
+
+function getAbilityLink(ability){
+	var name = ability.toLowerCase().replace(" ","-")
+	var url = "http://www.serebii.net/abilitydex/"+name+".shtml"
+	return "<a href='" + url + "'>" + ability + "</a>"
 }
 
 function getEggGroupText(eggGroup){
