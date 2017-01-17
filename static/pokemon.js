@@ -61,9 +61,15 @@ function getBreedables(parentPokemons){
 			baby.ivs = pokemon.ivs
 			baby.nature = pokemon.nature
 			baby.ability = pokemon.ability
-			baby.learntMoves = []
-			baby.balls = []
-			breedables.push(baby)
+			baby.learntMoves = pokemon.learntMoves.filter(e=>pokemon.moves.filter(o=>e == o.name && o.method == "egg").length)
+			baby.balls = pokemon.balls.filter(e=>e)
+			var existing = breedables.filter(e=>e.id == baby.id && e.form == baby.form && e.ability == baby.ability)[0]
+			if(existing){
+				existing.balls = existing.balls.concat(baby.balls)
+				existing.learntMoves = existing.learntMoves.concat(baby.learntMoves)
+			}
+			else
+				breedables.push(baby)
 		}
 	}
 	breedables = uniqueBy(breedables, e => e.id + e.form)
