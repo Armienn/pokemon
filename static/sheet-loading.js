@@ -133,24 +133,8 @@ function parseSheet(tab){
 	}
 }
 
-
-
 function loadPokemon(entry, tab){
-	var pokemon = {
-		get forms() {return this.base.forms },
-		get stats() {return this.base.stats },
-		get abilities() {return this.base.abilities },
-		get classification() {return this.base.classification },
-		get description() {return this.base.description },
-		get locations() {return this.base.locations },
-		get eggGroups() {return this.base.eggGroups },
-		get eggs() {return this.base.eggs },
-		get height() {return this.base.height },
-		get weight() {return this.base.weight },
-		get moves() {return this.base.moves },
-		get ratio() {return this.base.ratio },
-		get types() {return this.base.types }
-	}
+	var pokemon = new PokemonData()
 	if(!identifyPokemon(entry, pokemon))
 		return
 	pokemon.nature = getValue(entry.gsx$nature)
