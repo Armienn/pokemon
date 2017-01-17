@@ -224,6 +224,7 @@ function getPokemons(response){
 
 function isEverythingLoaded(){
 	return moves && Object.keys(moves).length &&
+		abilities && Object.keys(abilities).length &&
 		pokemons && pokemons.length &&
 		(spreadsheetId ? pokemonInventories.length : true)
 }

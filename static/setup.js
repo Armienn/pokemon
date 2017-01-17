@@ -115,7 +115,8 @@ var mode = "table"
 var loaded = false
 
 var pokemons = []
-var moves = []
+var moves = {}
+var abilities = {}
 var filters = {}
 var searchFilter
 
@@ -183,6 +184,7 @@ movesHeader.onclick = toggleShowMoves
 
 requestJSON("https://armienn.github.io/pokemon/static/moves.json", getMoves)
 requestJSON("https://armienn.github.io/pokemon/static/pokemons.json", getPokemons)
+requestJSON("https://armienn.github.io/pokemon/static/abilities.json", e=>{abilities = e;tryLoad()})
 
 if(spreadsheetId)
 	requestJSON(getSpreadsheetUrl(spreadsheetId), parseSpreadsheet)

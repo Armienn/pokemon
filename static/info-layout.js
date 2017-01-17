@@ -351,7 +351,7 @@ function getTypesText(pokemon){
 }
 
 function getAbilityText(ability, hidden){
-	return "<span" + (hidden ? " style='font-style: italic;'" : "") + ">"+ ability + "</span>"
+	return "<span" + (hidden ? " style='font-style: italic;'" : "") + (abilities[ability] ? " title='"+abilities[ability].description+"'" : "") + ">"+ ability + "</span>"
 }
 
 function getAbilitiesText(pokemon){

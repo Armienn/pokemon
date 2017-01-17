@@ -48,7 +48,7 @@ function tryLoad(){
 		return
 	loaded = true
 	addFilterEntry("Type", hasItemInFilter("types"), typeNames)
-	addFilterEntry("Ability", hasItemInFilter("ability","abilities"))
+	addFilterEntry("Ability", hasItemInFilter("ability","abilities"), Object.keys(abilities))
 	addFilterEntry("Move", hasItemInFilter("moves"), Object.keys(moves))
 	addFilterEntry("Egg group", hasItemInFilter("eggGroups"), eggGroupNames)
 	addFilterMultiSelectEntry("Gender ratios", hasItemInFilter("ratio"), ["7:1","3:1","1:1","1:3","1:7","—"])
