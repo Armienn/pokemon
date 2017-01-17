@@ -58,6 +58,7 @@ function tryLoad(){
 		addFilterEntry("Learnt moves", hasItemInFilter("learntMoves"), Object.keys(moves))
 		addFilterMultiSelectEntry("Gender", hasItemInFilter("gender"), ["♂","♀","—","Undefined"])
 	}
+	addCustomFilterEntry("Custom filter")
 	addFilterChooser("Add filter:")
 	addSearch("Search")
 	update()
@@ -110,6 +111,29 @@ function selectFilter(){
 	}
 	if(selected)
 		selected.style.display = "inline-block"
+}
+
+function addCustomFilterEntry(label){
+	var filterElement = newTag("li", filterList)
+	filterElement.style.display = "none"
+	filterElement.title = "Return true for the pokemon you want to see"
+	newTag("label", filterElement).innerHTML = label
+	var inputElement = newTag("textarea", filterElement)
+	inputElement.type = "text"
+	inputElement.style.width = "16rem"
+	inputElement.style.height = "1rem"
+	inputElement.value = "return pokemon.name == 'Pikachu'"
+	var addElement = newTag("button", filterElement)
+	addElement.innerHTML = "Add"
+	addElement.onclick = function(){
+		addCustomFilter(label, inputElement.value)
+		update()
+	}
+}
+
+function addCustomFilter(label, input, filterFunction){
+	var title = label + " <span class='close-mark'>❌</span>"
+	filters[title] = function(pokemon){return new Function("var pokemon = this;" + input).call(pokemon)}
 }
 
 function addFilterEntry(label, filterFunction, datalist){
