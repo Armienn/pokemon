@@ -136,8 +136,8 @@ function parseSheet(tab){
 }
 
 function loadPokemon(entry, tab){
-	var pokemon = new PokemonData()
-	if(!identifyPokemon(entry, pokemon))
+	var pokemon = identifyPokemon(entry)
+	if(!pokemon)
 		return
 	pokemon.nature = getValue(entry.gsx$nature)
 	pokemon.ability = getValue(entry.gsx$ability)
@@ -251,21 +251,18 @@ function loadPokemon(entry, tab){
 	tab.pokemons.push(pokemon)
 }
 
-function identifyPokemon(entry, pokemon){
-	pokemon.id = Number(getValue(entry.gsx$dexno) || getValue(entry.gsx$no) || getValue(entry.gsx$number) || getValue(entry.gsx$id))
-	pokemon.name = getValue(entry.gsx$name) || getValue(entry.gsx$pokemon)
-	pokemon.form = getValue(entry.gsx$form)
-	if(!pokemon.id && !pokemon.name)
+function identifyPokemon(entry){
+	var id = Number(getValue(entry.gsx$dexno) || getValue(entry.gsx$no) || getValue(entry.gsx$number) || getValue(entry.gsx$id))
+	var name = getValue(entry.gsx$name) || getValue(entry.gsx$pokemon)
+	var form = getValue(entry.gsx$form)
+	if(!id && !name)
 		return false
-	var possiblePokes = pokemons.filter(e => pokemon.id == e.id || pokemon.name.toLowerCase() == e.name.toLowerCase())
-	if(possiblePokes.length == 1){
-		pokemon.base = possiblePokes[0]
-	} else if (possiblePokes.length > 0) {
-		var possibleForms = possiblePokes.filter(e => e.form.toLowerCase().indexOf(pokemon.form.toLowerCase()) > -1)
-		if(possibleForms.length == 1)
-			pokemon.base = possibleForms[0]
+	if(!id){
+		var possiblePokes = pokemons.filter(e => pokemon.name.toLowerCase() == e.name.toLowerCase())
+		if(possiblePokes.length)
+			id = possiblePokes[0].id
 		else
-			pokemon.base = possiblePokes[0]
-	} else return false
-	return true
+			return false
+	}
+	return findPokemon(id, form)
 }

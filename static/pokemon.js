@@ -18,32 +18,51 @@ var PokemonData = function(){
 	}
 }
 
-function getPokemonFrom(idformthing){
-	var possibilities = pokemons.filter(e=>e.id == idformthing.id)
-	if(possibilities.length == 0)
-		return null
+function findPokemon(id, form){
 	var pokemon = new PokemonData()
-	pokemon.id == idformthing.id
-	pokemon.name = possibilities[0].name
-	pokemon.form = possibilities[0].form
-	pokemon.base = possibilities[0]
-	if(idformthing.form == "Base")
-		return pokemon
-	if(idformthing.form == "Alolan"){
-		var poke = possibilities.filter(e=>e.form == "Alolan")[0]
-		pokemon.base = poke
-		pokemon.form = poke.form
-		return pokemon
+	pokemon.id = id
+	var possiblePokes = pokemons.filter(e => id == e.id)
+	if(possiblePokes.length == 0)
+	 	return null
+	pokemon.base = possiblePokes[0]
+	if(possiblePokes[0].forms)
+		pokemon.form = findBestFormFit(possiblePokes[0].forms, form)
+	else
+		pokemon.form = "Base"
+	if (possiblePokes.length > 1) {
+		var possibleForms = possiblePokes.filter(e => e.form == pokemon.form)
+		if(possibleForms.length == 1)
+			pokemon.base = possibleForms[0]
 	}
-	if(idformthing.form == "Same"){
-		var poke = possibilities.filter(e=>e.form == idformthing.form)[0]
-		if(poke){
-			pokemon.base = poke
-			pokemon.form = poke.form
-			return pokemon
-		}
-	}
+	pokemon.name = pokemon.base.name
 	return pokemon
+}
+
+function findBestFormFit(forms, form){
+	var fits = forms.filter(e=>e.toLowerCase()==form.toLowerCase())
+	if(fits.length)
+		return fits[0]
+	fits = []
+	var words = form.split(" ")
+	var highestCount = 0
+	for(var i in forms){
+		var count = 0
+		for(var j in words)
+			if(forms[i].toLowerCase().indexOf(words[j].toLowerCase()) > -1)
+				count++
+		if (count > highestCount){
+			fits = [forms[i]]
+			highestCount = count
+		} else if (count == highestCount)
+			fits.push(forms[i])
+	}
+	if(fits.length)
+		return fits[0]
+	return forms[0]
+}
+
+function getPokemonFrom(idformthing){
+	return findPokemon(idformthing.id, idformthing.form)
 }
 
 function getFilteredPokemons(){
@@ -75,34 +94,27 @@ function getBreedables(parentPokemons){
 		for(var i in pokemon.eggs){
 			//TODO: minior...
 			var egg = pokemon.eggs[i]
-			var baseForm
-			if(egg.form == "Base"){
-				baseForm = pokemons.filter(e => (e.id == egg.id && (e.forms ? e.forms[0] == e.form : true)))[0]
-			} else if(egg.form == "Same"){
-				baseForm = pokemons.filter(e => (e.id == egg.id && (e.form == "Base" ? true : e.forms[0] == e.form)))[0]
-			} else {
-				baseForm = pokemons.filter(e => (e.id == egg.id && e.form == egg.form))[0]
-			}
-			var baby = new PokemonData()
-			baby.base = baseForm
-			baby.id = baseForm.id
-			baby.name = baseForm.name
-			baby.form = baseForm.form
+			var baby = getPokemonFrom(egg)
 			baby.ivs = pokemon.ivs
+			if(nearPerfectIvCount(baby.ivs)<4)
+				continue
 			baby.nature = pokemon.nature
-			baby.ability = pokemon.ability
-			baby.learntMoves = pokemon.learntMoves.filter(e=>pokemon.moves.filter(o=>e == o.name && o.method == "egg").length)
+			var hidden = pokemon.abilities[2] ? pokemon.abilities[2].toLowerCase() == pokemon.ability.toLowerCase() : false
+			if(hidden)
+				baby.ability = baby.abilities[2]
+			else
+				baby.ability = pokemon.abilities[0] + (pokemon.abilities[1] ? " · " + pokemon.abilities[1] : "")
+			baby.learntMoves = pokemon.learntMoves.filter(e=>baby.moves.filter(o=>e == o.name && o.method == "egg").length)
 			baby.balls = pokemon.balls.filter(e=>e)
-			var existing = breedables.filter(e=>e.id == baby.id && e.form == baby.form && e.ability == baby.ability)[0]
+			var existing = breedables.filter(e=>e.id == baby.id && e.form == baby.form && e.ability == baby.ability && e.nature == baby.nature)[0]
 			if(existing){
-				existing.balls = existing.balls.concat(baby.balls)
-				existing.learntMoves = existing.learntMoves.concat(baby.learntMoves)
+				existing.balls = uniqueBy(existing.balls.concat(baby.balls),e=>e)
+				existing.learntMoves = uniqueBy(existing.learntMoves.concat(baby.learntMoves),e=>e)
 			}
 			else
 				breedables.push(baby)
 		}
 	}
-	breedables = uniqueBy(breedables, e => e.id + e.form)
 	return breedables
 }
 
@@ -112,6 +124,14 @@ function uniqueBy(list, key) {
 		var k = key(item);
 		return seen.hasOwnProperty(k) ? false : (seen[k] = true);
 	})
+}
+
+function nearPerfectIvCount(ivs){
+	var count = 0
+	for(var i in ivs)
+		if(ivs[i] >= 30)
+			count++
+	return count
 }
 
 function getSearchFilter(query) {
