@@ -112,6 +112,7 @@ var currentPokemon
 var showMoves = false
 
 var mode = "table"
+var completionMode = "normal"
 var loaded = false
 
 var pokemons = []

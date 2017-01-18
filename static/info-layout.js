@@ -468,7 +468,7 @@ function getAmountShinyText(pokemon){
 
 function getIVText(iv, pokemon) {
 	var cssClass = getNatureCssClass(iv,pokemon)
-	return "<span class='"+cssClass+"'>"+pokemon.ivs[iv]+"</span>"
+	return "<span class='"+cssClass+"'>" + (pokemon.ivs ? pokemon.ivs[iv] : "x") + "</span>"
 }
 
 function getNatureCssClass(stat,pokemon){

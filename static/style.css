@@ -289,3 +289,24 @@ nav li{
 .positive-nature{
     color: #d66;
 }
+
+#pokemon-grid .got{
+    background-color: rgba(68, 255, 48, 0.35);
+}
+#pokemon-grid .got:hover{
+    background-color: rgba(68, 255, 48, 0.5);
+}
+
+#pokemon-list .got-even{
+    background-color: rgba(68, 255, 48, 0.35);
+}
+#pokemon-list .got-even:hover{
+    background-color: rgba(68, 255, 48, 0.5);
+}
+
+#pokemon-list .got-odd{
+    background-color: rgba(50, 174, 37, 0.35)
+}
+#pokemon-list .got-odd:hover{
+    background-color: rgba(68, 255, 48, 0.5);
+}

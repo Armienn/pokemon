@@ -1,5 +1,5 @@
-var PokemonData = function(){
-	return {
+var PokemonData = function(pokemon){
+	var poke = {
 		get forms() {return this.base.forms },
 		get stats() {return this.base.stats },
 		get abilities() {return this.base.abilities },
@@ -16,6 +16,13 @@ var PokemonData = function(){
 		get ratio() {return this.base.ratio },
 		get types() {return this.base.types }
 	}
+	if(pokemon) {
+		poke.base = pokemon
+		poke.id = pokemon.id
+		poke.name = pokemon.name
+		poke.form = pokemon.form
+	}
+	return poke
 }
 
 function findPokemon(id, form){
@@ -78,6 +85,20 @@ function getFilteredPokemons(){
 		pokes = getBreedables(pokes)
 	} else if(selectedTab)
 		pokes = selectedTab.pokemons
+	
+	if(completionMode == "pokemons"){
+		var basePokes = []
+		for(var n in pokemons){
+			var pokemon = pokemons[n]
+			if(!basePokes[pokemon.id-1]){
+				basePokes[pokemon.id-1] = new PokemonData(pokemon)
+				if(pokes.filter(e=>e.id == pokemon.id).length)
+					basePokes[pokemon.id-1].got = true
+			}
+		}
+		pokes = basePokes
+	}
+
 	for(var i in filters)
 		pokes = pokes.filter(filters[i])
 	if(searchFilter)

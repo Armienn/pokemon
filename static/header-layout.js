@@ -61,6 +61,8 @@ function tryLoad(){
 	addCustomFilterEntry("Custom filter")
 	addFilterChooser("Add filter:")
 	addSearch("Search")
+	if(spreadsheetId)
+		addCompletionModeSwitcher()
 	update()
 	if(!spreadsheetId && destination)
 		selectPokemonBasedOn(destination)
@@ -73,6 +75,33 @@ function setColors(backgroundColor, textColor, headerColor, tableHeaderColor){
 	document.getElementsByTagName("section")[0].style.backgroundColor = headerColor
 	document.getElementsByTagName("header")[0].style.backgroundColor = headerColor
 	document.getElementsByTagName("thead")[0].style.backgroundColor = tableHeaderColor
+}
+
+function addCompletionModeSwitcher(){
+	var element = newTag("li", filterAdder, true)
+	element.innerHTML = "Normal mode"
+	element.style.cursor = "pointer"
+	element.onclick = function(){
+		switch(completionMode){
+			case "normal":
+				completionMode = "families"
+				element.innerHTML = "Completion: Families"
+			break
+			case "families":
+				completionMode = "pokemons"
+				element.innerHTML = "Completion: Pokemons"
+			break
+			case "pokemons":
+				completionMode = "forms"
+				element.innerHTML = "Completion: Forms"
+			break
+			case "forms":
+				completionMode = "normal"
+				element.innerHTML = "Normal mode"
+			break
+		}
+		update()
+	}
 }
 
 function addSearch(label){

@@ -68,12 +68,14 @@ var tabPokemonColumns = [
 	},
 	{ getColumnHeader: function(){ return "Ability" },
 		getColumn: function(pokemon){
-			return getAbilityText(pokemon.ability, pokemon.abilities[2] ? pokemon.abilities[2].toLowerCase() == pokemon.ability.toLowerCase() : false)
+			if(pokemon.ability)
+				return getAbilityText(pokemon.ability, pokemon.abilities[2] ? pokemon.abilities[2].toLowerCase() == pokemon.ability.toLowerCase() : false)
+			return getAbilitiesText(pokemon)
 		}
 	},
 	{ getColumnHeader: function(){ return "Nature" },
 		getColumn: function(pokemon){
-			return pokemon.nature
+			return pokemon.nature ? pokemon.nature : ""
 		}
 	},
 	{ getColumnHeader: function(){ return "HP" },
@@ -96,7 +98,7 @@ var tabPokemonColumns = [
 	},
 	{ getColumnHeader: function(){ return "Moves" },
 		getColumn: function(pokemon){
-			return pokemon.learntMoves.join(", ")
+			return pokemon.learntMoves ? pokemon.learntMoves.join(", ") : ""
 		}
 	},
 	{ getColumnHeader: function(){ return "Ball" },
@@ -112,7 +114,7 @@ function addNextPokemonEntry(){
 		return
 	}
 	if(nextPoke > nextLimit){
-		nextLimit += 25
+		nextLimit += mode == "grid" ? 50 : 25
 		return
 	}
 	if(mode == "table")
@@ -126,7 +128,7 @@ function addNextPokemonEntry(){
 function setUpTableHeader(){
 	var tableHeader = newTag("tr", pokemonList.children[0])
 	var columns = basePokemonColumns
-	if(selectedTab)
+	if(selectedTab && completionMode == "normal")
 		columns = tabPokemonColumns
 	for(var i in columns){
 		var element = newTag("th", tableHeader)
@@ -156,7 +158,7 @@ function clearInterface(){
 function addPokemonListElement(pokemon) {
 	var pokeElement = newTag("tr", pokemonList.children[1])
 	var columns = basePokemonColumns
-	if(selectedTab)
+	if(selectedTab && completionMode == "normal")
 		columns = tabPokemonColumns
 	for(var i in columns){
 		var element = newTag("th", pokeElement)
@@ -165,11 +167,16 @@ function addPokemonListElement(pokemon) {
 	pokeElement.onclick = function(){
 		selectPokemon(pokemon, pokeElement)
 	}
-	pokeElement.className = nextPoke%2?"odd":"even"
+	if(nextPoke % 2)
+		pokeElement.className = pokemon.got ? "got-odd" : "odd"
+	else
+		pokeElement.className = pokemon.got ? "got-even" : "even"
 }
 
 function addPokemonGridElement(pokemon) {
 	var pokeElement = newTag("li", pokemonGrid)
+	if(pokemon.got)
+		pokeElement.className = "got"
 	pokeElement.innerHTML = "<img src='" + getPokemonSpriteName(pokemon) + "'/>"
 	pokeElement.onclick = function(){
 		selectPokemon(pokemon)
