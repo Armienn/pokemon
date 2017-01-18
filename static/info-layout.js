@@ -72,6 +72,7 @@ function showPokemonInfo(pokemon){
 	showInfoBSection(pokemon)
 	showDefensesSection(pokemon)
 	showStatSection(pokemon)
+	showFamilySection(pokemon)
 	showMovesSection(pokemon)
 }
 
@@ -101,37 +102,37 @@ function showImageSection(pokemon){
 }
 
 function showInfoSection(pokemon){
-	addInfoElement(infoSectionTable, pokemon, "Types |", getTypesText(pokemon))
+	addInfoElement(infoSectionTable, "Types |", getTypesText(pokemon))
 	if(pokemon.nickname)
-		addInfoElement(infoSectionTable, pokemon, "Nickname |", pokemon.nickname)
+		addInfoElement(infoSectionTable, "Nickname |", pokemon.nickname)
 	else
-		addInfoElement(infoSectionTable, pokemon, "Classification |", pokemon.classification)
+		addInfoElement(infoSectionTable, "Classification |", pokemon.classification)
 	if(pokemon.ability)
-		addInfoElement(infoSectionTable, pokemon, "Ability |", getAbilityText(pokemon.ability, pokemon.abilities[2] ? pokemon.abilities[2].toLowerCase() == pokemon.ability.toLowerCase() : false))
+		addInfoElement(infoSectionTable, "Ability |", getAbilityText(pokemon.ability, pokemon.abilities[2] ? pokemon.abilities[2].toLowerCase() == pokemon.ability.toLowerCase() : false))
 	else
-		addInfoElement(infoSectionTable, pokemon, "Abilities |", getAbilitiesText(pokemon, true))
+		addInfoElement(infoSectionTable, "Abilities |", getAbilitiesText(pokemon, true))
 	if(pokemon.nature)
-		addInfoElement(infoSectionTable, pokemon, "Nature |", pokemon.nature)
+		addInfoElement(infoSectionTable, "Nature |", pokemon.nature)
 	else
-		addInfoElement(infoSectionTable, pokemon, "Egg groups |", getEggGroupsText(pokemon))
+		addInfoElement(infoSectionTable, "Egg groups |", getEggGroupsText(pokemon))
 	if(pokemon.gender)
-		addInfoElement(infoSectionTable, pokemon, "Gender |", getGenderText(pokemon))
+		addInfoElement(infoSectionTable, "Gender |", getGenderText(pokemon))
 	else
-		addInfoElement(infoSectionTable, pokemon, "Gender ratio |", getGenderText(pokemon))
+		addInfoElement(infoSectionTable, "Gender ratio |", getGenderText(pokemon))
 	if(pokemon.hiddenPower)
-		addInfoElement(infoSectionTable, pokemon, "Hidden power |", getTypeText(pokemon.hiddenPower))
+		addInfoElement(infoSectionTable, "Hidden power |", getTypeText(pokemon.hiddenPower))
 	else
-		addInfoElement(infoSectionTable, pokemon, "Weight/height |", getWeightHeightText(pokemon))
+		addInfoElement(infoSectionTable, "Weight/height |", getWeightHeightText(pokemon))
 }
 
 function showInfoBSection(pokemon){
 	if(!pokemon.base) return
 	if(pokemon.ot || pokemon.tid)
-		addInfoElement(infoBSectionTable, pokemon, "OT |", pokemon.ot + " (" + prependZeroes(pokemon.tid, 6) + ")" )
+		addInfoElement(infoBSectionTable, "OT |", pokemon.ot + " (" + prependZeroes(pokemon.tid, 6) + ")" )
 	for(var i in pokemon.learntMoves)
-		addInfoElement(infoBSectionTable, pokemon, "Move |", pokemon.learntMoves[i])
+		addInfoElement(infoBSectionTable, "Move |", pokemon.learntMoves[i])
 	if(pokemon.balls.length)
-		addInfoElement(infoBSectionTable, pokemon, "Ball |", getBallsText(pokemon)).style.padding = "0"
+		addInfoElement(infoBSectionTable, "Ball |", getBallsText(pokemon)).style.padding = "0"
 }
 
 function showDefensesSection(pokemon){
@@ -184,13 +185,11 @@ function getDefenseText(defense){
 		return "<span style='color:#888888;'>0</span>"
 }
 
-function addInfoElement(table, pokemon, headerText, content){
+function addInfoElement(table, headerText, content){
 	var row = newTag("tr", table)
-	var header = newTag("th", row)
-	var text = newTag("td", row)
-	header.innerHTML = headerText
-	text.innerHTML = content
-	return text
+	newTag("th", row).innerHTML = headerText
+	newTag("td", row).innerHTML = content
+	return row
 }
 
 function showStatSection(pokemon){
@@ -225,6 +224,27 @@ function addStatElement(pokemon, headerText, stat){
 		bar = newTag("div", barElement)
 		bar.className = "stat-bar ev-bar"
 		bar.style.width = evBase/4 + "px"
+	}
+}
+
+function showFamilySection(pokemon){
+	for(var i in pokemon.eggs)
+		addFamilyElement(familySectionTable, "Egg |", pokemon.eggs[i])
+	if(pokemon.evolvesFrom)
+		addFamilyElement(familySectionTable, "Evolves from |", pokemon.evolvesFrom)
+	for(var i in pokemon.evolvesTo)
+		addFamilyElement(familySectionTable, "Evolves to |", pokemon.evolvesTo[i])
+}
+
+function addFamilyElement(table, headerText, pokeInfo){
+	var row = newTag("tr", table)
+	newTag("th", row).innerHTML = headerText
+	var pokemon = getPokemonFrom(pokeInfo)
+	var text = pokemonFormName(pokemon) + (pokeInfo.method == "Normal" ? "" : " ("+pokeInfo.method + ")")
+	newTag("td", row).innerHTML = text
+	row.style.cursor = "pointer"
+	row.onclick = function(){
+		selectPokemon(pokemon.base)
 	}
 }
 
@@ -330,6 +350,8 @@ function clearPokemonInfo(){
 		infoBSectionTable.removeChild(infoBSectionTable.firstChild)
 	while (defensesSectionTable.firstChild)
 		defensesSectionTable.removeChild(defensesSectionTable.firstChild)
+	while (familySectionTable.firstChild)
+		familySectionTable.removeChild(familySectionTable.firstChild)
 	for(var i=0;i<2;i++){
 	while (movesLevelTable.children[i].firstChild)
 		movesLevelTable.children[i].removeChild(movesLevelTable.children[i].firstChild)

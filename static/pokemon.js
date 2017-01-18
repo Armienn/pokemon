@@ -8,12 +8,42 @@ var PokemonData = function(){
 		get locations() {return this.base.locations },
 		get eggGroups() {return this.base.eggGroups },
 		get eggs() {return this.base.eggs },
+		get evolvesFrom() {return this.base.evolvesFrom },
+		get evolvesTo() {return this.base.evolvesTo },
 		get height() {return this.base.height },
 		get weight() {return this.base.weight },
 		get moves() {return this.base.moves },
 		get ratio() {return this.base.ratio },
 		get types() {return this.base.types }
 	}
+}
+
+function getPokemonFrom(idformthing){
+	var possibilities = pokemons.filter(e=>e.id == idformthing.id)
+	if(possibilities.length == 0)
+		return null
+	var pokemon = new PokemonData()
+	pokemon.id == idformthing.id
+	pokemon.name = possibilities[0].name
+	pokemon.form = possibilities[0].form
+	pokemon.base = possibilities[0]
+	if(idformthing.form == "Base")
+		return pokemon
+	if(idformthing.form == "Alolan"){
+		var poke = possibilities.filter(e=>e.form == "Alolan")[0]
+		pokemon.base = poke
+		pokemon.form = poke.form
+		return pokemon
+	}
+	if(idformthing.form == "Same"){
+		var poke = possibilities.filter(e=>e.form == idformthing.form)[0]
+		if(poke){
+			pokemon.base = poke
+			pokemon.form = poke.form
+			return pokemon
+		}
+	}
+	return pokemon
 }
 
 function getFilteredPokemons(){

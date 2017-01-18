@@ -149,6 +149,7 @@ var infoBSectionTable = document.getElementById("info-b-section").children[0].ch
 var defensesSectionTable = document.getElementById("defenses-section")
 var statSection = document.getElementById("stat-section")
 var statSectionTable = document.getElementById("stat-section").children[0].children[1]
+var familySectionTable = document.getElementById("family-section")
 var movesHeader = document.getElementById("moves-header")
 var movesSection = document.getElementById("moves-section")
 var movesLevelTable = document.getElementById("moves-level")
