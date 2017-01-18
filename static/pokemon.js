@@ -123,10 +123,18 @@ function getCompletionModePokemon(pokes){
 	return basePokes
 }
 
-function getPokemonFamilyIds(pokemon){
+function getPokemonFamilyIds(pokemon, recursion){
+	if(recursion === undefined)
+		recursion = 0
+	else
+		recursion++
+	if(!pokemon || recursion > 3) {
+		console.log("error with " + JSON.stringify(pokemon))
+		return []
+	}
 	var ids = [pokemon.id]
 	for(var i in pokemon.evolvesTo)
-		ids = ids.concat(getPokemonFamilyIds(findPokemonFrom(pokemon.evolvesTo[i])))
+		ids = ids.concat(getPokemonFamilyIds(getPokemonFrom(pokemon.evolvesTo[i]),recursion))
 	return ids
 }
 
