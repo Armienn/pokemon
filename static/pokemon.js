@@ -114,12 +114,20 @@ function getCompletionModePokemon(pokes){
 			var pokemon = pokemons[n]
 			if(!basePokes[pokemon.id-1]){
 				basePokes[pokemon.id-1] = new PokemonData(pokemon)
-				if(pokes.filter(e=>e.id == pokemon.id).length)
+				var lineIds = getPokemonFamilyIds(pokemon)
+				if(pokes.filter(e=>lineIds.indexOf(e.id) > -1).length)
 					basePokes[pokemon.id-1].got = true
 			}
 		}
 	}
 	return basePokes
+}
+
+function getPokemonFamilyIds(pokemon){
+	var ids = [pokemon.id]
+	for(var i in pokemon.evolvesTo)
+		ids = ids.concat(getPokemonFamilyIds(findPokemonFrom(pokemon.evolvesTo[i])))
+	return ids
 }
 
 function getBreedables(parentPokemons){
