@@ -228,23 +228,30 @@ function addStatElement(pokemon, headerText, stat){
 }
 
 function showFamilySection(pokemon){
+	var compact = 6 < (pokemon.evolvesTo ? pokemon.evolvesTo.length : 0) + (pokemon.eggs ? pokemon.eggs.length : 0) + (pokemon.evolvesFrom ? 1 : 0)
 	for(var i in pokemon.eggs)
-		addFamilyElement(familySectionTable, "Egg |", pokemon.eggs[i])
+		addFamilyElement(familySectionTable, "Egg |", pokemon.eggs[i], compact)
 	if(pokemon.evolvesFrom)
-		addFamilyElement(familySectionTable, "Evolves from |", pokemon.evolvesFrom)
+		addFamilyElement(familySectionTable, "Evolves from |", pokemon.evolvesFrom, compact)
 	for(var i in pokemon.evolvesTo)
-		addFamilyElement(familySectionTable, "Evolves to |", pokemon.evolvesTo[i])
+		addFamilyElement(familySectionTable, "Evolves to |", pokemon.evolvesTo[i], compact)
 }
 
-function addFamilyElement(table, headerText, pokeInfo){
+function addFamilyElement(table, headerText, pokeInfo, compact){
 	var row = newTag("tr", table)
 	newTag("th", row).innerHTML = headerText
 	var pokemon = getPokemonFrom(pokeInfo)
 	var text = pokemonFormName(pokemon) + (pokeInfo.method == "Normal" ? "" : " ("+pokeInfo.method + ")")
-	newTag("td", row).innerHTML = text
+	var thing = newTag("td", row)
+	thing.innerHTML = text
 	row.style.cursor = "pointer"
 	row.onclick = function(){
 		selectPokemon(pokemon.base)
+	}
+	if(compact){
+		thing.style.paddingBottom = "0.05rem"
+		thing.style.paddingTop = "0.18rem"
+		row.style.height = "1.33rem"
 	}
 }
 
