@@ -228,13 +228,17 @@ function addStatElement(pokemon, headerText, stat){
 }
 
 function showFamilySection(pokemon){
-	var compact = 6 < (pokemon.evolvesTo ? pokemon.evolvesTo.length : 0) + (pokemon.eggs ? pokemon.eggs.length : 0) + (pokemon.evolvesFrom ? 1 : 0)
+	var things = (pokemon.evolvesTo ? pokemon.evolvesTo.length : 0) + (pokemon.eggs ? pokemon.eggs.length : 0) + (pokemon.evolvesFrom ? 1 : 0)
 	for(var i in pokemon.eggs)
-		addFamilyElement(familySectionTable, "Egg |", pokemon.eggs[i], compact)
+		addFamilyElement(familySectionTable, "Egg |", pokemon.eggs[i], things > 6)
 	if(pokemon.evolvesFrom)
-		addFamilyElement(familySectionTable, "Evolves from |", pokemon.evolvesFrom, compact)
+		addFamilyElement(familySectionTable, "Evolves from |", pokemon.evolvesFrom, things > 6)
 	for(var i in pokemon.evolvesTo)
-		addFamilyElement(familySectionTable, "Evolves to |", pokemon.evolvesTo[i], compact)
+		addFamilyElement(familySectionTable, "Evolves to |", pokemon.evolvesTo[i], things > 6)
+	if(things == 0)
+		familySectionTable.parentNode.parentNode.style.display = "none"
+	else
+		familySectionTable.parentNode.parentNode.style.display = ""
 }
 
 function addFamilyElement(table, headerText, pokeInfo, compact){
