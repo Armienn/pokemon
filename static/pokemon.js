@@ -86,7 +86,29 @@ function getFilteredPokemons(){
 	} else if(selectedTab)
 		pokes = selectedTab.pokemons
 	
-	if(completionMode == "pokemons"){
+	pokes = getCompletionModePokemon(pokes)
+
+	for(var i in filters)
+		pokes = pokes.filter(filters[i])
+	if(searchFilter)
+		pokes = pokes.filter(searchFilter)
+	return pokes
+}
+
+function getCompletionModePokemon(pokes){
+	if(completionMode == "normal") return pokes
+	var basePokes = []
+	if(completionMode == "families"){
+		for(var n in pokemons){
+			var pokemon = pokemons[n]
+			if(!pokemon.evolvesFrom && basePokes.filter(e=>e.id == pokemon.id).length == 0){
+				var newPoke = new PokemonData(pokemon)
+				basePokes.push(newPoke)
+				if(pokes.filter(e=>e.id == pokemon.id).length)
+					newPoke.got = true
+			}
+		}
+	} else if (completionMode == "pokemons"){
 		var basePokes = []
 		for(var n in pokemons){
 			var pokemon = pokemons[n]
@@ -96,14 +118,8 @@ function getFilteredPokemons(){
 					basePokes[pokemon.id-1].got = true
 			}
 		}
-		pokes = basePokes
 	}
-
-	for(var i in filters)
-		pokes = pokes.filter(filters[i])
-	if(searchFilter)
-		pokes = pokes.filter(searchFilter)
-	return pokes
+	return basePokes
 }
 
 function getBreedables(parentPokemons){

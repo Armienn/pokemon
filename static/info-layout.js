@@ -132,7 +132,7 @@ function showInfoBSection(pokemon){
 		addInfoElement(infoBSectionTable, "OT |", pokemon.ot + " (" + prependZeroes(pokemon.tid, 6) + ")" )
 	for(var i in pokemon.learntMoves)
 		addInfoElement(infoBSectionTable, "Move |", pokemon.learntMoves[i])
-	if(pokemon.balls.length)
+	if(pokemon.balls && pokemon.balls.length)
 		addInfoElement(infoBSectionTable, "Ball |", getBallsText(pokemon)).style.padding = "0"
 }
 
