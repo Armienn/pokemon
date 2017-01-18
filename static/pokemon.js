@@ -167,7 +167,7 @@ function getPokemonSpriteName(pokemon){
 		else if(textContains(pokemon.form, "10%"))
 			formname = "10-percent"
 		else if(pokemon.form.toLowerCase() == "core form")
-			formname = "core-yellow"
+			formname = "core-red"
 		else if(pokemon.form.toLowerCase() == "female")
 			formname = false
 		else if(textContains(pokemon.form, "size"))
@@ -175,7 +175,7 @@ function getPokemonSpriteName(pokemon){
 		else if(textContains(pokemon.form, "mega"))
 			formname = pokemon.form.replace(" ", "-")
 		else if(textContains(pokemon.form, "core"))
-			formname = "core-"+pokemon.form.replace(" ", "").toLowerCase().split("core")[0]
+			formname = pokemon.form.replace(" ", "-")
 		else if(pokemon.form == "Ash-Greninja")
 			formname = "ash"
 		else if(!textContains(pokemon.form, "base"))
