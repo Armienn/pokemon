@@ -1,5 +1,6 @@
 function selectPokemon(pokemon, element){
-	if(!pokemon){
+	if(!pokemon || currentPokemon == pokemon){
+		currentPokemon = null
 		infoSlideAway(function(){ infoMove() })
 		return
 	}
@@ -54,7 +55,7 @@ function infoMove(element){
 	if(pokeInfoRow.parentNode)
 		pokeInfoRow.parentNode.removeChild(pokeInfoRow)
 	if(element && element.parentNode){
-		element.parentNode.insertBefore(pokeInfoRow, element)
+		element.parentNode.insertBefore(pokeInfoRow, element.nextSibling)
 		pokeInfoRow.children[0].colSpan = element.children.length
 		pokemonInfo.style.width = "100%"
 		return
@@ -220,7 +221,7 @@ function addStatElement(pokemon, headerText, stat){
 		text.innerHTML += " · " + ivBase + " · " + evBase
 		bar = newTag("div", barElement)
 		bar.className = "stat-bar iv-bar"
-		bar.style.width = ivBase + "px"
+		bar.style.width = (ivBase.endsWith("*") ? 31 : ivBase) + "px"
 		bar = newTag("div", barElement)
 		bar.className = "stat-bar ev-bar"
 		bar.style.width = evBase/4 + "px"
