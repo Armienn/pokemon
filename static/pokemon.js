@@ -104,7 +104,8 @@ function getCompletionModePokemon(pokes){
 			if(!pokemon.evolvesFrom && basePokes.filter(e=>e.id == pokemon.id).length == 0){
 				var newPoke = new PokemonData(pokemon)
 				basePokes.push(newPoke)
-				if(pokes.filter(e=>e.id == pokemon.id).length)
+				var lineIds = getPokemonFamilyIds(pokemon)
+				if(pokes.filter(e=>lineIds.indexOf(e.id) > -1).length)
 					newPoke.got = true
 			}
 		}
@@ -114,8 +115,7 @@ function getCompletionModePokemon(pokes){
 			var pokemon = pokemons[n]
 			if(!basePokes[pokemon.id-1]){
 				basePokes[pokemon.id-1] = new PokemonData(pokemon)
-				var lineIds = getPokemonFamilyIds(pokemon)
-				if(pokes.filter(e=>lineIds.indexOf(e.id) > -1).length)
+				if(pokes.filter(e=>e.id == pokemon.id).length)
 					basePokes[pokemon.id-1].got = true
 			}
 		}
