@@ -327,6 +327,24 @@ function hasItemInFilter(key, fallbackKey) {
 	}
 }
 
+function shinyFilter(mode) {
+	var show = mode == "Show only"
+	return function(pokemon) {
+		if(pokemon.shiny)
+			return show
+		return !show
+	}
+}
+
+function hiddenAbilityFilter(mode) {
+	var show = mode == "Show only"
+	return function(pokemon) {
+		if(pokemon.ability && (pokemon.abilities[2] ? pokemon.abilities[2].toLowerCase() == pokemon.ability.toLowerCase() : false))
+			return show
+		return !show
+	}
+}
+
 function generationFilter(...items) {
 	return function(pokemon) {
 		var generation = getGeneration(pokemon)

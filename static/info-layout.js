@@ -210,6 +210,7 @@ function showStatSection(pokemon){
 
 function addStatElement(pokemon, headerText, stat){
 	var row = newTag("tr", statSectionTable)
+	row.title = "Base stat total: " + getTotalBaseStat(pokemon)
 	var header = newTag("th", row)
 	var text = newTag("td", row)
 	var barElement = newTag("td", row)
@@ -232,6 +233,13 @@ function addStatElement(pokemon, headerText, stat){
 		bar.className = "stat-bar ev-bar"
 		bar.style.width = evBase/4 + "px"
 	}
+}
+
+function getTotalBaseStat(pokemon){
+	var count = 0
+	for(var i in pokemon.stats)
+		count += pokemon.stats[i]
+	return count
 }
 
 function showFamilySection(pokemon){

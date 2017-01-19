@@ -57,6 +57,8 @@ function tryLoad(){
 		addFilterEntry("Nature", hasItemInFilter("nature"), Object.keys(natures))
 		addFilterEntry("Learnt moves", hasItemInFilter("learntMoves"), Object.keys(moves))
 		addFilterMultiSelectEntry("Gender", hasItemInFilter("gender"), ["♂","♀","—","Undefined"])
+		addFilterSelectEntry("Shiny", shinyFilter, ["Show only","Don't show"])
+		addFilterSelectEntry("Hidden ability", hiddenAbilityFilter, ["Show only","Don't show"])
 	}
 	addCustomFilterEntry("Custom filter")
 	addFilterChooser("Add filter:")
@@ -186,6 +188,24 @@ function addFilterEntry(label, filterFunction, datalist){
 		for(var i in datalist){
 			newTag("option", datalistElement).value = datalist[i]
 		}
+	}
+}
+
+function addFilterSelectEntry(label, filterFunction, options){
+	var filterElement = newTag("li", filterList)
+	filterElement.style.display = "none"
+	newTag("label", filterElement).innerHTML = label
+	var selectElement = newTag("select", filterElement)
+	for(var i in options){
+		option = newTag("option", selectElement)
+		option.value = options[i]
+		option.innerHTML = options[i]
+	}
+	var addElement = newTag("button", filterElement)
+	addElement.innerHTML = "Add"
+	addElement.onclick = function(){
+		addFilter(label, selectElement.value, filterFunction)
+		update()
 	}
 }
 
