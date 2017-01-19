@@ -46,6 +46,8 @@ function findPokemon(id, form){
 }
 
 function findBestFormFit(forms, form){
+	if(!form)
+		return forms[0]
 	var fits = forms.filter(e=>e.toLowerCase()==form.toLowerCase())
 	if(fits.length)
 		return fits[0]
