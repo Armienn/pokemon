@@ -19,7 +19,8 @@ function selectPokemonBasedOn(destination){
 	for(var n in pokemons){
 		var pokemon = pokemons[n]
 		var name = pokemon.name.toLowerCase().replace(" ", "-").replace("♀","-f").replace("♂","-m").replace("'","").replace(".","").replace("ébé","ebe").replace(":","")
-		if(pokemon.id == destination || name == unescape(destination).toLowerCase().replace(" ", "-").replace("♀","-f").replace("♂","-m").replace("'","").replace(".","").replace("ébé","ebe").replace(":","")){
+		var destname = unescape(destination).toLowerCase().replace(" ", "-").replace("♀","-f").replace("♂","-m").replace("'","").replace(".","").replace("ébé","ebe").replace(":","")
+		if(pokemon.id == destination || name == destname){
 			selectPokemon(pokemon)
 			return
 		}
