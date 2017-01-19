@@ -110,9 +110,9 @@ function parseConfig(response){
 	var contactUrl = tryValues(["contacturl"],entry)
 	var hideBreedables = tryValues(["showbreedables"],entry)
 	if(contactUrl && name)
-		document.getElementById("main-title").innerHTML = "<a href=\"" + contactUrl + "\">" + name + "</a>'s <a href=\"https://docs.google.com/spreadsheets/d/" + spreadsheetId + "\">Pokémon</a> Stuff"
+		document.getElementById("main-title").innerHTML = "<a href=\"" + contactUrl + "\">" + name + "</a>'s <a href=\"https://docs.google.com/spreadsheets/d/" + spreadsheetId + "\">Pokémon</a> <a href=\"https://armienn.github.io/pokemon/\">Stuff</a>"
 	else if(name)
-		document.getElementById("main-title").innerHTML = name + "'s Pokémon Stuff"
+		document.getElementById("main-title").innerHTML = name + "'s Pokémon <a href=\"https://armienn.github.io/pokemon/\">Stuff</a>"
 	if(name){
 		document.getElementById("nav-all-mine").innerHTML = name + "'s Pokémon"
 		document.title = name + "'s Pokémon Stuff"
