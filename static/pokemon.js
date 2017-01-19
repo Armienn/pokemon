@@ -123,6 +123,16 @@ function getCompletionModePokemon(pokes){
 		for(var i in allForms){
 			for(var j in allForms[i]){
 				var newPoke = getPokemonFrom(allForms[i][j])
+				if(newPoke.form.startsWith("Mega") ||
+					newPoke.form == "Primal" ||
+					newPoke.form == "Meteor Form" ||
+					newPoke.name == "Castform" && newPoke.form != "Base" ||
+					newPoke.name == "Rotom" && newPoke.form != "Base" ||
+					newPoke.name == "Meloetta" && newPoke.form != "Aria Forme" ||
+					newPoke.name == "Aegislash" && newPoke.form != "Shield Forme" ||
+					newPoke.name == "Wishiwashi" && newPoke.form != "Solo Form" ||
+					newPoke.name == "Minior" && newPoke.form == "Meteor Form"
+				) continue
 				basePokes.push(newPoke)
 				if(pokes.filter(e=>e.id == newPoke.id && e.form == newPoke.form).length)
 					newPoke.got = true
