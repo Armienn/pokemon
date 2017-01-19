@@ -12,7 +12,7 @@ var basePokemonColumns = [
 	},
 	{ getColumnHeader: function(){ return "Pokemon" },
 		getColumn: function(pokemon){
-			return pokemonFormName(pokemon)
+			return pokemonFormName(pokemon) + (pokemon.nickname ? " ["+pokemon.nickname+"]" : "")
 		}
 	},
 	{ getColumnHeader: function(){ return "Types" },
@@ -58,7 +58,7 @@ var tabPokemonColumns = [
 	},
 	{ getColumnHeader: function(){ return "Pokemon" },
 		getColumn: function(pokemon){
-			return pokemonFormName(pokemon) + getAmountShinyText(pokemon)
+			return pokemonFormName(pokemon) + getAmountShinyText(pokemon) + (pokemon.nickname ? " ["+pokemon.nickname+"]" : "")
 		}
 	},
 	{ getColumnHeader: function(){ return "Types" },
