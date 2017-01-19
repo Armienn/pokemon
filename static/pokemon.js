@@ -110,13 +110,22 @@ function getCompletionModePokemon(pokes){
 			}
 		}
 	} else if (completionMode == "pokemons"){
-		var basePokes = []
 		for(var n in pokemons){
 			var pokemon = pokemons[n]
 			if(!basePokes[pokemon.id-1]){
 				basePokes[pokemon.id-1] = new PokemonData(pokemon)
 				if(pokes.filter(e=>e.id == pokemon.id).length)
 					basePokes[pokemon.id-1].got = true
+			}
+		}
+	} else if (completionMode == "forms"){
+		var allForms = getAllForms()
+		for(var i in allForms){
+			for(var j in allForms[i]){
+				var newPoke = getPokemonFrom(allForms[i][j])
+				basePokes.push(newPoke)
+				if(pokes.filter(e=>e.id == newPoke.id && e.form == newPoke.form).length)
+					newPoke.got = true
 			}
 		}
 	}
@@ -136,6 +145,24 @@ function getPokemonFamilyIds(pokemon, recursion){
 	for(var i in pokemon.evolvesTo)
 		ids = ids.concat(getPokemonFamilyIds(getPokemonFrom(pokemon.evolvesTo[i]),recursion))
 	return ids
+}
+
+function getAllForms(){
+	var forms = []
+	for(var n in pokemons){
+		var pokemon = pokemons[n]
+		if(!forms[pokemon.id-1]){
+			if(!pokemon.forms){
+				forms[pokemon.id-1] = [{id: pokemon.id, form: pokemon.form}]
+				continue
+			}
+			forms[pokemon.id-1] = []
+			for(var i in pokemon.forms){
+				forms[pokemon.id-1].push({id: pokemon.id, form: pokemon.forms[i]})
+			}
+		}
+	}
+	return forms
 }
 
 function getBreedables(parentPokemons){
@@ -233,8 +260,10 @@ function getPokemonSpriteName(pokemon){
 			formname = "ash"
 		else if(!textContains(pokemon.form, "base"))
 			formname = pokemon.form
+		if(formname && pokemon.name != "Vivillon")
+			formname = formname.split(" ")[0]
 		if(formname)
-			name += "-" + formname.split(" ")[0].toLowerCase().replace(" ", "-").replace("'", "-")
+			name += "-" + formname.toLowerCase().replace(" ", "-").replace("'", "-").replace("é", "e-").replace("!","exclamation").replace("?","question")
 	}
 	if(!formname && pokemon.forms && pokemon.forms[0] == "Male" && (pokemon.form.toLowerCase() == "female" || pokemon.gender == "♀"))
 		name = "female/" + name
