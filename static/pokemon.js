@@ -345,6 +345,24 @@ function hiddenAbilityFilter(mode) {
 	}
 }
 
+function legendaryFilter(mode) {
+	var show = mode == "Show only"
+	return function(pokemon) {
+		if(pokemon.name == "Unown")
+			return !show
+		if(pokemon.eggGroups.indexOf("Undiscovered") > -1 && !(pokemon.evolvesTo || pokemon.evolvesFrom))
+			return show
+		if(pokemon.name == "Phione" ||
+		   pokemon.name == "Manaphy" ||
+		   pokemon.name == "Cosmog" ||
+		   pokemon.name == "Cosmoem" ||
+		   pokemon.name == "Solgaleo" ||
+			 pokemon.name == "Lunala")
+			return show
+		return !show
+	}
+}
+
 function generationFilter(...items) {
 	return function(pokemon) {
 		var generation = getGeneration(pokemon)

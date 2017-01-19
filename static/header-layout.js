@@ -53,6 +53,7 @@ function tryLoad(){
 	addFilterEntry("Egg group", hasItemInFilter("eggGroups"), eggGroupNames)
 	addFilterMultiSelectEntry("Gender ratios", hasItemInFilter("ratio"), ["7:1","3:1","1:1","1:3","1:7","—"])
 	addFilterMultiSelectEntry("Generation", generationFilter, ["1","2","3","4","5","6","7"])
+	addFilterSelectEntry("Legendary", legendaryFilter, ["Show only","Don't show"])
 	if(spreadsheetId){
 		addFilterEntry("Nature", hasItemInFilter("nature"), Object.keys(natures))
 		addFilterEntry("Learnt moves", hasItemInFilter("learntMoves"), Object.keys(moves))
