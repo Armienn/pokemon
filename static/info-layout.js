@@ -469,7 +469,7 @@ function getBallsText(pokemon){
 }
 
 function getStatText(stat){
-	return "<span style='color:"+getStatColor(stat)+"'>" + stat + "</span>"
+	return "<span style='color:"+getStatColor(stat)+"; text-shadow: 1px 1px #333;'>" + stat + "</span>"
 }
 
 function getStatColor(stat){
