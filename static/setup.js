@@ -119,6 +119,8 @@ var pokemons = []
 var moves = {}
 var abilities = {}
 var filters = {}
+var sorts = {}
+var sorting
 var searchFilter
 
 var onload

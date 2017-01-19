@@ -61,8 +61,17 @@ function tryLoad(){
 		addFilterSelectEntry("Shiny", shinyFilter, ["Show only","Don't show"])
 		addFilterSelectEntry("Hidden ability", hiddenAbilityFilter, ["Show only","Don't show"])
 	}
+	addSortMethod("By ID", function(a,b){return a.id - b.id})
+	addSortMethod("By HP", function(a,b){return b.stats.hp - a.stats.hp})
+	addSortMethod("By Attack", function(a,b){return b.stats.atk - a.stats.atk})
+	addSortMethod("By Defense", function(a,b){return b.stats.def - a.stats.def})
+	addSortMethod("By Sp. Attack", function(a,b){return b.stats.spa - a.stats.spa})
+	addSortMethod("By Sp. Defense", function(a,b){return b.stats.spd - a.stats.spd})
+	addSortMethod("By Speed", function(a,b){return b.stats.spe - a.stats.spe})
+	addSortMethod("Custom sort", function(a,b){return b.stats.hp - a.stats.hp})
 	addCustomFilterEntry("Custom filter")
 	addFilterChooser("Add filter:")
+	addSortingChooser("Sort by:")
 	addSearch("Search")
 	if(spreadsheetId)
 		addCompletionModeSwitcher()
@@ -125,6 +134,45 @@ function addSearch(label){
 	}
 }
 
+function addSortMethod(name, method){
+	sorts[name] = {method: method}
+}
+
+function addSortingChooser(label){
+	var filterElement = newTag("li", document.getElementById("custom-adder"), true)
+	newTag("label", filterElement).innerHTML = label
+	var selectElement = newTag("select", filterElement)
+	for(var i in sorts){
+		var optionElement = newTag("option", selectElement)
+		optionElement.value = i
+		optionElement.innerHTML = i
+	}
+	selectElement.onchange = function(){
+		var customSortElement = document.getElementById("custom-sort")
+		if(this.value == "Custom sort"){
+			newTag("label", customSortElement).innerHTML = label
+			var inputElement = newTag("textarea", customSortElement)
+			inputElement.type = "text"
+			inputElement.style.width = "20rem"
+			inputElement.style.height = "1rem"
+			inputElement.value = "return pokeB.stats.hp - pokeA.stats.hp"
+			var addElement = newTag("button", customSortElement)
+			addElement.innerHTML = "Update"
+			addElement.onclick = function(){
+				sorts["Custom sort"].method = addCustomSort(label, inputElement.value)
+				update()
+			}
+			sorting = sorts["Custom sort"]
+			update()
+		}
+		else {
+			customSortElement.innerHTML = ""
+			sorting = sorts[this.value]
+			update()
+		}
+	}
+}
+
 function addFilterChooser(label){
 	var filterElement = newTag("li", filterAdder, true)
 	filterElement.title = "Filters remove pokemons that do not fit the filter"
@@ -173,6 +221,10 @@ function addCustomFilterEntry(label){
 function addCustomFilter(label, input, filterFunction){
 	var title = label + " <span class='close-mark'>❌</span>"
 	filters[title] = function(pokemon){return new Function("var pokemon = this;" + input).call(pokemon)}
+}
+
+function addCustomSort(label, input, filterFunction){
+	return function(a,b){return new Function("var pokeA = this.a;var pokeB = this.b;" + input).call({a:a,b:b})}
 }
 
 function addFilterEntry(label, filterFunction, datalist){

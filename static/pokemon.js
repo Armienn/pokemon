@@ -94,6 +94,8 @@ function getFilteredPokemons(){
 		pokes = pokes.filter(filters[i])
 	if(searchFilter)
 		pokes = pokes.filter(searchFilter)
+	if(sorting)
+		pokes.sort(sorting.method)
 	return pokes
 }
 
