@@ -258,7 +258,7 @@ function identifyPokemon(entry){
 	if(!id && !name)
 		return false
 	if(!id){
-		var possiblePokes = pokemons.filter(e => pokemon.name.toLowerCase() == e.name.toLowerCase())
+		var possiblePokes = pokemons.filter(e => name.toLowerCase() == e.name.toLowerCase())
 		if(possiblePokes.length)
 			id = possiblePokes[0].id
 		else
