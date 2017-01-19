@@ -31,8 +31,10 @@ Most columns can be deleted. Even a sheet as simple as [this](https://docs.googl
 
 ## Other notes
 
+If you're not interested in the auto breedables list, you can remove it by adding a column to your first worksheet with the header "Hide breedables".
+
 For developers interested in the code: Be warned, it's somewhat of a mess. I would clean it up, but I've already used a lot more time on this project than I should have, so that won't happen for the next few months. That said, if you venture in there anyway and make improvements or additions, I'm open to reasonable pull requests.
 
 Thanks to [richi3f](https://github.com/richi3f) for the inspiration for this site, and for the initial template spreadsheet.
 
-Pokémon is &copy; of Nintendo, 1995-2017.
+Pokémon &copy; Nintendo / Game Freak, 1995-2017.
