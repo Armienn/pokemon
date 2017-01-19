@@ -414,7 +414,7 @@ function getAbilitiesText(pokemon, link){
 }
 
 function getAbilityLink(ability){
-	var name = ability.toLowerCase().replace("","-")
+	var name = ability.toLowerCase().replace(" ","")
 	var url = "http://www.serebii.net/abilitydex/"+name+".shtml"
 	return "<a href='" + url + "'>" + ability + "</a>"
 }
