@@ -78,12 +78,18 @@ function showPokemonInfo(pokemon){
 }
 
 function showNameHeader(pokemon){
+	nameHeader.innerHTML = ""
+	if(!pokemon.base)
+		nameHeader.innerHTML = "#" + pokemon.id + " - "
+	nameHeader.innerHTML += pokemon.name
 	if(pokemon.base)
-		nameHeader.innerHTML =  pokemon.name + getAmountShinyText(pokemon)
-	else
-		nameHeader.innerHTML = "#" + pokemon.id + " - " + pokemon.name
+		nameHeader.innerHTML += getAmountShinyText(pokemon)
 	if(pokemon.form && pokemon.form != "Base")
 		nameHeader.innerHTML += " (" + pokemon.form + ")"
+	if(pokemon.level)
+		nameHeader.innerHTML += " <span style='font-size:1rem;'>- Lv."+ pokemon.level + "</span>"
+	if(pokemon.language)
+		nameHeader.innerHTML += " <span style='font-size:1rem;'>- "+ pokemon.language + "</span>"
 	var colorA = typeColors[pokemon.types[0]]
 	var colorB = pokemon.types[1] ? typeColors[pokemon.types[1]] : typeColors[pokemon.types[0]]
 	nameHeader.style.background = "linear-gradient(to right, " + colorA + ", " + colorB + ")"
