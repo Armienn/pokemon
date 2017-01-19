@@ -337,7 +337,7 @@ function addMoveHeader(table, moveGroup, method){
 function addMoveRow(table, move, level, i, method){
 	var row = newTag("tr", table)
 	var head = newTag("td", row)
-	var url = "http://pokemondb.net/move/" + move.name.toLowerCase().replace(" ","").replace("'","")
+	var url = "http://pokemondb.net/move/" + move.name.toLowerCase().replace(" ","-").replace("'","")
 	head.innerHTML = "<a href='" + url + "'>" + move.name + "</a>"
 	head.style.fontWeight = "bold"
 	if(method == "level")
@@ -414,7 +414,7 @@ function getAbilitiesText(pokemon, link){
 }
 
 function getAbilityLink(ability){
-	var name = ability.toLowerCase().replace(" ","-")
+	var name = ability.toLowerCase().replace("","-")
 	var url = "http://www.serebii.net/abilitydex/"+name+".shtml"
 	return "<a href='" + url + "'>" + ability + "</a>"
 }
