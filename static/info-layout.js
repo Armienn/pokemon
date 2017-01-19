@@ -337,13 +337,13 @@ function addMoveHeader(table, moveGroup, method){
 function addMoveRow(table, move, level, i, method){
 	var row = newTag("tr", table)
 	var head = newTag("td", row)
-	var url = "http://pokemondb.net/move/" + move.name.toLowerCase().replace(" ","-").replace("'","")
+	var url = "http://pokemondb.net/move/" + move.name.toLowerCase().replace(" ","").replace("'","")
 	head.innerHTML = "<a href='" + url + "'>" + move.name + "</a>"
 	head.style.fontWeight = "bold"
 	if(method == "level")
 		newTag("td", row).innerHTML = level
 	if(method == "tm")
-		newTag("td", row).innerHTML = move.gameDescription
+		newTag("td", row).innerHTML = move.tm
 	newTag("td", row).innerHTML = getTypeText(move.type)
 	newTag("td", row).innerHTML = move.category
 	newTag("td", row).innerHTML = move.power
