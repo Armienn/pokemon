@@ -284,18 +284,23 @@ function getPokemonSpriteName(pokemon){
 
 function getPokemonImageName(pokemon){
 	var form = ""
-	if(pokemon.form && pokemon.form != "Base" && pokemon.forms && !textContains(pokemon.form, pokemon.forms[0])){
+	if(pokemon.form && pokemon.form != "Base" &&
+	   pokemon.name != "Vivillon" &&
+		 pokemon.name != "Flabébé" &&
+		 pokemon.name != "Floette" &&
+		 pokemon.name != "Florges" &&
+		 pokemon.name != "Minior" &&
+		 pokemon.name != "Unown" &&
+	   pokemon.forms && !textContains(pokemon.form, pokemon.forms[0])){
 		for(var i in pokemon.forms){
 			var temp = pokemon.forms[i]
-			if(pokemon.name == "Minior" && pokemon.forms[i] != "Meteor Form")
-				temp = "Core"
 			if(textContains(pokemon.form, temp)){
 				form = "_f" + (+i + (pokemon.name == "Zygarde" ? 2 : 1) )
 				break
 			}
 		}
 	}
-	if(pokemon.form == "Core Form")
+	if(pokemon.form.indexOf("Core") > -1)
 		form = "_f2"
 	return "http://assets.pokemon.com/assets/cms2/img/pokedex/full/" + prependZeroes(pokemon.id, 3) + form + ".png"
 }
