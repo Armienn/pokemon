@@ -35,6 +35,8 @@ If you're not interested in the auto breedables list, you can remove it by addin
 
 For developers interested in the code: Be warned, it's somewhat of a mess. I would clean it up, but I've already used a lot more time on this project than I should have, so that won't happen for the next few months. That said, if you venture in there anyway and make improvements or additions, I'm open to reasonable pull requests.
 
+This project also provides various Pokémon data in json format, found in static/pokemons.json, static/moves.json, static/abilities.json, static/natures.json and static/types.json. There's no guarantee about correctness or updatedness, and no documentation, but it's there for those who want it.
+
 Thanks to [richi3f](https://github.com/richi3f) for the inspiration for this site, and for the initial template spreadsheet.
 
 Pokémon &copy; Nintendo / Game Freak, 1995-2017.
