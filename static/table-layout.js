@@ -127,6 +127,7 @@ function addNextPokemonEntry(){
 
 function setUpTableHeader(){
 	var tableHeader = newTag("tr", pokemonList.children[0])
+	tableHeader.onclick = showMarkdownTable
 	var columns = basePokemonColumns
 	if(selectedTab && completionMode == "normal")
 		columns = tabPokemonColumns
@@ -181,4 +182,39 @@ function addPokemonGridElement(pokemon) {
 	pokeElement.onclick = function(){
 		selectPokemon(pokemon)
 	}
+}
+
+function showMarkdownTable(){
+	document.getElementById("copy").style.display = ""
+	document.getElementById("pokemon-copy-table").value = getMarkdownTable()
+}
+
+function getMarkdownTable(){
+	var table = `Pokemon| Ability| Nature| IVs| Moves| Pokeball
+---|---|----|----|----|----
+`
+	for(var n in pokes){
+		var pokemon = pokes[n]
+		table += (pokemon.shiny ? "★ " : "") + 
+			pokemonFormName(pokemon) +
+		  (pokemon.gender ? " " + pokemon.gender : "") +
+		  (pokemon.amount ? " (" + pokemon.amount + ")" : "") + "| "
+		if(pokemon.ability)
+		  table += pokemon.ability
+		table += "| "
+		if(pokemon.nature)
+		  table += pokemon.nature
+		table += "| "
+		if(pokemon.ivs)
+		  table += pokemon.ivs.hp + "/" + pokemon.ivs.atk + "/" + pokemon.ivs.def + "/" + 
+			  pokemon.ivs.spa + "/" + pokemon.ivs.spd + "/" + pokemon.ivs.spe
+		table += "| "
+		if(pokemon.learntMoves)
+			table += pokemon.learntMoves.join(", ")
+		table += "| "
+		for(var i in pokemon.balls)
+			table += "[](/" + pokemon.balls[i].replace(" ","").replace("é","e").toLowerCase() + ") "
+		table += "\n"
+	}
+	return table
 }

@@ -65,6 +65,13 @@ function tryLoad(){
 	addSearch("Search")
 	if(spreadsheetId)
 		addCompletionModeSwitcher()
+		
+	document.getElementById("copy").onclick = function(){
+		document.getElementById("copy").style.display = "none"
+	}
+	document.getElementById("pokemon-copy-table").onclick = function(e){
+		e.stopPropagation()
+	}
 	update()
 	if(!spreadsheetId && destination)
 		selectPokemonBasedOn(destination)

@@ -310,3 +310,31 @@ nav li{
 #pokemon-list .got-odd:hover{
     background-color: rgba(68, 255, 48, 0.5);
 }
+
+#copy {
+    position:fixed;
+    top:0;left:0;
+    z-index:3000;
+    height:100%;
+    width:100%;
+    background-color:rgba(0,0,0,0.75);
+}
+
+#table-info {
+    width: 40rem;
+    height: 20rem;
+    padding: 0.5rem;
+    position: absolute;
+    top:50%;
+    left:50%;
+    margin-left:-20rem;
+    margin-top:-10rem;
+}
+#table-info h1 {
+    font-size: 1rem;
+    margin: 0.5rem;
+}
+#table-info textarea {   
+    width: calc(100% - 1rem);
+    height: calc(100% - 1rem);
+}
