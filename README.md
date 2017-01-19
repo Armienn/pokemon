@@ -29,6 +29,8 @@ The script tries a few different column names for every piece of Pokémon inform
 
 Most columns can be deleted. Even a sheet as simple as [this](https://docs.google.com/spreadsheets/d/1Co8N7zAWXhPnKHTUOdPbLunalSDoGyDVoftpvV0IxDY/edit?usp=sharing) will work: [See?](https://armienn.github.io/pokemon/?1Co8N7zAWXhPnKHTUOdPbLunalSDoGyDVoftpvV0IxDY#1)
 
+Worksheets namded "db" or whose name contains "template", "item", "config" or "database" won't be shown, and sheets whose name start with "lf" or "looking for" will appear on their own in the list of tabs and the Pokémon in them won't be added to the list of all your Pokémon.
+
 ## Other notes
 
 If you're not interested in the auto breedables list, you can remove it by adding a column to your first worksheet with the header "Hide breedables".
