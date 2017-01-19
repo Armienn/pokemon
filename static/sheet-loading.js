@@ -121,7 +121,7 @@ function parseConfig(response){
 		document.getElementById("sub-title").innerHTML = "FC: " + friendcode
 		document.getElementById("sub-title").style.display = ""
 	}
-	if(hideBreedables != "no" && hideBreedables != "false")
+	if(hideBreedables !== undefined && hideBreedables != "no" && hideBreedables != "false")
 		document.getElementById("nav-breedables").style.display = "none"
 }
 
