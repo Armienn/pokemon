@@ -108,7 +108,7 @@ function parseConfig(response){
 	var name = tryValues(["ingamename"],entry)
 	var friendcode = tryValues(["friendcode"],entry)
 	var contactUrl = tryValues(["contacturl"],entry)
-	var hideBreedables = tryValues(["showbreedables"],entry)
+	var hideBreedables = tryValues(["hidebreedables"],entry)
 	if(contactUrl && name)
 		document.getElementById("main-title").innerHTML = "<a href=\"" + contactUrl + "\">" + name + "</a>'s <a href=\"https://docs.google.com/spreadsheets/d/" + spreadsheetId + "\">Pokémon</a> <a href=\"https://armienn.github.io/pokemon/\">Stuff</a>"
 	else if(name)
@@ -121,7 +121,7 @@ function parseConfig(response){
 		document.getElementById("sub-title").innerHTML = "FC: " + friendcode
 		document.getElementById("sub-title").style.display = ""
 	}
-	if(hideBreedables)
+	if(hideBreedables != "no" && hideBreedables != "false")
 		document.getElementById("nav-breedables").style.display = "none"
 }
 
