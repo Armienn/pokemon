@@ -157,10 +157,10 @@ function loadPokemon(entry, tab){
 	pokemon.evs.spe = tryValues(["speev", "speedev", "evspeed", "evspe"], entry) || "x"
 	pokemon.hiddenPower = tryValues(["hiddenpower", "hidden"], entry)
 	pokemon.learntMoves = [
-		tryValues(["move1", "eggmove1"], entry),
-		tryValues(["move2", "eggmove2"], entry),
-		tryValues(["move3", "eggmove3"], entry),
-		tryValues(["move4", "eggmove4"], entry)
+		tryValues(["move1", "eggmove1", "moveslot1"], entry),
+		tryValues(["move2", "eggmove2", "moveslot2"], entry),
+		tryValues(["move3", "eggmove3", "moveslot3"], entry),
+		tryValues(["move4", "eggmove4", "moveslot4"], entry)
 		].filter(e => e)
 	pokemon.gender = tryValues(["gender", "sex"], entry)
 	switch (pokemon.base.ratio) {
