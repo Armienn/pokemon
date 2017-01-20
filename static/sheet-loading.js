@@ -184,7 +184,7 @@ function loadPokemon(entry, tab){
 	}
 
 	pokemon.amount = tryValues(["amount", "count"], entry)
-	pokemon.shiny = tryValues(["shiny"], entry)
+	pokemon.shiny = tryValues(["shiny", "★"], entry)
 	pokemon.nickname = tryValues(["nickname"], entry)
 	pokemon.ot = tryValues(["ot"], entry)
 	pokemon.tid = tryValues(["tid"], entry)
