@@ -164,6 +164,7 @@ var closeElement = document.getElementById("close-header")
 var pokeInfoRow = document.getElementById("pokemon-info-row")
 
 var navAll = document.getElementById("nav-all")
+var navCustom = document.getElementById("nav-custom")
 var navMine = document.getElementById("nav-mine")
 var navAllMine = document.getElementById("nav-all-mine")
 var navBreedables = document.getElementById("nav-breedables")
@@ -179,6 +180,7 @@ var pokemonInventories = []
 var pokemonLookingFor = []
 
 var selectedTab
+var customPokemon = function(){ return [findPokemon(1), findPokemon(6, "Mega X")] }
 
 setColors(...colors.night)
 setupDayNightButtons()

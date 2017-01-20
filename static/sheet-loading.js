@@ -33,13 +33,6 @@ function parseSpreadsheet(response){
 		addNewTab(title, i)
 	}
 	if(pokemonLookingFor.length || pokemonInventories.length){
-		navAll.style.display = ""
-		navAll.onclick = function(){
-			deselectTabs()
-			navAll.className = "active"
-			infoMove()
-			update()
-		}
 		navMine.style.display = ""
 		navAllMine.onclick = function(){
 			deselectTabs()
@@ -98,8 +91,10 @@ function deselectTabs(){
 	for(var i=0; i<navInventory.children.length; i++)
 		navInventory.children[i].className = "inactive"
 	navAll.className = "inactive"
+	navCustom.className = "inactive"
 	navAllMine.className = "inactive"
 	navBreedables.className = "inactive"
+	document.getElementById("custom-pokemon-section").style.display = "none"
 	selectedTab = undefined
 }
 

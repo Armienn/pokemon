@@ -15,7 +15,8 @@
 		<h4 id="sub-title" style="display: none;">Pokémon</h4>
 		<nav>
 			<ul>
-				<li id="nav-all" class="active" style="display: none;">All Pokémon</li>
+				<li id="nav-all" class="active" style="font-size: 1.5rem; padding-bottom: 0.2rem;">⊖</li>
+				<li id="nav-custom" class="inactive" style="font-size: 1.3rem;">☷</li>
 				<ul id="nav-mine" style="display: none;">|
 					<li id="nav-all-mine" class="inactive">Unknown's Pokémon</li>
 					<li id="nav-breedables" class="inactive">Breedables</li>
@@ -37,6 +38,13 @@
 	</header>
 
 	<section>
+		<ul id="custom-pokemon-section" style="display: none;">
+			<label>
+				Custom Pokémon:
+			</label>
+			<textarea id="custom-pokemon" style="height: 1rem; width: 20rem;"></textarea>
+			<button id="custom-pokemon-update">Update</button>
+		</ul>
 		<ul>
 		<ul id="filter-adder" style="display: inline-table;">
 			<ul id="filter-list">

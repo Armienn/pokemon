@@ -47,6 +47,26 @@ function tryLoad(){
 	if(loaded)
 		return
 	loaded = true
+	
+	navAll.onclick = function(){
+		deselectTabs()
+		navAll.className = "active"
+		infoMove()
+		update()
+	}
+	navCustom.onclick = function(){
+		deselectTabs()
+		navCustom.className = "active"
+		document.getElementById("custom-pokemon-section").style.display = ""
+		selectedTab = "custom"
+		infoMove()
+		update()
+	}
+	document.getElementById("custom-pokemon").value = "return [findPokemon(1), findPokemon(6, \"Mega X\")]"
+	document.getElementById("custom-pokemon-update").onclick = function(){
+		customPokemon = new Function(document.getElementById("custom-pokemon").value)
+		update()
+	}
 	addFilterEntry("Type", hasItemInFilter("types"), typeNames)
 	addFilterEntry("Ability", hasItemInFilter("ability","abilities"), Object.keys(abilities))
 	addFilterEntry("Move", hasItemInFilter("moves"), Object.keys(moves))

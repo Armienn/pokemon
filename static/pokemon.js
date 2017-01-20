@@ -85,6 +85,8 @@ function getFilteredPokemons(){
 		for(var i in pokemonInventories)
 			pokes = pokes.concat(pokemonInventories[i].pokemons)
 		pokes = getBreedables(pokes)
+	} else if(selectedTab == "custom"){
+		pokes = customPokemon()
 	} else if(selectedTab)
 		pokes = selectedTab.pokemons
 	
