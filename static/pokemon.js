@@ -71,6 +71,13 @@ function findBestFormFit(forms, form){
 }
 
 function getPokemonFrom(idformthing){
+	if(!idformthing.id && idformthing.name){
+		var possiblePokes = pokemons.filter(e => idformthing.name.toLowerCase() == e.name.toLowerCase())
+		if(possiblePokes.length)
+			idformthing.id = possiblePokes[0].id
+		else
+			return false
+	}
 	return findPokemon(idformthing.id, idformthing.form)
 }
 
