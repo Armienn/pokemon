@@ -11,7 +11,7 @@ function getValue(field) {
 function tryValues(values, entry){
 	for(var i in values)
 		if(entry["gsx$"+values[i]] && entry["gsx$"+values[i]].$t)
-			return entry["gsx$"+values[i]].$t
+			return entry["gsx$"+values[i]].$t.trim()
 	return undefined
 }
 
@@ -131,7 +131,18 @@ function parseSheet(tab){
 }
 
 function loadPokemon(entry, tab){
-	var pokemon = identifyPokemon(entry)
+	var id = Number(tryValues(["dexno", "no", "number", "id"], entry))
+	var name = tryValues(["pokemon", "name"], entry)
+	var form = tryValues(["form"], entry)
+	if(name){
+		var splitName = name.split("(")
+		if(1 < splitName.length){
+			name = splitName[0].trim()
+			if(!form)
+				form = splitName[1].split(")")[0].trim()
+		}
+	}
+	var pokemon = getPokemonFrom({name:name, id:id, form:form})
 	if(!pokemon)
 		return
 	pokemon.nature = getValue(entry.gsx$nature)

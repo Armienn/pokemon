@@ -58,7 +58,7 @@ var tabPokemonColumns = [
 	},
 	{ getColumnHeader: function(){ return "Pokemon" },
 		getColumn: function(pokemon){
-			return pokemonFormName(pokemon) + (pokemon.gender ? " " + getGenderText(pokemon) : "") + getAmountShinyText(pokemon) + (pokemon.nickname ? " ["+pokemon.nickname+"]" : "")
+			return pokemonFormName(pokemon) + (pokemon.gender && pokemon.gender != "—" ? " " + getGenderText(pokemon) : "") + getAmountShinyText(pokemon) + (pokemon.nickname ? " ["+pokemon.nickname+"]" : "")
 		}
 	},
 	{ getColumnHeader: function(){ return "Types" },
