@@ -162,7 +162,7 @@ function loadPokemon(entry, tab){
 		tryValues(["move3", "eggmove3", "moveslot3"], entry),
 		tryValues(["move4", "eggmove4", "moveslot4"], entry)
 		].filter(e => e)
-	pokemon.gender = tryValues(["gender", "sex"], entry)
+	pokemon.gender = tryValues(["gender", "sex", "mf", "fm"], entry)
 	switch (pokemon.base.ratio) {
 	case "1:0":
 		pokemon.gender = '♂'
@@ -184,7 +184,7 @@ function loadPokemon(entry, tab){
 	}
 
 	pokemon.amount = tryValues(["amount", "count"], entry)
-	pokemon.shiny = tryValues(["shiny", "★"], entry)
+	pokemon.shiny = tryValues(["shiny"], entry)
 	pokemon.nickname = tryValues(["nickname"], entry)
 	pokemon.ot = tryValues(["ot"], entry)
 	pokemon.tid = tryValues(["tid"], entry)
