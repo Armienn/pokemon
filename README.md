@@ -6,6 +6,8 @@ A site for browsing Pokémon (either all Pokémon and Pokémon stored in Google 
 
 * Browse the list of all Pokémon and find just the Pokémon you want using a plethora of filters
 * Make your own custom filter if you know javascript
+* Or make your own custom sorting function with javascript
+* Or even define a collection of Pokémon with your own custom javascript function
 * Browse all your Pokémon, or just those in specific tabs
 * Simple display of how complete your collection is
 * Automatically calculates breedables based on your Pokémon (although this feature is in need of some love still)
