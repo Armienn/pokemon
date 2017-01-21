@@ -1,12 +1,11 @@
 # Pokémon Stuff
 
-A site for browsing Pokémon (either all Pokémon and Pokémon stored in Google Sheets) featuring easy-to-use advanced filtering and searching
+A site for browsing Pokémon (either all Pokémon, Pokémon stored in Google Sheets, or Pokémon loaded via custom javascript) featuring easy-to-use advanced filtering and searching
 
 ## Features
 
 * Browse the list of all Pokémon and find just the Pokémon you want using a plethora of filters
-* Make your own custom filter if you know javascript
-* Or make your own custom sorting function with javascript
+* Make your own custom filter or sorting function if you know javascript
 * Or even define a collection of Pokémon with your own custom javascript function
 * Browse all your Pokémon, or just those in specific tabs
 * Simple display of how complete your collection is
@@ -15,7 +14,7 @@ A site for browsing Pokémon (either all Pokémon and Pokémon stored in Google 
 * Generate a Reddit Markdown table to share your current selection of Pokémon
 * Link to [a](https://armienn.github.io/pokemon/#Magearna) [specific](https://armienn.github.io/pokemon/#123) [Pokémon](https://armienn.github.io/pokemon/#nidoran-m)
 
-## How to Use
+## How to Use with Spreadsheets
 
 1. Have a Google Spreadsheet with Pokémon in it
 2. Publish it (`File > Publish to the web…`)
@@ -32,6 +31,16 @@ The script tries a few different column names for every piece of Pokémon inform
 Most columns can be deleted. Even a sheet as simple as [this](https://docs.google.com/spreadsheets/d/1Co8N7zAWXhPnKHTUOdPbLunalSDoGyDVoftpvV0IxDY/edit?usp=sharing) will work: [See?](https://armienn.github.io/pokemon/?1Co8N7zAWXhPnKHTUOdPbLunalSDoGyDVoftpvV0IxDY#1)
 
 Worksheets named "db" or whose name contains "template", "item", "config", "resource" or "database" won't be shown, and sheets whose name start with "lf" or "looking for" will appear on their own in the list of tabs and the Pokémon in them won't be added to the list of all your Pokémon.
+
+## How to Use with a Javascript Script
+
+As a new feature it is now possible to load javascript from somewhere else on the web and set up a collection by running that. 
+
+To do so, just add the url (without the protocol) onto the end of this: `https://armienn.github.io/pokemon/?script:script-url`
+
+Example: [`https://armienn.github.io/pokemon/?script:gist.githubusercontent.com/Armienn/27b4759d86c33542656f255efd1e50af/raw/3ad081a42ab88216d8d237adb4c91e36ca0b9d6d/test-pokemons.js`](https://armienn.github.io/pokemon/?script:gist.githubusercontent.com/Armienn/27b4759d86c33542656f255efd1e50af/raw/3ad081a42ab88216d8d237adb4c91e36ca0b9d6d/test-pokemons.js)
+
+This will load [this javascript](https://gist.githubusercontent.com/Armienn/27b4759d86c33542656f255efd1e50af/raw/3ad081a42ab88216d8d237adb4c91e36ca0b9d6d/test-pokemons.js) and run it to get the collection of Pokémon to show. This opens up a lot of new possibilities, so I look forward to seeing what people do with it.
 
 ## Other notes
 
