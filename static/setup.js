@@ -197,7 +197,23 @@ var pokemonInventories = []
 var pokemonLookingFor = []
 
 var selectedTab
-var customPokemon = function(){ return [findPokemon(1), findPokemon(6, "Mega X")] }
+var customPokemon = function(){ 
+	var list = []
+	var pokemon = getPokemonFrom({name:"Beedrill",form:"Mega"})
+	pokemon.ivs = {hp:31,atk:31,def:31,spa:31,spd:31,spe:31}
+	pokemon.evs = {hp:0,atk:0,def:0,spa:0,spd:0,spe:252}
+	pokemon.nature = "Jolly"
+	pokemon.got = true
+	list.push(pokemon)
+	for(var n in pokemons){
+		pokemon = new PokemonData(pokemons[n])
+		pokemon.ivs = {hp:31,atk:31,def:31,spa:31,spd:31,spe:31}
+		pokemon.evs = {hp:0,atk:0,def:0,spa:0,spd:0,spe:252}
+		pokemon.nature = "Jolly"
+		list.push(pokemon)
+	}
+	return list
+}
 
 setColors(...colors.night)
 setupDayNightButtons()

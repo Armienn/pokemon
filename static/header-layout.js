@@ -72,7 +72,21 @@ function tryLoad(){
 		infoMove()
 		update()
 	}
-	document.getElementById("custom-pokemon").value = "return [findPokemon(1), findPokemon(6, \"Mega X\")]"
+	document.getElementById("custom-pokemon").value = `var list = []
+var pokemon = getPokemonFrom({name:"Beedrill",form:"Mega"})
+pokemon.ivs = {hp:31,atk:31,def:31,spa:31,spd:31,spe:31}
+pokemon.evs = {hp:0,atk:0,def:0,spa:0,spd:0,spe:252}
+pokemon.nature = "Jolly"
+pokemon.got = true
+list.push(pokemon)
+for(var n in pokemons){
+    pokemon = new PokemonData(pokemons[n])
+    pokemon.ivs = {hp:31,atk:31,def:31,spa:31,spd:31,spe:31}
+    pokemon.evs = {hp:0,atk:0,def:0,spa:0,spd:0,spe:252}
+    pokemon.nature = "Jolly"
+    list.push(pokemon)
+}
+return list`
 	document.getElementById("custom-pokemon-update").onclick = function(){
 		customPokemon = new Function(document.getElementById("custom-pokemon").value)
 		update()
