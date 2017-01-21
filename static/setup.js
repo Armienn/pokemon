@@ -242,4 +242,5 @@ function addScriptTab(script){
 		infoMove()
 		selectTab(tab)
 	}
+	selectTab(tab)
 }
