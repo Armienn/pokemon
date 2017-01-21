@@ -42,8 +42,18 @@ function update(){
 }
 
 function tryLoad(){
-	if(!isEverythingLoaded())
+	if(!isBasicLoaded())
 		return
+	if(externalInventory.shouldLoad && !externalInventory.loaded){
+		if(scriptUrl){
+			request("https://" + scriptUrl, function(script){
+				addScriptTab(script)
+				externalInventory.loaded = true
+				tryLoad()
+			})
+		}
+		return
+	}
 	if(loaded)
 		return
 	loaded = true
@@ -94,7 +104,7 @@ function tryLoad(){
 	addFilterChooser("Add filter:")
 	addSortingChooser("Sort by:")
 	addSearch("Search")
-	if(spreadsheetId)
+	if(externalInventory.shouldLoad)
 		addCompletionModeSwitcher()
 		
 	document.getElementById("copy").onclick = function(){
@@ -104,7 +114,7 @@ function tryLoad(){
 		e.stopPropagation()
 	}
 	update()
-	if(!spreadsheetId && destination)
+	if(!externalInventory.shouldLoad && destination)
 		selectPokemonBasedOn(destination)
 	setInterval(loadMoreWhenScrolledDown,500)
 }

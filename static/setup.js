@@ -170,9 +170,26 @@ var navAllMine = document.getElementById("nav-all-mine")
 var navBreedables = document.getElementById("nav-breedables")
 var navInventory = document.getElementById("nav-inventory")
 var navLookingFor = document.getElementById("nav-looking-for")
-var spreadsheetId = 0
-if(window.location.search)
-	spreadsheetId = window.location.search.substring(1)
+
+var loadedThings = {
+	pokemons: false,
+	moves: false,
+	abilities: false
+}
+var externalInventory = {shouldLoad: false, loaded: false}
+
+var spreadsheetId
+var scriptUrl
+if(window.location.search){
+	var argument = window.location.search.substring(1)
+	if(argument.startsWith("script:")){
+		externalInventory.shouldLoad = true
+		scriptUrl = argument.substring(7)
+	} else {
+		externalInventory.shouldLoad = true
+		spreadsheetId = argument
+	}
+}
 var destination = false
 if(window.location.hash)
 	destination = window.location.hash.substring(1)
@@ -190,7 +207,23 @@ movesHeader.onclick = toggleShowMoves
 
 requestJSON("https://armienn.github.io/pokemon/static/moves.json", getMoves)
 requestJSON("https://armienn.github.io/pokemon/static/pokemons.json", getPokemons)
-requestJSON("https://armienn.github.io/pokemon/static/abilities.json", e=>{abilities = e;tryLoad()})
+requestJSON("https://armienn.github.io/pokemon/static/abilities.json", getAbilities)
 
 if(spreadsheetId)
 	requestJSON(getSpreadsheetUrl(spreadsheetId), parseSpreadsheet)
+
+function addScriptTab(script){
+	var tab = {}
+	tab.title = "Pokémon list"
+	tab.id = 1
+	tab.pokemons = new Function(script)()
+	pokemonInventories.push(tab)
+	tab.navEntry = newTag("li", navInventory)
+	navInventory.style.display = ""
+	tab.navEntry.innerHTML = tab.title
+	tab.navEntry.className = "inactive"
+	tab.navEntry.onclick = function(){
+		infoMove()
+		selectTab(tab)
+	}
+}

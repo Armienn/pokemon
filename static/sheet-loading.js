@@ -49,6 +49,7 @@ function parseSpreadsheet(response){
 			update()
 		}
 	}
+	externalInventory.loaded = true
 	tryLoad()
 }
 

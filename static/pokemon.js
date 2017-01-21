@@ -405,10 +405,16 @@ function getGeneration(pokemon){
 }
 
 function requestJSON(url, callback) {
+	request(url, function(response){
+		callback(JSON.parse(response))
+	})
+}
+
+function request(url, callback) {
 	var xmlHttp = new XMLHttpRequest();
 	xmlHttp.onreadystatechange = function() { 
 		if (xmlHttp.readyState == 4 && xmlHttp.status == 200)
-			callback(JSON.parse(xmlHttp.responseText))
+			callback(xmlHttp.responseText)
 	}
 	xmlHttp.open("GET", url, true)
 	xmlHttp.send()
@@ -424,17 +430,25 @@ function prependZeroes(number, characters){
 
 function getMoves(response){
 	moves = response
+	loadedThings.moves = true
 	tryLoad()
 }
 
 function getPokemons(response){
 	pokemons = response
+	loadedThings.pokemons = true
 	tryLoad()
 }
 
-function isEverythingLoaded(){
-	return moves && Object.keys(moves).length &&
-		abilities && Object.keys(abilities).length &&
-		pokemons && pokemons.length &&
-		(spreadsheetId ? pokemonInventories.length : true)
+function getAbilities(response){
+	abilities = response
+	loadedThings.abilities = true
+	tryLoad()
+}
+
+function isBasicLoaded(){
+	for(var i in loadedThings)
+		if(!loadedThings[i])
+			return false
+	return true
 }
