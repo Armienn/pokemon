@@ -485,6 +485,13 @@ function getIVText(iv, pokemon) {
 	return "<span class='"+cssClass+"'>" + (pokemon.ivs ? pokemon.ivs[iv] : "x") + "</span>"
 }
 
+function getEVText(ev, pokemon) {
+	if(!pokemon.evs || !+pokemon.evs[ev])
+		return ""
+	var cssClass = getNatureCssClass(ev,pokemon)
+	return " <span class='"+cssClass+"' style=\"font-size:0.7rem;display: block;\">" + pokemon.evs[ev] + "</span>"
+}
+
 function getNatureCssClass(stat,pokemon){
 	var nature = natures[pokemon.nature]
 	if(!nature)

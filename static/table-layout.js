@@ -79,22 +79,22 @@ var tabPokemonColumns = [
 		}
 	},
 	{ getColumnHeader: function(){ return "HP" },
-		getColumn: function(pokemon){ return getIVText("hp", pokemon) }
+		getColumn: function(pokemon){ return getIVEVText("hp", pokemon) }
 	},
 	{ getColumnHeader: function(){ return "Atk" },
-		getColumn: function(pokemon){ return getIVText("atk", pokemon) }
+		getColumn: function(pokemon){ return getIVEVText("atk", pokemon) }
 	},
 	{ getColumnHeader: function(){ return "Def" },
-		getColumn: function(pokemon){ return getIVText("def", pokemon) }
+		getColumn: function(pokemon){ return getIVEVText("def", pokemon) }
 	},
 	{ getColumnHeader: function(){ return "SpA" },
-		getColumn: function(pokemon){ return getIVText("spa", pokemon) }
+		getColumn: function(pokemon){ return getIVEVText("spa", pokemon) }
 	},
 	{ getColumnHeader: function(){ return "SpD" },
-		getColumn: function(pokemon){ return getIVText("spd", pokemon) }
+		getColumn: function(pokemon){ return getIVEVText("spd", pokemon) }
 	},
 	{ getColumnHeader: function(){ return "Spe" },
-		getColumn: function(pokemon){ return getIVText("spe", pokemon) }
+		getColumn: function(pokemon){ return getIVEVText("spe", pokemon) }
 	},
 	{ getColumnHeader: function(){ return "Moves" },
 		getColumn: function(pokemon){
@@ -107,6 +107,10 @@ var tabPokemonColumns = [
 		}
 	}
 ]
+
+function getIVEVText(stat, pokemon){
+	return " <span style=\"max-width: 1rem;display: inline-block;\">" + getIVText(stat, pokemon) + getEVText(stat, pokemon) + "</span>"
+}
 
 function addNextPokemonEntry(){
 	if(!pokes[nextPoke]){
