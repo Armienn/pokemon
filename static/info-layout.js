@@ -228,7 +228,7 @@ function addStatElement(pokemon, headerText, stat){
 		text.innerHTML += " · " + ivBase + " · " + evBase
 		bar = newTag("div", barElement)
 		bar.className = "stat-bar iv-bar"
-		bar.style.width = (ivBase.toString().endsWith("*") ? 31 : ivBase) + "px"
+		bar.style.width = (ivBase.toString().endsWith("*") ? 31 : +ivBase) + "px"
 		bar = newTag("div", barElement)
 		bar.className = "stat-bar ev-bar"
 		bar.style.width = evBase/4 + "px"
