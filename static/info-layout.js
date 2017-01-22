@@ -135,7 +135,7 @@ function showInfoSection(pokemon){
 function showInfoBSection(pokemon){
 	if(!pokemon.base) return
 	if(pokemon.ot || pokemon.tid)
-		addInfoElement(infoBSectionTable, "OT |", pokemon.ot + " (" + prependZeroes(pokemon.tid, 6) + ")" )
+		addInfoElement(infoBSectionTable, "OT |", pokemon.ot + (pokemon.tid ? " (" + prependZeroes(pokemon.tid, 6) + ")" : "" ) )
 	for(var i in pokemon.learntMoves)
 		addInfoElement(infoBSectionTable, "Move |", pokemon.learntMoves[i])
 	if(pokemon.balls && pokemon.balls.length)
