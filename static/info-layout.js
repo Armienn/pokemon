@@ -216,8 +216,10 @@ function addStatElement(pokemon, headerText, stat){
 	var barElement = newTag("td", row)
 	header.innerHTML = headerText
 	var statBase = pokemon.stats[stat]
-	var ivBase = pokemon.ivs ? pokemon.ivs[stat] : 0
+	var ivText = pokemon.ivs ? pokemon.ivs[stat] : 0
 	var evBase = pokemon.evs ? pokemon.evs[stat] : 0
+	var ivBase = ivText.toString().endsWith("*") ? 31 : ivText
+	ivBase = isNaN(+ivBase) ? ivBase.replace(/(^\d+)(.+$)/i,'$1') : +ivBase
 	text.innerHTML = statBase
 	text.className = pokemon.nature ? getNatureCssClass(stat,pokemon) : ""
 	var bar = newTag("div", barElement)
@@ -225,10 +227,10 @@ function addStatElement(pokemon, headerText, stat){
 	bar.style.width = statBase*2 + "px"
 	bar.style.background = "linear-gradient(to right, red, "+getStatColor(statBase)+")"
 	if(pokemon.ivs || pokemon.evs){
-		text.innerHTML += " · " + ivBase + " · " + evBase
+		text.innerHTML += " · " + ivText + " · " + evBase
 		bar = newTag("div", barElement)
 		bar.className = "stat-bar iv-bar"
-		bar.style.width = (ivBase.toString().endsWith("*") ? 31 : ivBase.replace(/(^\d+)(.+$)/i,'$1')) + "px"
+		bar.style.width = ivBase + "px"
 		bar = newTag("div", barElement)
 		bar.className = "stat-bar ev-bar"
 		bar.style.width = evBase/4 + "px"
