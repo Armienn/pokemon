@@ -109,7 +109,7 @@ var tabPokemonColumns = [
 ]
 
 function getIVEVText(stat, pokemon){
-	return " <span style=\"max-width: 1rem;display: inline-block;\">" + getIVText(stat, pokemon) + getEVText(stat, pokemon) + "</span>"
+	return " <span style=\"max-width: 2rem;display: inline-block;\">" + getIVText(stat, pokemon) + getEVText(stat, pokemon) + "</span>"
 }
 
 function addNextPokemonEntry(){
