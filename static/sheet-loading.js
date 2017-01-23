@@ -104,7 +104,11 @@ function parseConfig(response){
 	var name = tryValues(["ingamename"],entry)
 	var friendcode = tryValues(["friendcode"],entry)
 	var contactUrl = tryValues(["contacturl"],entry)
-	var hideBreedables = tryValues(["hidebreedables"],entry)
+	var showBreedables = tryValues(["showbreedables"],entry)
+	var colorScheme = tryValues(["colorscheme"],entry)
+	var backgroundColor = tryValues(["custombackgroundcolor","backgroundcolor"],entry)
+	var textColor = tryValues(["customtextcolor","textcolor"],entry)
+	var headerColor = tryValues(["customheadercolor","headercolor"],entry)
 	if(contactUrl && name)
 		document.getElementById("main-title").innerHTML = "<a href=\"" + contactUrl + "\">" + name + "</a>'s <a href=\"https://docs.google.com/spreadsheets/d/" + spreadsheetId + "\">Pokémon</a> <a href=\"https://armienn.github.io/pokemon/\">Stuff</a>"
 	else if(name)
@@ -117,8 +121,15 @@ function parseConfig(response){
 		document.getElementById("sub-title").innerHTML = "FC: " + friendcode
 		document.getElementById("sub-title").style.display = ""
 	}
-	if(hideBreedables !== undefined && hideBreedables != "no" && hideBreedables != "false")
+	if(!showBreedables || showBreedables.toLowerCase().trim() == "no" || showBreedables.toLowerCase().trim() == "false")
 		document.getElementById("nav-breedables").style.display = "none"
+		
+	if(colorScheme.toLowerCase().trim() == "night")
+		setColors(...colors.night)
+	else if(colorScheme.toLowerCase().trim() == "day")
+		setColors(...colors.day)
+	else if(colorScheme.toLowerCase().trim() == "custom")
+		setColors(backgroundColor, textColor, headerColor)
 }
 
 function parseSheet(tab){

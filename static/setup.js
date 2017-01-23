@@ -1,7 +1,7 @@
 
 var colors = {
-	night: ["#222", "#eee", "#cf0000", "rgba(50, 50, 50,0.5)"],
-	day: ["whitesmoke", "black", "#ff3a23", "rgba(50, 50, 50,0.5)"]
+	night: ["#222", "#eee", "#c00"],
+	day: ["whitesmoke", "black", "#ff3a23"]
 }
 var typeColors = {
 	Bug: "#A8B820",

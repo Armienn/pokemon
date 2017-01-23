@@ -133,12 +133,11 @@ return list`
 	setInterval(loadMoreWhenScrolledDown,500)
 }
 
-function setColors(backgroundColor, textColor, headerColor, tableHeaderColor){
+function setColors(backgroundColor, textColor, headerColor){
 	document.getElementsByTagName("body")[0].style.backgroundColor = backgroundColor
 	document.getElementsByTagName("body")[0].style.color = textColor
 	document.getElementsByTagName("section")[0].style.backgroundColor = headerColor
 	document.getElementsByTagName("header")[0].style.backgroundColor = headerColor
-	document.getElementsByTagName("thead")[0].style.backgroundColor = tableHeaderColor
 }
 
 function addCompletionModeSwitcher(){
