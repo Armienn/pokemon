@@ -42,9 +42,11 @@ Example: [`https://armienn.github.io/pokemon/?script:gist.githubusercontent.com/
 
 This will load [this javascript](https://gist.githubusercontent.com/Armienn/27b4759d86c33542656f255efd1e50af/raw/3ad081a42ab88216d8d237adb4c91e36ca0b9d6d/test-pokemons.js) and run it to get the collection of Pokémon to show. This opens up a lot of new possibilities, so I look forward to seeing what people do with it.
 
-## Other notes
+## Settings
 
-If you're not interested in the auto breedables list, you can remove it by adding a column to your first worksheet with the header "Hide breedables".
+By having settings in your spreadsheet as seen in the template spreadsheet, it is possible enable the auto breedables list, and to choose the colour scheme to use (either Night, Day or Custom).
+
+## Other notes
 
 For developers interested in the code: Be warned, it's somewhat of a mess. I would clean it up, but I've already used a lot more time on this project than I should have, so that won't happen for the next few months. That said, if you venture in there anyway and make improvements or additions, I'm open to reasonable pull requests.
 
