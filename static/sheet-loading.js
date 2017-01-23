@@ -49,8 +49,16 @@ function parseSpreadsheet(response){
 			update()
 		}
 	}
-	externalInventory.loaded = true
+	updateExternalInventoryLoadedness()
 	tryLoad()
+}
+
+function updateExternalInventoryLoadedness(){
+	if(externalInventory.tabsToLoad)
+		for(var i in externalInventory.tabsToLoad)
+			if(!externalInventory.tabsToLoad[i])
+				return
+	externalInventory.loaded = true
 }
 
 function addNewTab(title, index){
@@ -75,6 +83,9 @@ function addNewTab(title, index){
 		infoMove()
 		selectTab(tab)
 	}
+	if(!externalInventory.tabsLoaded)
+		externalInventory.tabsLoaded = []
+	externalInventory.tabsLoaded[tab.id] = false
 	requestJSON(getWorksheetUrl(spreadsheetId, tab.id), parseSheet(tab))
 }
 
@@ -139,6 +150,9 @@ function parseSheet(tab){
 		}
 		if(tab.id == destination)
 			selectTab(tab)
+		externalInventory.tabsLoaded[tab.id] = true
+		updateExternalInventoryLoadedness()
+		tryLoad()
 	}
 }
 

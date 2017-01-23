@@ -127,10 +127,24 @@ return list`
 	document.getElementById("pokemon-copy-table").onclick = function(e){
 		e.stopPropagation()
 	}
+	setTimeout(function(){fade(document.getElementById("loading"))},500)
 	update()
 	if(!externalInventory.shouldLoad && destination)
 		selectPokemonBasedOn(destination)
 	setInterval(loadMoreWhenScrolledDown,500)
+}
+
+function fade(element) {
+	var opacity = 1;
+	var timer = setInterval(function () {
+		if (opacity <= 0.01){
+			clearInterval(timer)
+			element.style.display = 'none'
+		}
+		element.style.opacity = opacity
+		element.style.filter = 'alpha(opacity=' + opacity * 100 + ")"
+		opacity -= 0.15
+	}, 50)
 }
 
 function setColors(backgroundColor, textColor, headerColor){
