@@ -227,7 +227,7 @@ function loadPokemon(entry, tab){
 	if(pokemon.balls.length == 0){
 		if (getValue(entry.gsx$poke)) pokemon.balls.push("Poké Ball")
 		if (getValue(entry.gsx$great)) pokemon.balls.push("Great Ball")
-		if (getValue(entry.gsx$Ultra)) pokemon.balls.push("Ultra Ball")
+		if (getValue(entry.gsx$ultra)) pokemon.balls.push("Ultra Ball")
 		if (getValue(entry.gsx$master)) pokemon.balls.push("Master Ball")
 		if (getValue(entry.gsx$safari)) pokemon.balls.push("Safari Ball")
 		if (getValue(entry.gsx$level)) pokemon.balls.push("Level Ball")
