@@ -19,7 +19,8 @@ function parseSpreadsheet(response){
 	for(var i in response.feed.entry){
 		var entry = response.feed.entry[i]
 		var title = getValue(entry.title).trim()
-		if(title.toLowerCase().indexOf("item") > -1 ||
+		if(title.toLowerCase().indexOf("[hide]") > -1 ||
+			title.toLowerCase().indexOf("item") > -1 ||
 			title.toLowerCase().indexOf("template") > -1 ||
 			title.toLowerCase().indexOf("config") > -1 ||
 			title.toLowerCase().indexOf("database") > -1 ||
@@ -223,7 +224,14 @@ function loadPokemon(entry, tab){
 	pokemon.level = tryValues(["level","lvl","lv"], entry)
 	pokemon.language = tryValues(["language","lang"], entry)
 	pokemon.notes = tryValues(["notes","note","comments","comment"], entry)
-	pokemon.balls = [tryValues(["pokeball","ball"], entry)].filter(e=>e)
+	pokemon.balls = []
+	var balls = tryValues(["pokeball","ball","pokeballs","balls"], entry)
+	if(balls){
+		balls = balls.split(",")
+		for(var i in balls)
+			balls[i] = balls[i].trim()
+		pokemon.balls = balls.filter(e=>e)
+	}
 	if(pokemon.balls.length == 0){
 		if (getValue(entry.gsx$poke)) pokemon.balls.push("Poké Ball")
 		if (getValue(entry.gsx$great)) pokemon.balls.push("Great Ball")

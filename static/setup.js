@@ -119,7 +119,7 @@ var pokemons = []
 var moves = {}
 var abilities = {}
 var filters = {}
-var sorts = {}
+var sorts = {Default:undefined}
 var sorting
 var searchFilter
 
