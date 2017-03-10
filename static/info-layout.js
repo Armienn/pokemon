@@ -115,7 +115,7 @@ function showInfoSection(pokemon){
 	else
 		addInfoElement(infoSectionTable, "Classification |", pokemon.classification)
 	if(pokemon.ability)
-		addInfoElement(infoSectionTable, "Ability |", getAbilityText(pokemon.ability, pokemon.abilities[2] ? pokemon.abilities[2].toLowerCase() == pokemon.ability.toLowerCase() : false))
+		addInfoElement(infoSectionTable, "Ability |", getAbilityText(pokemon.ability, pokemon.abilities[2] ? pokemon.abilities[2].toLowerCase() == pokemon.ability.split("(")[0].trim().toLowerCase() : false, true))
 	else
 		addInfoElement(infoSectionTable, "Abilities |", getAbilitiesText(pokemon, true))
 	if(pokemon.nature)
@@ -137,7 +137,7 @@ function showInfoBSection(pokemon){
 	if(pokemon.ot || pokemon.tid)
 		addInfoElement(infoBSectionTable, "OT |", pokemon.ot + (pokemon.tid ? " (" + prependZeroes(pokemon.tid, 6) + ")" : "" ) )
 	for(var i in pokemon.learntMoves)
-		addInfoElement(infoBSectionTable, "Move |", pokemon.learntMoves[i])
+		addInfoElement(infoBSectionTable, "Move |", getMoveText(pokemon.learntMoves[i]))
 	if(pokemon.balls && pokemon.balls.length)
 		addInfoElement(infoBSectionTable, "Ball |", getBallsText(pokemon)).style.padding = "0"
 }
@@ -402,8 +402,12 @@ function getTypesText(pokemon){
 	return getTypeText(pokemon.types[0]) + (pokemon.types[1] ? " · " + getTypeText(pokemon.types[1]) : "")
 }
 
+function getMoveText(move, eggMove){
+	return "<span" + (eggMove ? " style='font-style: italic;'" : "") + ">" + move + "</span>"
+}
+
 function getAbilityText(ability, hidden, link){
-	return "<span" + (hidden ? " style='font-style: italic;'" : "") + (abilities[ability] ? " title='"+abilities[ability].summary.replace("'","&#39;").replace("\"","&#34;")+"'" : "") + ">"+ (link ? getAbilityLink(ability) : ability ) + "</span>"
+	return "<span" + (hidden ? " style='font-style: italic;'" : "") + (abilities[ability.split("(")[0].trim()] ? " title='"+abilities[ability.split("(")[0].trim()].summary.replace("'","&#39;").replace("\"","&#34;")+"'" : "") + ">"+ (link ? getAbilityLink(ability) : ability ) + "</span>"
 }
 
 function getAbilitiesText(pokemon, link){
@@ -416,6 +420,7 @@ function getAbilitiesText(pokemon, link){
 }
 
 function getAbilityLink(ability){
+	ability = ability.split("(")[0].trim()
 	var name = ability.toLowerCase().replace(" ","")
 	var url = "http://www.serebii.net/abilitydex/"+name+".shtml"
 	return "<a href='" + url + "'>" + ability + "</a>"

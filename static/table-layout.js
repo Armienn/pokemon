@@ -69,7 +69,7 @@ var tabPokemonColumns = [
 	{ getColumnHeader: function(){ return "Ability" },
 		getColumn: function(pokemon){
 			if(pokemon.ability)
-				return getAbilityText(pokemon.ability, pokemon.abilities[2] ? pokemon.abilities[2].toLowerCase() == pokemon.ability.toLowerCase() : false)
+				return getAbilityText(pokemon.ability, pokemon.abilities[2] ? pokemon.abilities[2].toLowerCase() == pokemon.ability.split("(")[0].trim().toLowerCase() : false)
 			return getAbilitiesText(pokemon)
 		}
 	},

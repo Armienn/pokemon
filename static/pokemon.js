@@ -207,7 +207,7 @@ function getBreedables(parentPokemons){
 				baby.ability = baby.abilities[2]
 			else
 				baby.ability = pokemon.abilities[0] + (pokemon.abilities[1] ? " · " + pokemon.abilities[1] : "")
-			baby.learntMoves = pokemon.learntMoves.filter(e=>baby.moves.filter(o=>e == o.name && o.method == "egg").length)
+			baby.learntMoves = pokemon.learntMoves.filter(e=>baby.moves.filter(o=>e.split("(")[0].trim() == o.name && o.method == "egg").length)
 			baby.balls = pokemon.balls.filter(e=>e)
 			var existing = breedables.filter(e=>e.id == baby.id && e.form == baby.form && e.ability == baby.ability && e.nature == baby.nature)[0]
 			if(existing){
