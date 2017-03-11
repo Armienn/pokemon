@@ -202,7 +202,7 @@ function getBreedables(parentPokemons){
 			if(nearPerfectIvCount(baby.ivs)<4)
 				continue
 			baby.nature = pokemon.nature
-			var hidden = pokemon.abilities[2] ? pokemon.abilities[2].toLowerCase() == pokemon.ability.toLowerCase() : false
+			var hidden = pokemon.abilities[2] ? pokemon.abilities[2].toLowerCase() == pokemon.ability.split("(")[0].trim().toLowerCase() : false
 			if(hidden)
 				baby.ability = baby.abilities[2]
 			else
