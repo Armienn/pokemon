@@ -5,6 +5,7 @@ class State {
 		this.mode = "table"
 		this.completionMode = "normal"
 		this.currentPokemon
+		this.currentTab
 		this.showMoves = false
 		this.loaded = false
 		this.thingsLoaded = {
@@ -12,24 +13,10 @@ class State {
 			moves: false,
 			abilities: false
 		}
-		this.loadExternalInventory = false
+		this.externalInventory = { load: false, tabsLoaded: [] }
 		this.script
 		this.spreadsheet
-
-		this.colorSets = {
-			night: ["#222", "#eee", "#c00"],
-			day: ["whitesmoke", "black", "rgb(239, 85, 67)"],
-			custom: ["#222", "#eee", "#c00"]
-		}
-		this.colorSet = "night"
-	}
-
-	get colors() {
-		return {
-			backgroundColor: this.colorSets[this.colorSet][0],
-			textColor: this.colorSets[this.colorSet][1],
-			headerColor: this.colorSets[this.colorSet][2]
-		}
+		this.destination
 	}
 
 	get thingsAreLoaded(){
@@ -37,5 +24,11 @@ class State {
 			if(!this.thingsLoaded[i])
 				return false
 		return true
+	}
+
+	selectTab(tab) {
+		this.currentTab = tab
+		window.location.hash = tab.id
+		stuff.update()
 	}
 }

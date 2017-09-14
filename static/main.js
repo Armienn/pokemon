@@ -8,32 +8,35 @@ class PokemonStuff {
 		this.gridSection = new GridSection()
 		this.infoSection = new InfoSection()
 		this.state = new State()
+		this.settings = new Settings()
 		this.data = new PokemonData()
-		this.collection = new CollectionData()
+		this.collection = new Collection()
+		this.spreadsheetParser = new SpreadsheetParser()
+	}
+
+	update() {
+		// ?
 	}
 
 	tryLoad() {
 		if (!this.state.thingsAreLoaded)
 			return
-		if (this.state.loadExternalInventory) {
+		if (this.state.externalInventory.load) {
 			if (this.state.script)
-				addScriptTab(this.state.script)
+				this.loadScript()
 			else if (this.state.spreadsheet)
-				parseSpreadsheet(this.state.spreadsheet)
-			else return
+				this.loadSpreadsheet()
+			if (!this.state.externalInventory.isLoaded)
+				return
 		}
-		
+		this.show()
 	}
 
-	show() {
-		this.headerSection.show()
-		this.updateColors()
-		document.getElementById("loading").hidden = true
-	}
-
-	loadData() {
+	load() {
 		this.loadBaseData()
 		this.loadCollectionData()
+		this.loadDestination()
+		this.loadCookieSettings()
 	}
 
 	loadBaseData() {
@@ -58,32 +61,53 @@ class PokemonStuff {
 		if (!window.location.search)
 			return
 		var argument = window.location.search.substring(1)
-		this.state.loadExternalInventory = true
+		this.state.externalInventory.load = true
 		if (argument.startsWith("script:"))
 			request("https://" + argument.substring(7), (response) => {
 				this.state.script = response
 				this.tryLoad()
 			})
 		else
-			requestJSON(getSpreadsheetUrl(argument), (response) => {
-				this.state.spreadsheet = response
+			requestJSON(this.spreadsheetParser.getSpreadsheetUrl(argument), (response) => {
+				this.state.spreadsheet = { id: argument, spreadsheet: response }
 				this.tryLoad()
 			})
 	}
 
-	loadScript() {
+	loadDestination() {
+		if (window.location.hash)
+			this.state.destination = window.location.hash.substring(1)
+	}
 
+	loadCookieSettings() {
+
+	}
+
+	loadScript() {
+		var pokemons = new Function(this.state.script)()
+		this.state.script = undefined
+		if (!pokemons)
+			return
+		var tab = this.collection.addTab("Pokémon list", pokemons)
+		this.state.selectTab(tab)
 	}
 
 	loadSpreadsheet() {
+		this.spreadsheetParser.parse(this.state.spreadsheet)
+		this.state.spreadsheet = undefined
+	}
 
+	show() {
+		this.headerSection.show()
+		this.updateColors()
+		document.getElementById("loading").hidden = true
 	}
 
 	updateColors() {
-		document.getElementsByTagName("body")[0].style.backgroundColor = this.state.colors.backgroundColor
-		document.getElementsByTagName("body")[0].style.color = this.state.colors.textColor
-		document.getElementsByTagName("section")[0].style.backgroundColor = this.state.colors.headerColor
-		document.getElementsByTagName("header")[0].style.backgroundColor = this.state.colors.headerColor
+		document.getElementsByTagName("body")[0].style.backgroundColor = this.settings.colors.backgroundColor
+		document.getElementsByTagName("body")[0].style.color = this.settings.colors.textColor
+		document.getElementsByTagName("section")[0].style.backgroundColor = this.settings.colors.headerColor
+		document.getElementsByTagName("header")[0].style.backgroundColor = this.settings.colors.headerColor
 	}
 }
 
@@ -96,9 +120,6 @@ class GridSection {
 }
 
 class InfoSection {
-}
-
-class CollectionData {
 
 }
 
@@ -134,5 +155,4 @@ function newTag(tag, parentElement, options = {}) {
 }
 
 var stuff = new PokemonStuff()
-stuff.loadData()
-stuff.show()
+stuff.load()

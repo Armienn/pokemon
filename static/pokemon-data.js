@@ -1,7 +1,34 @@
 "use strict";
 
+class Pokemon {
+	constructor(pokemon) {
+		if (pokemon) {
+			this.base = pokemon
+			this.id = pokemon.id
+			this.name = pokemon.name
+			this.form = pokemon.form
+		}
+	}
+
+	get forms() { return this.base.forms }
+	get stats() { return this.base.stats }
+	get abilities() { return this.base.abilities }
+	get classification() { return this.base.classification }
+	get description() { return this.base.description }
+	get locations() { return this.base.locations }
+	get eggGroups() { return this.base.eggGroups }
+	get eggs() { return this.base.eggs }
+	get evolvesFrom() { return this.base.evolvesFrom }
+	get evolvesTo() { return this.base.evolvesTo }
+	get height() { return this.base.height }
+	get weight() { return this.base.weight }
+	get moves() { return this.base.moves }
+	get ratio() { return this.base.ratio }
+	get types() { return this.base.types }
+}
+
 class PokemonData {
-	constructor(){
+	constructor() {
 		this.pokemons = []
 		this.moves = {}
 		this.abilities = {}
@@ -109,5 +136,61 @@ class PokemonData {
 			"Serious": { "positive": "Speed", "negative": "Speed" },
 			"Timid": { "positive": "Speed", "negative": "Attack" }
 		}
+	}
+
+	findPokemon(id, form){
+		var pokemon = new Pokemon()
+		pokemon.id = id
+		var possiblePokes = this.pokemons.filter(e => id == e.id)
+		if(possiblePokes.length == 0)
+			 return null
+		pokemon.base = possiblePokes[0]
+		if(possiblePokes[0].forms)
+			pokemon.form = this.findBestFormFit(possiblePokes[0].forms, form)
+		else
+			pokemon.form = "Base"
+		if (possiblePokes.length > 1) {
+			var possibleForms = possiblePokes.filter(e => e.form == pokemon.form)
+			if(possibleForms.length == 1)
+				pokemon.base = possibleForms[0]
+		}
+		pokemon.name = pokemon.base.name
+		return pokemon
+	}
+	
+	findBestFormFit(forms, form){
+		if(!form)
+			return forms[0]
+		var fits = forms.filter(e=>e.toLowerCase()==form.toLowerCase())
+		if(fits.length)
+			return fits[0]
+		fits = []
+		var words = form.split(" ")
+		var highestCount = 0
+		for(var i in forms){
+			var count = 0
+			for(var j in words)
+				if(forms[i].toLowerCase().indexOf(words[j].toLowerCase()) > -1)
+					count++
+			if (count > highestCount){
+				fits = [forms[i]]
+				highestCount = count
+			} else if (count == highestCount)
+				fits.push(forms[i])
+		}
+		if(fits.length)
+			return fits[0]
+		return forms[0]
+	}
+	
+	getPokemonFrom(idformthing){
+		if(!idformthing.id && idformthing.name){
+			var possiblePokes = this.pokemons.filter(e => idformthing.name.toLowerCase() == e.name.toLowerCase())
+			if(possiblePokes.length)
+				idformthing.id = possiblePokes[0].id
+			else
+				return false
+		}
+		return this.findPokemon(idformthing.id, idformthing.form)
 	}
 }

@@ -38,14 +38,14 @@ class HeaderSection {
 			colours: {
 				day: {
 					text: "☀",
-					click: () => { stuff.state.colorSet = "day"; stuff.updateColors() },
-					active: () => stuff.state.colorSet == "day",
+					click: () => { stuff.settings.colorScheme = "day"; stuff.updateColors() },
+					active: () => stuff.settings.colorScheme == "day",
 					style: { fontSize: "1.2rem" }
 				},
 				night: {
 					text: "☽",
-					click: () => { stuff.state.colorSet = "night"; stuff.updateColors() },
-					active: () => stuff.state.colorSet == "night",
+					click: () => { stuff.settings.colorScheme = "night"; stuff.updateColors() },
+					active: () => stuff.settings.colorScheme == "night",
 					style: { fontSize: "1.2rem" }
 				}
 			}
@@ -64,17 +64,29 @@ class HeaderSection {
 
 	showTitle() {
 		var element = this.titleElement
-		element.innerHTML = ""
-		if (this.titleLink) {
-			element = newTag("a", this.titleElement)
-			element.href = this.titleLink
+		if (stuff.collection.spreadsheetId) {
+			var title = stuff.collection.collectorUrl ? "<a href=\"" + stuff.collection.collectorUrl + "\">" + stuff.collection.collectorName + "</a>'s " : stuff.collection.collectorName + "'s "
+			title += stuff.collection.spreadsheetId ? "<a href=\"https://docs.google.com/spreadsheets/d/" + stuff.collection.spreadsheetId + "\">Pokémon</a> " : "Pokémon "
+			title += "<a href=\"https://armienn.github.io/pokemon/\">Stuff</a>"
+			element.innerHTML = title
 		}
-		element.innerText = this.title
+		else {
+			element.innerHTML = ""
+			if (this.titleLink) {
+				element = newTag("a", this.titleElement)
+				element.href = this.titleLink
+			}
+			element.innerHTML = this.title
+		}
+		document.title = element.textContent
 	}
 
 	showSubtitle() {
-		this.subtitleElement.innerText = this.subtitle
-		if (this.subtitle)
+		if (stuff.collection.collectorFriendCode)
+			this.subtitleElement.innerText = "FC: " + stuff.collection.collectorFriendCode
+		else
+			this.subtitleElement.innerText = this.subtitle
+		if (this.subtitleElement.innerText)
 			this.subtitleElement.style.display = ""
 		else
 			this.subtitleElement.style.display = "none"
