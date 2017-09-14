@@ -10,13 +10,13 @@ class HeaderSection {
 			base: {
 				all: {
 					text: "⊖",
-					click: () => stuff.state.currentTab = "all",
+					click: () => stuff.state.selectTab("all"),
 					active: () => stuff.state.currentTab == "all",
 					style: { fontSize: "1.5rem", paddingBottom: "0.2rem" }
 				},
 				custom: {
 					text: "☷",
-					click: () => stuff.state.currentTab = "custom",
+					click: () => stuff.state.selectTab("custom"),
 					active: () => stuff.state.currentTab == "custom",
 					style: { fontSize: "1.3rem" }
 				}
@@ -26,13 +26,13 @@ class HeaderSection {
 			modes: {
 				table: {
 					text: "▤",
-					click: () => stuff.state.mode = "table",
+					click: () => { stuff.state.mode = "table"; stuff.updatePokemon() },
 					active: () => stuff.state.mode == "table",
 					style: { fontSize: "2rem", fontWeight: "initial" }
 				},
 				grid: {
 					text: "▦",
-					click: () => stuff.state.mode = "grid",
+					click: () => { stuff.state.mode = "grid"; stuff.updatePokemon() },
 					active: () => stuff.state.mode == "grid",
 					style: { fontSize: "2rem", fontWeight: "initial" }
 				}
@@ -163,4 +163,103 @@ class HeaderSection {
 			index++
 		}
 	}
+
+
+}
+
+// filter things
+
+
+
+function getSearchFilter(query) {
+	return function (pokemon) {
+		query = query.trim().toLowerCase()
+		return pokemonFormName(pokemon).toLowerCase().indexOf(query) > -1
+	}
+}
+
+function hasItemInFilter(key, fallbackKey) {
+	return function (...items) {
+		return function (pokemon) {
+			var item = pokemon[key]
+			if (!item)
+				item = pokemon[fallbackKey]
+			for (var i in items) {
+				if (!item && items[i] == "Undefined")
+					return true
+				else if (!item)
+					continue
+				if (typeof item == "string") {
+					if (item.toLowerCase() == items[i].toLowerCase())
+						return true
+				} else if (item.filter(e => e ? (e.toLowerCase ? e.toLowerCase() : e.name.toLowerCase()) == items[i].toLowerCase() : false).length)
+					return true
+			}
+			return false
+		}
+	}
+}
+
+function shinyFilter(mode) {
+	var show = mode == "Show only"
+	return function (pokemon) {
+		if (pokemon.shiny)
+			return show
+		return !show
+	}
+}
+
+function hiddenAbilityFilter(mode) {
+	var show = mode == "Show only"
+	return function (pokemon) {
+		if (pokemon.ability && (pokemon.abilities[2] ? pokemon.abilities[2].toLowerCase() == pokemon.ability.toLowerCase() : false))
+			return show
+		return !show
+	}
+}
+
+function legendaryFilter(mode) {
+	var show = mode == "Show only"
+	return function (pokemon) {
+		if (pokemon.name == "Unown")
+			return !show
+		if (pokemon.eggGroups.indexOf("Undiscovered") > -1 && !(pokemon.evolvesTo || pokemon.evolvesFrom))
+			return show
+		if (pokemon.name == "Phione" ||
+			pokemon.name == "Manaphy" ||
+			pokemon.name == "Cosmog" ||
+			pokemon.name == "Cosmoem" ||
+			pokemon.name == "Solgaleo" ||
+			pokemon.name == "Lunala")
+			return show
+		return !show
+	}
+}
+
+function generationFilter(...items) {
+	return function (pokemon) {
+		var generation = getGeneration(pokemon)
+		for (var i in items)
+			if (+items[i] == generation)
+				return true
+		return false
+	}
+}
+
+function getGeneration(pokemon) {
+	if (pokemon.id <= 151)
+		return 1
+	if (pokemon.id <= 251)
+		return 2
+	if (pokemon.id <= 386)
+		return 3
+	if (pokemon.id <= 493)
+		return 4
+	if (pokemon.id <= 649)
+		return 5
+	if (pokemon.id <= 721)
+		return 6
+	if (pokemon.id <= 802)
+		return 7
+	return 8
 }

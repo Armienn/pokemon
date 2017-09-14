@@ -5,8 +5,6 @@ class PokemonStuff {
 	constructor() {
 		this.headerSection = new HeaderSection()
 		this.listSection = new ListSection()
-		this.gridSection = new GridSection()
-		this.infoSection = new InfoSection()
 		this.state = new State()
 		this.settings = new Settings()
 		this.data = new PokemonData()
@@ -14,7 +12,11 @@ class PokemonStuff {
 		this.spreadsheetParser = new SpreadsheetParser()
 	}
 
-	update() {
+	updatePokemon() {
+		if(!this.state.loaded)
+			return
+		this.state.currentPokemons = this.data.getFilteredPokemons()
+		this.listSection.show()
 		// ?
 	}
 
@@ -29,8 +31,11 @@ class PokemonStuff {
 			if (!this.state.externalInventory.isLoaded)
 				return
 		}
+		this.state.loaded = true
 		this.headerSection.updateNavPokemonTabs()
+		this.updatePokemon()
 		this.show()
+		setInterval(() => { this.listSection.loadMoreWhenScrolledDown() }, 500)
 	}
 
 	load() {
@@ -91,6 +96,7 @@ class PokemonStuff {
 			return
 		var tab = this.collection.addTab("Pokémon list", pokemons)
 		this.state.selectTab(tab)
+		this.state.externalInventory.isLoaded = true
 	}
 
 	loadSpreadsheet() {
@@ -101,7 +107,7 @@ class PokemonStuff {
 	show() {
 		this.headerSection.show()
 		this.updateColors()
-		setTimeout(function(){fade(document.getElementById("loading"))},500)
+		setTimeout(function () { fade(document.getElementById("loading")) }, 500)
 	}
 
 	updateColors() {
@@ -112,17 +118,7 @@ class PokemonStuff {
 	}
 }
 
-class ListSection {
-
-}
-
-class GridSection {
-
-}
-
-class InfoSection {
-
-}
+// some utility functions
 
 function requestJSON(url, callback) {
 	request(url, function (response) {
@@ -158,7 +154,7 @@ function newTag(tag, parentElement, options = {}) {
 function fade(element) {
 	var opacity = 1;
 	var timer = setInterval(function () {
-		if (opacity <= 0.01){
+		if (opacity <= 0.01) {
 			clearInterval(timer)
 			element.style.display = 'none'
 		}
@@ -168,6 +164,50 @@ function fade(element) {
 	}, 50)
 }
 
+function textContains(text, substring) {
+	return text.toLowerCase().indexOf(substring.toLowerCase()) > -1
+}
+
+function prependZeroes(number, characters){
+	number = number.toString()
+	while(number.length < characters){
+		number = "0" + number
+	}
+	return number
+}
+
+function parseStatType(text){
+	if(["hp","health"].indexOf(text.trim().toLowerCase())>-1)
+		return "hp"
+	if(["atk","attack"].indexOf(text.trim().toLowerCase())>-1)
+		return "atk"
+	if(["def","defense"].indexOf(text.trim().toLowerCase())>-1)
+		return "def"
+	if(["spa","sp. atk","sp. attack","special attack"].indexOf(text.trim().toLowerCase())>-1)
+		return "spa"
+	if(["spd","sp. def","sp. defense","special defense"].indexOf(text.trim().toLowerCase())>-1)
+		return "spd"
+	if(["spe","speed"].indexOf(text.trim().toLowerCase()))
+		return "spe"
+}
+
+function HSVtoRGB(h, s, v) {
+		var r, g, b, i, f, p, q, t
+		i = Math.floor(h * 6)
+		f = h * 6 - i
+		p = v * (1 - s)
+		q = v * (1 - f * s)
+		t = v * (1 - (1 - f) * s)
+		switch (i % 6) {
+			case 0: r = v, g = t, b = p; break;
+			case 1: r = q, g = v, b = p; break;
+			case 2: r = p, g = v, b = t; break;
+			case 3: r = p, g = q, b = v; break;
+			case 4: r = t, g = p, b = v; break;
+			case 5: r = v, g = p, b = q; break;
+		}
+		return Math.round(r * 255) + "," + Math.round(g * 255) + "," + Math.round(b * 255)
+	}
 
 var stuff = new PokemonStuff()
 stuff.load()

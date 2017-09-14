@@ -138,59 +138,217 @@ class PokemonData {
 		}
 	}
 
-	findPokemon(id, form){
+	findPokemon(id, form) {
 		var pokemon = new Pokemon()
 		pokemon.id = id
 		var possiblePokes = this.pokemons.filter(e => id == e.id)
-		if(possiblePokes.length == 0)
-			 return null
+		if (possiblePokes.length == 0)
+			return null
 		pokemon.base = possiblePokes[0]
-		if(possiblePokes[0].forms)
+		if (possiblePokes[0].forms)
 			pokemon.form = this.findBestFormFit(possiblePokes[0].forms, form)
 		else
 			pokemon.form = "Base"
 		if (possiblePokes.length > 1) {
 			var possibleForms = possiblePokes.filter(e => e.form == pokemon.form)
-			if(possibleForms.length == 1)
+			if (possibleForms.length == 1)
 				pokemon.base = possibleForms[0]
 		}
 		pokemon.name = pokemon.base.name
 		return pokemon
 	}
-	
-	findBestFormFit(forms, form){
-		if(!form)
+
+	findBestFormFit(forms, form) {
+		if (!form)
 			return forms[0]
-		var fits = forms.filter(e=>e.toLowerCase()==form.toLowerCase())
-		if(fits.length)
+		var fits = forms.filter(e => e.toLowerCase() == form.toLowerCase())
+		if (fits.length)
 			return fits[0]
 		fits = []
 		var words = form.split(" ")
 		var highestCount = 0
-		for(var i in forms){
+		for (var i in forms) {
 			var count = 0
-			for(var j in words)
-				if(forms[i].toLowerCase().indexOf(words[j].toLowerCase()) > -1)
+			for (var j in words)
+				if (forms[i].toLowerCase().indexOf(words[j].toLowerCase()) > -1)
 					count++
-			if (count > highestCount){
+			if (count > highestCount) {
 				fits = [forms[i]]
 				highestCount = count
 			} else if (count == highestCount)
 				fits.push(forms[i])
 		}
-		if(fits.length)
+		if (fits.length)
 			return fits[0]
 		return forms[0]
 	}
-	
-	getPokemonFrom(idformthing){
-		if(!idformthing.id && idformthing.name){
+
+	getPokemonFrom(idformthing) {
+		if (!idformthing.id && idformthing.name) {
 			var possiblePokes = this.pokemons.filter(e => idformthing.name.toLowerCase() == e.name.toLowerCase())
-			if(possiblePokes.length)
+			if (possiblePokes.length)
 				idformthing.id = possiblePokes[0].id
 			else
 				return false
 		}
 		return this.findPokemon(idformthing.id, idformthing.form)
+	}
+
+	getFilteredPokemons() {
+		var pokes = this.pokemons
+		if (stuff.state.currentTab == "mine") {
+			pokes = []
+			for (var i in stuff.collection.pokemons)
+				pokes = pokes.concat(stuff.collection.pokemons[i].pokemons)
+		} else if (stuff.state.currentTab == "breedables") {
+			pokes = []
+			for (var i in stuff.collection.pokemons)
+				pokes = pokes.concat(stuff.collection.pokemons[i].pokemons)
+			pokes = this.getBreedables(pokes)
+		} else if (stuff.state.currentTab == "custom") {
+			pokes = stuff.state.customPokemon()
+		} else if (stuff.state.currentTab == "all") {
+			pokes = pokes
+		} else if (stuff.state.currentTab)
+			pokes = stuff.state.currentTab.pokemons
+
+		pokes = this.getCompletionModePokemon(pokes)
+
+		for (var i in stuff.state.filters)
+			pokes = pokes.filter(stuff.state.filters[i])
+		if (stuff.state.searchFilter)
+			pokes = pokes.filter(stuff.state.searchFilter)
+		if (stuff.state.sorting)
+			pokes.sort(stuff.state.sorting.method)
+		return pokes
+	}
+
+	getCompletionModePokemon(pokes) {
+		if (stuff.state.completionMode == "normal") return pokes
+		var basePokes = []
+		if (stuff.state.completionMode == "families") {
+			for (var n in this.pokemons) {
+				var pokemon = this.pokemons[n]
+				if (!pokemon.evolvesFrom && basePokes.filter(e => e.id == pokemon.id).length == 0) {
+					var newPoke = new Pokemon(pokemon)
+					basePokes.push(newPoke)
+					var lineIds = this.getPokemonFamilyIds(pokemon)
+					if (pokes.filter(e => lineIds.indexOf(e.id) > -1).length)
+						newPoke.got = true
+				}
+			}
+		} else if (stuff.state.completionMode == "pokemons") {
+			for (var n in this.pokemons) {
+				var pokemon = this.pokemons[n]
+				if (!basePokes[pokemon.id - 1]) {
+					basePokes[pokemon.id - 1] = new Pokemon(pokemon)
+					if (pokes.filter(e => e.id == pokemon.id).length)
+						basePokes[pokemon.id - 1].got = true
+				}
+			}
+		} else if (stuff.state.completionMode == "forms") {
+			var allForms = this.getAllForms()
+			for (var i in allForms) {
+				for (var j in allForms[i]) {
+					var newPoke = this.getPokemonFrom(allForms[i][j])
+					if (newPoke.form.startsWith("Mega") ||
+						newPoke.form == "Primal" ||
+						newPoke.form == "Meteor Form" ||
+						newPoke.name == "Castform" && newPoke.form != "Base" ||
+						newPoke.name == "Rotom" && newPoke.form != "Base" ||
+						newPoke.name == "Meloetta" && newPoke.form != "Aria Forme" ||
+						newPoke.name == "Aegislash" && newPoke.form != "Shield Forme" ||
+						newPoke.name == "Wishiwashi" && newPoke.form != "Solo Form" ||
+						newPoke.name == "Minior" && newPoke.form == "Meteor Form"
+					) continue
+					basePokes.push(newPoke)
+					if (pokes.filter(e => e.id == newPoke.id && e.form == newPoke.form).length)
+						newPoke.got = true
+				}
+			}
+		}
+		return basePokes
+	}
+
+	getPokemonFamilyIds(pokemon, recursion) {
+		if (recursion === undefined)
+			recursion = 0
+		else
+			recursion++
+		if (!pokemon || recursion > 3) {
+			console.log("error with " + JSON.stringify(pokemon))
+			return []
+		}
+		var ids = [pokemon.id]
+		for (var i in pokemon.evolvesTo)
+			ids = ids.concat(this.getPokemonFamilyIds(this.getPokemonFrom(pokemon.evolvesTo[i]), recursion))
+		return ids
+	}
+
+	getAllForms() {
+		var forms = []
+		for (var n in this.pokemons) {
+			var pokemon = this.pokemons[n]
+			if (!forms[pokemon.id - 1]) {
+				if (!pokemon.forms) {
+					forms[pokemon.id - 1] = [{ id: pokemon.id, form: pokemon.form }]
+					continue
+				}
+				forms[pokemon.id - 1] = []
+				for (var i in pokemon.forms) {
+					forms[pokemon.id - 1].push({ id: pokemon.id, form: pokemon.forms[i] })
+				}
+			}
+		}
+		return forms
+	}
+
+	getBreedables(parentPokemons) {
+		var breedables = []
+		for (var n in parentPokemons) {
+			var pokemon = parentPokemons[n]
+			if (!pokemon.eggs)
+				continue
+			for (var i in pokemon.eggs) {
+				//TODO: minior...
+				var egg = pokemon.eggs[i]
+				var baby = this.getPokemonFrom(egg)
+				baby.ivs = pokemon.ivs
+				if (this.nearPerfectIvCount(baby.ivs) < 4)
+					continue
+				baby.nature = pokemon.nature
+				var hidden = pokemon.abilities[2] ? pokemon.abilities[2].toLowerCase() == pokemon.ability.split("(")[0].trim().toLowerCase() : false
+				if (hidden)
+					baby.ability = baby.abilities[2]
+				else
+					baby.ability = pokemon.abilities[0] + (pokemon.abilities[1] ? " · " + pokemon.abilities[1] : "")
+				baby.learntMoves = pokemon.learntMoves.filter(e => baby.moves.filter(o => e.split("(")[0].trim() == o.name && o.method == "egg").length)
+				baby.balls = pokemon.balls.filter(e => e)
+				var existing = breedables.filter(e => e.id == baby.id && e.form == baby.form && e.ability == baby.ability && e.nature == baby.nature)[0]
+				if (existing) {
+					existing.balls = this.uniqueBy(existing.balls.concat(baby.balls), e => e)
+					existing.learntMoves = this.uniqueBy(existing.learntMoves.concat(baby.learntMoves), e => e)
+				}
+				else
+					breedables.push(baby)
+			}
+		}
+		return breedables
+	}
+
+	uniqueBy(list, key) {
+		var seen = {};
+		return list.filter(function (item) {
+			var k = key(item);
+			return seen.hasOwnProperty(k) ? false : (seen[k] = true);
+		})
+	}
+
+	nearPerfectIvCount(ivs) {
+		var count = 0
+		for (var i in ivs)
+			if (ivs[i] >= 30)
+				count++
+		return count
 	}
 }

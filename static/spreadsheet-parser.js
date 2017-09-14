@@ -21,23 +21,6 @@ class SpreadsheetParser {
 			}
 			this.addNewTab(title, i)
 		}
-		/*if (stuff.collection.lookingFor.length || stuff.collection.pokemons.length) {
-			navMine.style.display = ""
-			navAllMine.onclick = function () {
-				deselectTabs()
-				navAllMine.className = "active"
-				selectedTab = "mine"
-				infoMove()
-				update()
-			}
-			navBreedables.onclick = function () {
-				deselectTabs()
-				navBreedables.className = "active"
-				selectedTab = "breedables"
-				infoMove()
-				update()
-			}
-		}*/
 		this.updateExternalInventoryLoadedness()
 	}
 
