@@ -7,19 +7,21 @@ class HeaderSection {
 		this.subtitle = ""
 
 		this.navGroups = {
-			pokemons: {
+			base: {
 				all: {
 					text: "⊖",
-					click: () => stuff.state.mode = "table",
-					active: () => stuff.state.mode == "table",
+					click: () => stuff.state.currentTab = "all",
+					active: () => stuff.state.currentTab == "all",
 					style: { fontSize: "1.5rem", paddingBottom: "0.2rem" }
 				},
 				custom: {
 					text: "☷",
-					click: () => stuff.state.mode = "grid",
-					active: () => stuff.state.mode == "grid",
+					click: () => stuff.state.currentTab = "custom",
+					active: () => stuff.state.currentTab == "custom",
 					style: { fontSize: "1.3rem" }
 				}
+			},
+			pokemons: {
 			},
 			modes: {
 				table: {
@@ -112,6 +114,53 @@ class HeaderSection {
 		element.onclick = () => {
 			entry.click()
 			this.showNavList()
+		}
+	}
+
+	updateNavPokemonTabs() {
+		this.navGroups.pokemons = {}
+		var index = 0
+		this.navGroups.pokemons[index] = "|"
+		index++
+		if (stuff.collection.collectorName) {
+			this.navGroups.pokemons[index] = {
+				text: stuff.collection.collectorName + "'s Pokémon",
+				click: () => stuff.state.selectTab("mine"),
+				active: () => stuff.state.currentTab == "mine"
+			}
+			index++
+		}
+		if (stuff.settings.showBreedables) {
+			this.navGroups.pokemons[index] = {
+				text: "Breedables",
+				click: () => stuff.state.selectTab("breedables"),
+				active: () => stuff.state.currentTab == "breedables"
+			}
+			index++
+		}
+		if (stuff.collection.collectorName || stuff.settings.showBreedables) {
+			this.navGroups.pokemons[index] = "|"
+			index++
+		}
+		for (var i in stuff.collection.pokemons) {
+			var tab = stuff.collection.pokemons[i]
+			this.navGroups.pokemons[index] = {
+				text: tab.title,
+				click: tab.click,
+				active: tab.active
+			}
+			index++
+		}
+		this.navGroups.pokemons[index] = "|"
+		index++
+		for (var i in stuff.collection.lookingFor) {
+			var tab = stuff.collection.lookingFor[i]
+			this.navGroups.pokemons[index] = {
+				text: tab.title,
+				click: tab.click,
+				active: tab.active
+			}
+			index++
 		}
 	}
 }

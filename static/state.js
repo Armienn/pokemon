@@ -5,7 +5,7 @@ class State {
 		this.mode = "table"
 		this.completionMode = "normal"
 		this.currentPokemon
-		this.currentTab
+		this.currentTab = "all"
 		this.showMoves = false
 		this.loaded = false
 		this.thingsLoaded = {
@@ -27,8 +27,10 @@ class State {
 	}
 
 	selectTab(tab) {
+		window.location.hash = ""
+		if(typeof tab !== "string")
+			window.location.hash = tab.id
 		this.currentTab = tab
-		window.location.hash = tab.id
 		stuff.update()
 	}
 }

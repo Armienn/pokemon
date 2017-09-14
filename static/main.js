@@ -29,6 +29,7 @@ class PokemonStuff {
 			if (!this.state.externalInventory.isLoaded)
 				return
 		}
+		this.headerSection.updateNavPokemonTabs()
 		this.show()
 	}
 
@@ -100,7 +101,7 @@ class PokemonStuff {
 	show() {
 		this.headerSection.show()
 		this.updateColors()
-		document.getElementById("loading").hidden = true
+		setTimeout(function(){fade(document.getElementById("loading"))},500)
 	}
 
 	updateColors() {
@@ -153,6 +154,20 @@ function newTag(tag, parentElement, options = {}) {
 		newElement.innerHTML = options.text
 	return newElement
 }
+
+function fade(element) {
+	var opacity = 1;
+	var timer = setInterval(function () {
+		if (opacity <= 0.01){
+			clearInterval(timer)
+			element.style.display = 'none'
+		}
+		element.style.opacity = opacity
+		element.style.filter = 'alpha(opacity=' + opacity * 100 + ")"
+		opacity -= 0.15
+	}, 50)
+}
+
 
 var stuff = new PokemonStuff()
 stuff.load()
