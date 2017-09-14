@@ -122,7 +122,7 @@ class ListSection {
 			element.innerHTML = columns[i].column(pokemon)
 		}
 		pokeElement.onclick = function () {
-			// selectPokemon(pokemon, pokeElement)
+			stuff.selectPokemon(pokemon, pokeElement)
 		}
 		if (this.nextPoke % 2)
 			pokeElement.className = pokemon.got ? "got-odd" : "odd"
@@ -136,7 +136,7 @@ class ListSection {
 			pokeElement.className = "got"
 		pokeElement.innerHTML = "<img src='" + PokeText.spriteName(pokemon) + "'/>"
 		pokeElement.onclick = function () {
-			// selectPokemon(pokemon)
+			stuff.selectPokemon(pokemon)
 		}
 	}
 }

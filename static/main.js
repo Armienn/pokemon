@@ -4,6 +4,7 @@ class PokemonStuff {
 
 	constructor() {
 		this.headerSection = new HeaderSection()
+		this.infoSection = new InfoSection()
 		this.listSection = new ListSection()
 		this.state = new State()
 		this.settings = new Settings()
@@ -12,12 +13,22 @@ class PokemonStuff {
 		this.spreadsheetParser = new SpreadsheetParser()
 	}
 
-	updatePokemon() {
+	updatePokemons() {
 		if(!this.state.loaded)
 			return
 		this.state.currentPokemons = this.data.getFilteredPokemons()
 		this.listSection.show()
 		// ?
+	}
+
+	selectPokemon(pokemon, element){
+		if(!pokemon || this.state.currentPokemon == pokemon){
+			this.infoSection.closeInfo()
+			return
+		}
+		this.infoSection.closeInfo(()=>{
+			this.infoSection.showInfo(pokemon, element)
+		})
 	}
 
 	tryLoad() {
@@ -33,7 +44,7 @@ class PokemonStuff {
 		}
 		this.state.loaded = true
 		this.headerSection.updateNavPokemonTabs()
-		this.updatePokemon()
+		this.updatePokemons()
 		this.show()
 		setInterval(() => { this.listSection.loadMoreWhenScrolledDown() }, 500)
 	}

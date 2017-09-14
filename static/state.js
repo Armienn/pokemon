@@ -62,6 +62,6 @@ class State {
 		if(typeof tab !== "string")
 			window.location.hash = tab.id
 		this.currentTab = tab
-		stuff.updatePokemon()
+		stuff.updatePokemons()
 	}
 }

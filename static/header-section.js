@@ -26,13 +26,13 @@ class HeaderSection {
 			modes: {
 				table: {
 					text: "▤",
-					click: () => { stuff.state.mode = "table"; stuff.updatePokemon() },
+					click: () => { stuff.state.mode = "table"; stuff.updatePokemons() },
 					active: () => stuff.state.mode == "table",
 					style: { fontSize: "2rem", fontWeight: "initial" }
 				},
 				grid: {
 					text: "▦",
-					click: () => { stuff.state.mode = "grid"; stuff.updatePokemon() },
+					click: () => { stuff.state.mode = "grid"; stuff.updatePokemons() },
 					active: () => stuff.state.mode == "grid",
 					style: { fontSize: "2rem", fontWeight: "initial" }
 				}
