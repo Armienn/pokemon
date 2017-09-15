@@ -6,28 +6,28 @@ class InfoSection {
 			this.Section(
 				(pokemon) => {
 					var rows = []
-					rows.push([this.Title("Types |"), this.Content(PokeText.types(pokemon))])
+					this.simpleRow(rows, "Types |", PokeText.types(pokemon))
 					if (pokemon.nickname)
-						rows.push([this.Title("Nickname |"), this.Content(pokemon.nickname)])
+						this.simpleRow(rows, "Nickname |", pokemon.nickname)
 					else
-						rows.push([this.Title("Classification |"), this.Content(PokeText.types(pokemon))])
+						this.simpleRow(rows, "Classification |", pokemon.classification)
 					if (pokemon.ability)
-						rows.push([this.Title("Ability |"), this.Content(PokeText.ability(pokemon.ability, pokemon.abilities[2] ?
-							pokemon.abilities[2].toLowerCase() == pokemon.ability.split("(")[0].trim().toLowerCase() : false, true))])
+						this.simpleRow(rows, "Ability |", PokeText.ability(pokemon.ability, pokemon.abilities[2] ?
+							pokemon.abilities[2].toLowerCase() == pokemon.ability.split("(")[0].trim().toLowerCase() : false, true))
 					else
-						rows.push([this.Title("Abilities |"), this.Content(PokeText.abilities(pokemon, true))])
+						this.simpleRow(rows, "Abilities |", PokeText.abilities(pokemon, true))
 					if (pokemon.nature)
-						rows.push([this.Title("Nature |"), this.Content(pokemon.nature)])
+						this.simpleRow(rows, "Nature |", pokemon.nature)
 					else
-						rows.push([this.Title("Egg groups |"), this.Content(PokeText.eggGroups(pokemon))])
+						this.simpleRow(rows, "Egg groups |", PokeText.eggGroups(pokemon))
 					if (pokemon.gender)
-						rows.push([this.Title("Gender |"), this.Content(PokeText.gender(pokemon))])
+						this.simpleRow(rows, "Gender |", PokeText.gender(pokemon))
 					else
-						rows.push([this.Title("Gender ratio |"), this.Content(PokeText.gender(pokemon))])
+						this.simpleRow(rows, "Gender ratio |", PokeText.gender(pokemon))
 					if (pokemon.hiddenPower)
-						rows.push([this.Title("Hidden power |"), this.Content(PokeText.type(pokemon.hiddenPower))])
+						this.simpleRow(rows, "Hidden power |", PokeText.type(pokemon.hiddenPower))
 					else
-						rows.push([this.Title("Weight/height |"), this.Content(PokeText.weightHeight(pokemon))])
+						this.simpleRow(rows, "Weight/height |", PokeText.weightHeight(pokemon))
 					return rows
 				}),
 			this.Section(
@@ -35,11 +35,11 @@ class InfoSection {
 					if (!pokemon.base) return []
 					var rows = []
 					if (pokemon.ot || pokemon.tid)
-						rows.push([this.Title("OT |"), this.Content(pokemon.ot + (pokemon.tid ? " (" + prependZeroes(pokemon.tid, 6) + ")" : ""))])
+						this.simpleRow(rows, "OT |", pokemon.ot + (pokemon.tid ? " (" + prependZeroes(pokemon.tid, 6) + ")" : ""))
 					for (var i in pokemon.learntMoves)
-						rows.push([this.Title("Move |"), this.Content(PokeText.move(pokemon.learntMoves[i]))])
+						this.simpleRow(rows, "Move |", PokeText.move(pokemon.learntMoves[i]))
 					if (pokemon.balls && pokemon.balls.length)
-						rows.push([this.Title("Ball |"), this.Content(PokeText.balls(pokemon))])
+						this.simpleRow(rows, "Ball |", PokeText.balls(pokemon))
 					return rows
 				}),
 			this.Section(
@@ -71,9 +71,21 @@ class InfoSection {
 					return rows
 				}, {
 					title: (pokemon) => "Base stat total: " + this.getTotalBaseStat(pokemon)
-				})
+				}),
+			this.Section(
+				(pokemon) => {
+					var rows = []
+					var things = (pokemon.evolvesTo ? pokemon.evolvesTo.length : 0) + (pokemon.eggs ? pokemon.eggs.length : 0) + (pokemon.evolvesFrom ? 1 : 0)
+					var compact = things > 6
+					for (var i in pokemon.eggs)
+						this.familyRow(rows, "Egg |", pokemon.eggs[i], compact)
+					if (pokemon.evolvesFrom)
+						this.familyRow(rows, "Evolves from |", pokemon.evolvesFrom, compact)
+					for (var i in pokemon.evolvesTo)
+						this.familyRow(rows, "Evolves to |", pokemon.evolvesTo[i], compact)
+					return rows
+				}),
 		]
-		this.moveSections = []
 
 		this.infoElement = document.getElementById("pokemon-info")
 		this.infoRowElement = document.getElementById("pokemon-info-row")
@@ -82,6 +94,10 @@ class InfoSection {
 		this.descriptionElement = document.getElementById("description-header")
 		this.imageElement = document.getElementById("image-section")
 		this.sectionsElement = document.getElementById("info-sections")
+		this.movesElement = document.getElementById("moves-section")
+		this.movesHeader = document.getElementById("moves-header")
+		this.movesHeader.onclick = () => { this.toggleShowMoves() }
+		document.getElementById("close-header").onclick = () => { stuff.selectPokemon() }
 	}
 
 	closeInfo(onDone) {
@@ -121,7 +137,7 @@ class InfoSection {
 			this.infoElement.className = "hidden-info"
 		}, 50)
 		if (stuff.state.showMoves)
-			toggleShowMoves()
+			this.toggleShowMoves()
 		setTimeout(() => {
 			this.infoRowElement.style.display = "none"
 			this.moveAway()
@@ -149,9 +165,12 @@ class InfoSection {
 		this.showName(stuff.state.currentPokemon)
 		this.showDescription(stuff.state.currentPokemon)
 		this.showImage(stuff.state.currentPokemon)
+		this.sectionsElement.removeChild(this.imageElement)
 		this.sectionsElement.innerHTML = ""
+		this.sectionsElement.appendChild(this.imageElement)
 		for (var i in this.sections)
 			this.showSection(this.sections[i])
+		this.showMoves(stuff.state.currentPokemon)
 	}
 
 	showName(pokemon) {
@@ -190,11 +209,11 @@ class InfoSection {
 		if (!rows.length)
 			return
 		var sec = newTag("section", this.sectionsElement)
-		if(section.title)
+		if (section.title)
 			sec.title = section.title(stuff.state.currentPokemon)
 		var table = newTag("table", sec)
-		table.cellspacing = "0"
-		table.cellpadding = "0"
+		table.cellSpacing = "0"
+		table.cellPadding = "0"
 		newTag("thead", table)
 		var body = newTag("tbody", table)
 		for (var i in rows) {
@@ -205,12 +224,18 @@ class InfoSection {
 		}
 	}
 
-	showRow(row, setup) {
-		for (var i in setup) {
-			var cell = newTag(setup[i].tag, row)
-			cell.innerHTML = typeof setup[i].content == "string" ? setup[i].content : setup[i].content(stuff.state.currentPokemon)
-			for (var j in setup[i].style)
-				cell.style[j] = setup[i].style[j]
+	showRow(row, cells) {
+		for (var i in cells.style)
+			row.style[i] = cells.style[i]
+		delete cells.style
+		for (var i in cells.options)
+			row[i] = cells.options[i]
+		delete cells.options
+		for (var i in cells) {
+			var cell = newTag(cells[i].tag, row)
+			cell.innerHTML = typeof cells[i].content == "string" ? cells[i].content : cells[i].content(stuff.state.currentPokemon)
+			for (var j in cells[i].style)
+				cell.style[j] = cells[i].style[j]
 		}
 	}
 
@@ -230,7 +255,124 @@ class InfoSection {
 		return { tag: "td", style: style, content: content, ...options }
 	}
 
-	// stat bar stuff
+	showMoves(pokemon) {
+		var moveGroups = {}
+		for (var i in pokemon.moves) {
+			var method = pokemon.moves[i].method
+			var level = +method
+			if (level)
+				method = "level"
+			if (!moveGroups[method])
+				moveGroups[method] = []
+			moveGroups[method].push({ move: stuff.data.moves[pokemon.moves[i].name], level: level })
+		}
+		this.movesElement.innerHTML = ""
+		if (moveGroups["level"])
+			this.addMoveGroup(moveGroups["level"], "level")
+		delete moveGroups["level"]
+		if (moveGroups["evolution"])
+			this.addMoveGroup(moveGroups["evolution"], "evolution")
+		delete moveGroups["evolution"]
+		if (moveGroups["egg"])
+			this.addMoveGroup(moveGroups["egg"], "egg")
+		delete moveGroups["egg"]
+		if (moveGroups["tm"])
+			this.addMoveGroup(moveGroups["tm"], "tm")
+		delete moveGroups["tm"]
+		if (moveGroups["tutor"])
+			this.addMoveGroup(moveGroups["tutor"], "tutor")
+		delete moveGroups["tutor"]
+		for (var key in moveGroups)
+			this.addMoveGroup(moveGroups[key], key)
+	}
+
+	addMoveGroup(moveGroup, method) {
+		var table = newTag("table", this.movesElement)
+		table.cellSpacing = "0"
+		table.cellPadding = "0"
+		newTag("thead", table)
+		newTag("tbody", table)
+		setTimeout(() => { this.fillMoveTable(table, moveGroup, method) }, 0)
+	}
+
+	fillMoveTable(table, moveGroup, method) {
+		this.addMoveHeader(table.children[0], moveGroup, method)
+		for (var i in moveGroup) {
+			this.addMoveRow(table.children[1], moveGroup[i].move, moveGroup[i].level, i, method)
+		}
+	}
+
+	addMoveHeader(table, moveGroup, method) {
+		var row = newTag("tr", table)
+		var title = "Learnt somehow"
+		switch (method) {
+			case "level": title = "Learnt by level up:"; break;
+			case "evolution": title = "Learnt by evolution:"; break;
+			case "egg": title = "Learnt as egg move:"; break;
+			case "tm": title = "Learnt by TM:"; break;
+			case "tutor": title = "Learnt by tutor:"; break;
+		}
+		var titleRow = newTag("td", row)
+		titleRow.innerHTML = title
+		titleRow.colSpan = "8"
+		titleRow.style.fontWeight = "bold"
+		row = newTag("tr", table)
+		newTag("td", row).innerHTML = "Move"
+		if (method == "level")
+			newTag("td", row).innerHTML = "Level"
+		if (method == "tm")
+			newTag("td", row).innerHTML = "TM"
+		newTag("td", row).innerHTML = "Type"
+		newTag("td", row).innerHTML = "Category"
+		newTag("td", row).innerHTML = "Power"
+		newTag("td", row).innerHTML = "Accuracy"
+		newTag("td", row).innerHTML = "Priority"
+		newTag("td", row).innerHTML = "PP"
+		newTag("td", row).innerHTML = "Summary"
+	}
+
+	addMoveRow(table, move, level, i, method) {
+		var row = newTag("tr", table)
+		var head = newTag("td", row)
+		var url = "http://pokemondb.net/move/" + move.name.toLowerCase().replace(" ", "-").replace("'", "")
+		head.innerHTML = "<a href='" + url + "'>" + move.name + "</a>"
+		head.style.fontWeight = "bold"
+		if (method == "level")
+			newTag("td", row).innerHTML = level
+		if (method == "tm")
+			newTag("td", row).innerHTML = move.tm
+		newTag("td", row).innerHTML = PokeText.type(move.type)
+		newTag("td", row).innerHTML = move.category
+		newTag("td", row).innerHTML = move.power
+		newTag("td", row).innerHTML = move.accuracy
+		newTag("td", row).innerHTML = move.priority
+		newTag("td", row).innerHTML = move.pp.split(" ")[0]
+		newTag("td", row).innerHTML = move.gameDescription
+		row.className = i % 2 ? "odd" : "even"
+	}
+
+	toggleShowMoves() {
+		stuff.state.showMoves = !stuff.state.showMoves
+		if (stuff.state.showMoves) {
+			this.movesHeader.innerHTML = "Moves ▼"
+			this.movesElement.className = "shown-moves"
+			this.infoElement.style.maxHeight = "1000rem"
+		} else {
+			this.movesHeader.innerHTML = "Moves ▶"
+			this.movesElement.className = "hidden-moves"
+			this.infoElement.style.maxHeight = "none"
+		}
+	}
+
+	// general section stuff
+
+	simpleRow(rows, title, content) {
+		rows.push([
+			this.Title(title),
+			this.Content(content)])
+	}
+
+	// stat section stuff
 
 	statRow(rows, pokemon, title, stat) {
 		rows.push([
@@ -276,5 +418,18 @@ class InfoSection {
 		for (var i in pokemon.stats)
 			count += pokemon.stats[i]
 		return count
+	}
+
+	// family section stuff
+	familyRow(rows, title, pokeInfo, compact) {
+		var pokemon = stuff.data.getPokemonFrom(pokeInfo)
+		var text = PokeText.formName(pokemon) + (pokeInfo.method == "Normal" ? "" : " (" + pokeInfo.method + ")")
+		var cells = [
+			this.Title(title),
+			this.Content(PokeText.formName(pokemon) + (pokeInfo.method == "Normal" ? "" : " (" + pokeInfo.method + ")"),
+				compact ? { paddingBottom: "0.05rem", paddingTop: "0.18rem" } : "left")]
+		cells.style = { cursor: "pointer", height: compact ? "1.33rem" : "" }
+		cells.options = { onclick: () => { stuff.selectPokemon(pokemon.base) } }
+		rows.push(cells)
 	}
 }

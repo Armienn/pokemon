@@ -2,7 +2,7 @@
 
 class State {
 	constructor() {
-		// modes and tabs and toggles
+		// modes and tabs
 		this.mode = "table"
 		this.completionMode = "normal"
 		this.currentTab = "all"

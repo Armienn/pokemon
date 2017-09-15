@@ -58,6 +58,7 @@ class ListSection {
 	show() {
 		this.nextPoke = 0
 		this.nextLimit = 50
+		stuff.infoSection.moveAway()
 		while (this.listElement.children[0].firstChild)
 			this.listElement.children[0].removeChild(this.listElement.children[0].firstChild)
 		while (this.listElement.children[1].firstChild)
