@@ -88,7 +88,8 @@ class HeaderSection {
 			"Learnt moves": { type: "basic", filter: this.hasItemInFilter("learntMoves"), options: Object.keys(stuff.data.moves) },
 			"Gender": { type: "multi", filter: this.hasItemInFilter("gender"), options: ["♂", "♀", "—", "Undefined"] },
 			"Shiny": { type: "select", filter: this.shinyFilter, options: ["Show only", "Don't show"] },
-			"Hidden ability": { type: "select", filter: this.hiddenAbilityFilter, options: ["Show only", "Don't show"] }
+			"Hidden ability": { type: "select", filter: this.hiddenAbilityFilter, options: ["Show only", "Don't show"] },
+			"Custom filter": { type: "custom" }
 		}
 		this.updateNavPokemonTabs()
 	}
@@ -291,6 +292,7 @@ class HeaderSection {
 				case "basic": this.addBasicFilter(event.target.value, filter); break;
 				case "select": this.addFilterSelectEntry(event.target.value, filter); break;
 				case "multi": this.addFilterMultiSelectEntry(event.target.value, filter); break;
+				case "custom": this.addCustomFilterEntry(event.target.value); break;
 			}
 		}
 	}
@@ -366,6 +368,27 @@ class HeaderSection {
 				chosenOptions.push(option)
 			}
 		}
+	}
+
+	addCustomFilterEntry(label){
+		var filterElement = newTag("li", this.filterListElement)
+		filterElement.title = "Return true for the pokemon you want to see"
+		newTag("label", filterElement).innerHTML = label
+		var inputElement = newTag("textarea", filterElement)
+		inputElement.style.width = "20rem"
+		inputElement.style.height = "1rem"
+		inputElement.value = "return pokemon.form.startsWith('Mega')"
+		var addElement = newTag("button", filterElement)
+		addElement.innerHTML = "Add"
+		addElement.onclick = ()=>{
+			this.addCustomFilter(label, inputElement.value)
+			stuff.updatePokemons()
+		}
+	}
+
+	addCustomFilter(label, input, filterFunction){
+		var title = label + " <span class='close-mark'>❌</span>"
+		stuff.state.filters[title] = function(pokemon){return new Function("var pokemon = this;" + input).call(pokemon)}
 	}
 
 	addFilter(label, input, filterFunction) {
