@@ -18,7 +18,7 @@ class PokemonStuff {
 			return
 		this.state.currentPokemons = this.data.getFilteredPokemons()
 		this.listSection.show()
-		// ?
+		this.headerSection.updateFilterTabs()
 	}
 
 	selectPokemon(pokemon, element){

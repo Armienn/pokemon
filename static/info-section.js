@@ -70,7 +70,7 @@ class InfoSection {
 					this.statRow(rows, pokemon, "Speed |", "spe")
 					return rows
 				}, {
-					title: (pokemon) => "Base stat total: " + this.getTotalBaseStat(pokemon)
+					title: (pokemon) => "Base stat total: " + stuff.data.getTotalBaseStat(pokemon)
 				}),
 			this.Section(
 				(pokemon) => {
@@ -411,13 +411,6 @@ class InfoSection {
 			div += "background:" + background + ";"
 		div += "'></div>"
 		return div
-	}
-
-	getTotalBaseStat(pokemon) {
-		var count = 0
-		for (var i in pokemon.stats)
-			count += pokemon.stats[i]
-		return count
 	}
 
 	// family section stuff

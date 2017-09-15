@@ -219,7 +219,7 @@ class PokemonData {
 		if (stuff.state.searchFilter)
 			pokes = pokes.filter(stuff.state.searchFilter)
 		if (stuff.state.sorting)
-			pokes.sort(stuff.state.sorting.method)
+			pokes.sort(stuff.state.sorting)
 		return pokes
 	}
 
@@ -351,21 +351,21 @@ class PokemonData {
 				count++
 		return count
 	}
-	
-	tallyDefense(attackType, pokemon){
+
+	tallyDefense(attackType, pokemon) {
 		var defense = 1
 		defense *= this.getTypeDefense(attackType, pokemon.types[0])
-		if(pokemon.types[1])
+		if (pokemon.types[1])
 			defense *= this.getTypeDefense(attackType, pokemon.types[1])
 		return defense
 	}
 
-	getTypeDefense(attackType, defenseType){
-		if(this.types[defenseType].weaknesses.indexOf(attackType) > -1)
+	getTypeDefense(attackType, defenseType) {
+		if (this.types[defenseType].weaknesses.indexOf(attackType) > -1)
 			return 2
-		else if(this.types[defenseType].strengths.indexOf(attackType) > -1)
+		else if (this.types[defenseType].strengths.indexOf(attackType) > -1)
 			return 0.5
-		else if(this.types[defenseType].immunities.indexOf(attackType) > -1)
+		else if (this.types[defenseType].immunities.indexOf(attackType) > -1)
 			return 0
 		return 1
 	}
@@ -386,5 +386,12 @@ class PokemonData {
 		if (pokemon.id <= 802)
 			return 7
 		return 8
+	}
+
+	getTotalBaseStat(pokemon) {
+		var count = 0
+		for (var i in pokemon.stats)
+			count += pokemon.stats[i]
+		return count
 	}
 }

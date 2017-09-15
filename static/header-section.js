@@ -53,16 +53,29 @@ class HeaderSection {
 			}
 		}
 
-		this.filters = { }
+		this.sorts = {
+			"ID": (a, b) => { return a.id - b.id },
+			"HP": (a, b) => { return b.stats.hp - a.stats.hp },
+			"Attack": (a, b) => { return b.stats.atk - a.stats.atk },
+			"Defense": (a, b) => { return b.stats.def - a.stats.def },
+			"Sp. Attack": (a, b) => { return b.stats.spa - a.stats.spa },
+			"Sp. Defense": (a, b) => { return b.stats.spd - a.stats.spd },
+			"Speed": (a, b) => { return b.stats.spe - a.stats.spe },
+			"Total base stats": (a, b) => { return stuff.data.getTotalBaseStat(b) - stuff.data.getTotalBaseStat(a) },
+			"Custom sort": (a, b) => { return b.stats.hp - a.stats.hp }
+		}
+
+		this.filters = {}
 
 		this.titleElement = document.getElementById("main-title")
 		this.subtitleElement = document.getElementById("sub-title")
 		this.navListElement = document.getElementById("nav-list")
 		this.filterAdderElement = document.getElementById("filter-adder")
 		this.filterListElement = document.getElementById("filter-list")
+		this.currentFilterList = document.getElementById("current-filter-list")
 	}
 
-	setup(){
+	setup() {
 		this.filters = {
 			"Type": { type: "basic", filter: this.hasItemInFilter("types"), options: stuff.data.typeNames },
 			"Ability": { type: "basic", filter: this.hasItemInFilter("ability", "abilities"), options: Object.keys(stuff.data.abilities) },
@@ -84,7 +97,10 @@ class HeaderSection {
 		this.showTitle()
 		this.showSubtitle()
 		this.showNavList()
-		this.showFiltering()
+		this.filterAdderElement.innerHTML = ""
+		this.showSearch()
+		this.showFilterSelect()
+		this.showSortingChooser()
 	}
 
 	showTitle() {
@@ -187,36 +203,99 @@ class HeaderSection {
 		}
 	}
 
-	showFiltering() {
-		//this.addFilterInputs()
-		this.addFilterSelect()
+	showSearch() {
+		var filterElement = newTag("li", this.filterAdderElement, true)
+		var inputElement = newTag("input", filterElement)
+		inputElement.placeholder = "Search"
+		inputElement.style.width = "15rem"
+		inputElement.oninput = () => {
+			stuff.state.searchFilter = this.getSearchFilter(inputElement.value)
+			stuff.updatePokemons()
+		}
 	}
-	
-	addFilterSelect(){
+
+	showSortingChooser() {
+		var label = "Sort by:"
+		document.getElementById("custom-adder").innerHTML = ""
+		var filterElement = newTag("li", document.getElementById("custom-adder"), true)
+		newTag("label", filterElement).innerHTML = label
+		var selectElement = newTag("select", filterElement)
+		for (var i in this.sorts) {
+			var optionElement = newTag("option", selectElement)
+			optionElement.value = i
+			optionElement.innerHTML = i
+		}
+		selectElement.onchange = function () {
+			var customSortElement = document.getElementById("custom-sort")
+			if (this.value == "Custom sort") {
+				newTag("label", customSortElement).innerHTML = label
+				var textareaElement = newTag("textarea", customSortElement)
+				textareaElement.style.width = "20rem"
+				textareaElement.style.height = "1rem"
+				textareaElement.value = "return pokeB.stats.hp - pokeA.stats.hp"
+				var addElement = newTag("button", customSortElement)
+				addElement.innerHTML = "Update"
+				addElement.onclick = function () {
+					stuff.headerSection.sorts["Custom sort"] = stuff.headerSection.addCustomSort(label, textareaElement.value)
+					stuff.state.sorting = stuff.headerSection.sorts["Custom sort"]
+					stuff.updatePokemons()
+				}
+				stuff.state.sorting = stuff.headerSection.sorts["Custom sort"]
+				stuff.updatePokemons()
+			}
+			else {
+				customSortElement.innerHTML = ""
+				stuff.state.sorting = stuff.headerSection.sorts[this.value]
+				stuff.updatePokemons()
+			}
+		}
+	}
+
+	addCustomSort(label, input, filterFunction) {
+		return function (a, b) { return new Function("var pokeA = this.a;var pokeB = this.b;" + input).call({ a: a, b: b }) }
+	}
+
+	updateFilterTabs() {
+		this.currentFilterList.innerHTML = ""
+		for (var i in stuff.state.filters)
+			this.createFilterListElement(i)
+	}
+
+	createFilterListElement(filterKey) {
+		var filterElement = newTag("li", this.currentFilterList)
+		filterElement.innerHTML = filterKey
+		filterElement.onclick = function () {
+			delete stuff.state.filters[filterKey]
+			stuff.updatePokemons()
+		}
+		return filterElement
+	}
+
+	showFilterSelect() {
 		var filterElement = newTag("li", this.filterAdderElement, true)
 		filterElement.title = "Filters remove pokemons that do not fit the filter"
 		newTag("label", filterElement).innerHTML = "Add filter:"
 		var selectElement = newTag("select", filterElement)
 		newTag("option", selectElement)
-		for(var i in this.filters){
+		for (var i in this.filters) {
 			var optionElement = newTag("option", selectElement)
 			optionElement.value = i
 			optionElement.innerHTML = i
 		}
-		selectElement.onchange = (event)=>{
+		selectElement.onchange = (event) => {
 			this.filterListElement.innerHTML = ""
 			var filter = this.filters[event.target.value]
-			if(!filter)
+			if (!filter)
 				return
-			switch(filter.type){
-				case "basic": this.addBasicFilter(event.target.value,filter); break;
-				case "select": this.addFilterSelectEntry(event.target.value,filter); break;
-				case "multi": this.addFilterMultiSelectEntry(event.target.value,filter); break;
+			switch (filter.type) {
+				case "basic": this.addBasicFilter(event.target.value, filter); break;
+				case "select": this.addFilterSelectEntry(event.target.value, filter); break;
+				case "multi": this.addFilterMultiSelectEntry(event.target.value, filter); break;
 			}
 		}
 	}
 
-	addBasicFilter(label, filter){
+	addBasicFilter(label, filter) {
 		var filterElement = newTag("li", this.filterListElement)
 		filterElement.title = "A comma-separated list of acceptable values"
 		newTag("label", filterElement).innerHTML = label
@@ -224,64 +303,64 @@ class HeaderSection {
 		inputElement.type = "text"
 		var addElement = newTag("button", filterElement)
 		addElement.innerHTML = "Add"
-		addElement.onclick = ()=>{
+		addElement.onclick = () => {
 			this.addFilter(label, inputElement.value, filter.filter)
 			inputElement.value = ""
 			stuff.updatePokemons()
 		}
-		if(filter.options){
+		if (filter.options) {
 			var datalistElement = newTag("datalist", filterElement)
-			datalistElement.id = "datalist" + label.replace(" ","-")
-			inputElement.setAttribute("list", "datalist" + label.replace(" ","-"))
-			for(var i in filter.options){
+			datalistElement.id = "datalist" + label.replace(" ", "-")
+			inputElement.setAttribute("list", "datalist" + label.replace(" ", "-"))
+			for (var i in filter.options) {
 				newTag("option", datalistElement).value = filter.options[i]
 			}
 		}
 	}
 
-	addFilterSelectEntry(label, filter){
+	addFilterSelectEntry(label, filter) {
 		var filterElement = newTag("li", this.filterListElement)
 		newTag("label", filterElement).innerHTML = label
 		var selectElement = newTag("select", filterElement)
-		for(var i in filter.options){
+		for (var i in filter.options) {
 			var option = newTag("option", selectElement)
 			option.value = filter.options[i]
 			option.innerHTML = filter.options[i]
 		}
 		var addElement = newTag("button", filterElement)
 		addElement.innerHTML = "Add"
-		addElement.onclick = ()=>{
+		addElement.onclick = () => {
 			this.addFilter(label, selectElement.value, filter.filter)
 			stuff.updatePokemons()
 		}
 	}
-	
-	addFilterMultiSelectEntry(label, filter){
+
+	addFilterMultiSelectEntry(label, filter) {
 		var filterElement = newTag("li", this.filterListElement)
 		newTag("label", filterElement).innerHTML = label
 		var chosenOptions = []
-		for(var i in filter.options)
+		for (var i in filter.options)
 			this.addMultiSelectOption(filterElement, chosenOptions, filter.options[i])
 		var addElement = newTag("button", filterElement)
 		addElement.innerHTML = "Add"
-		addElement.onclick = ()=>{
+		addElement.onclick = () => {
 			this.addFilter(label, chosenOptions, filter.filter)
 			stuff.updatePokemons()
 		}
 	}
-	
-	addMultiSelectOption(filterElement, chosenOptions, option){
+
+	addMultiSelectOption(filterElement, chosenOptions, option) {
 		var element = newTag("li", filterElement)
 		element.className = "inactive"
 		element.style.cursor = "pointer"
 		element.style.fontWeight = "bold"
 		element.innerHTML = option
-		element.onclick = function(){
-			if(element.className == "active"){
+		element.onclick = function () {
+			if (element.className == "active") {
 				element.className = "inactive"
 				var index = chosenOptions.indexOf(option)
 				if (index > -1)
-				chosenOptions.splice(index, 1)
+					chosenOptions.splice(index, 1)
 			} else {
 				element.className = "active"
 				chosenOptions.push(option)
@@ -289,20 +368,20 @@ class HeaderSection {
 		}
 	}
 
-	addFilter(label, input, filterFunction){
+	addFilter(label, input, filterFunction) {
 		var title = label + ": "
 		var inputs = []
-		if(typeof input == "string")
+		if (typeof input == "string")
 			inputs = input.split(",")
 		else
 			inputs = input
-		if(label == "Type")
-			for(var i in inputs)
-				title += PokeText.type(inputs[i].trim()) + (i<inputs.length - 1? ", " : "")
+		if (label == "Type")
+			for (var i in inputs)
+				title += PokeText.type(inputs[i].trim()) + (i < inputs.length - 1 ? ", " : "")
 		else
 			title += input
 		title += " <span class='close-mark'>❌</span>"
-		for(var i in inputs)
+		for (var i in inputs)
 			inputs[i] = inputs[i].trim()
 		stuff.state.filters[title] = filterFunction(...inputs)
 	}
@@ -314,7 +393,7 @@ class HeaderSection {
 			return PokeText.formName(pokemon).toLowerCase().indexOf(query) > -1
 		}
 	}
-	
+
 	hasItemInFilter(key, fallbackKey) {
 		return function (...items) {
 			return function (pokemon) {
@@ -336,7 +415,7 @@ class HeaderSection {
 			}
 		}
 	}
-	
+
 	shinyFilter(mode) {
 		var show = mode == "Show only"
 		return function (pokemon) {
@@ -345,7 +424,7 @@ class HeaderSection {
 			return !show
 		}
 	}
-	
+
 	hiddenAbilityFilter(mode) {
 		var show = mode == "Show only"
 		return function (pokemon) {
@@ -354,7 +433,7 @@ class HeaderSection {
 			return !show
 		}
 	}
-	
+
 	legendaryFilter(mode) {
 		var show = mode == "Show only"
 		return function (pokemon) {
@@ -372,7 +451,7 @@ class HeaderSection {
 			return !show
 		}
 	}
-	
+
 	generationFilter(...items) {
 		return (pokemon) => {
 			var generation = stuff.data.getGeneration(pokemon)
@@ -383,8 +462,3 @@ class HeaderSection {
 		}
 	}
 }
-
-// filter things
-
-
-
