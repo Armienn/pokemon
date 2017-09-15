@@ -351,4 +351,22 @@ class PokemonData {
 				count++
 		return count
 	}
+	
+	tallyDefense(attackType, pokemon){
+		var defense = 1
+		defense *= this.getTypeDefense(attackType, pokemon.types[0])
+		if(pokemon.types[1])
+			defense *= this.getTypeDefense(attackType, pokemon.types[1])
+		return defense
+	}
+
+	getTypeDefense(attackType, defenseType){
+		if(this.types[defenseType].weaknesses.indexOf(attackType) > -1)
+			return 2
+		else if(this.types[defenseType].strengths.indexOf(attackType) > -1)
+			return 0.5
+		else if(this.types[defenseType].immunities.indexOf(attackType) > -1)
+			return 0
+		return 1
+	}
 }

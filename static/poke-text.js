@@ -78,7 +78,7 @@ class PokeText {
 		if (defense == 2)
 			return "<span style='color:green;'>2</span>"
 		if (defense == 1)
-			return defense
+			return "1"
 		if (defense == 0.5)
 			return "<span style='color:#ba2323;'>½</span>"
 		if (defense == 0.25)
