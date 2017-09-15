@@ -14,7 +14,7 @@ class State {
 
 		// filters and search
 		this.query
-		this.filters = []
+		this.filters = {}
 		this.searchFilter
 		this.sorting
 

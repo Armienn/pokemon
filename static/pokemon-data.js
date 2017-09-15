@@ -369,4 +369,22 @@ class PokemonData {
 			return 0
 		return 1
 	}
+
+	getGeneration(pokemon) {
+		if (pokemon.id <= 151)
+			return 1
+		if (pokemon.id <= 251)
+			return 2
+		if (pokemon.id <= 386)
+			return 3
+		if (pokemon.id <= 493)
+			return 4
+		if (pokemon.id <= 649)
+			return 5
+		if (pokemon.id <= 721)
+			return 6
+		if (pokemon.id <= 802)
+			return 7
+		return 8
+	}
 }
