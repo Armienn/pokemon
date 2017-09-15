@@ -43,7 +43,7 @@ class PokemonStuff {
 				return
 		}
 		this.state.loaded = true
-		this.headerSection.updateNavPokemonTabs()
+		this.headerSection.setup()
 		this.updatePokemons()
 		this.show()
 		setInterval(() => { this.listSection.loadMoreWhenScrolledDown() }, 500)
