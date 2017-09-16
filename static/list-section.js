@@ -12,6 +12,7 @@ class ListSection {
 	constructor() {
 		this.nextPoke = 0
 		this.nextLimit = 50
+		this.adding = false
 
 		this.basePokemonColumns = [
 			new PokemonColumn("", (pokemon) => "<img src='" + PokeText.spriteName(pokemon) + "'  style='height: 2rem;'/>"),
@@ -78,12 +79,15 @@ class ListSection {
 	}
 
 	addNextPokemonEntry() {
+		this.adding = true
 		if (!stuff.state.currentPokemons[this.nextPoke]) {
 			this.nextPoke = 0
+			this.adding = false
 			return
 		}
 		if (this.nextPoke > this.nextLimit) {
 			this.nextLimit += stuff.state.mode == "grid" ? 50 : 25
+			this.adding = false
 			return
 		}
 		if (stuff.state.mode == "table")
@@ -110,6 +114,8 @@ class ListSection {
 	}
 
 	loadMoreWhenScrolledDown() {
+		if(this.adding)
+			return
 		var main = document.getElementById("main")
 		if (main.scrollTop > main.scrollHeight - main.clientHeight - 200) {
 			if (this.nextPoke)
