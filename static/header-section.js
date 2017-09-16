@@ -9,14 +9,14 @@ class HeaderSection {
 		this.navGroups = {
 			base: {
 				all: {
-					text: "⊖",
+					text: "<img src='static/pokeball-white.png' style='height:1.5rem;padding-top:0.6rem;'></img>", //⊖
 					click: () => stuff.state.selectTab("all"),
 					active: () => stuff.state.currentTab == "all",
 					style: { fontSize: "1.5rem", paddingBottom: "0.2rem" }
 				},
 				custom: {
 					text: "☷",
-					click: () => {stuff.state.selectTab("custom"); this.customPokemonElement.style.display = "" },
+					click: () => { stuff.state.selectTab("custom"); this.customPokemonElement.style.display = "" },
 					active: () => stuff.state.currentTab == "custom",
 					style: { fontSize: "1.3rem" }
 				}
@@ -163,6 +163,8 @@ class HeaderSection {
 
 	updateNavPokemonTabs() {
 		this.navGroups.pokemons = {}
+		if (!(stuff.collection.pokemons.length || stuff.collection.lookingFor.length))
+			return
 		var index = 0
 		this.navGroups.pokemons[index] = "|"
 		index++

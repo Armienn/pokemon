@@ -109,7 +109,26 @@ class PokemonStuff {
 		this.headerSection.setup()
 		this.updatePokemons()
 		this.show()
+		document.getElementById("copy").onclick = function(){
+			document.getElementById("copy").style.display = "none"
+		}
+		document.getElementById("pokemon-copy-table").onclick = function(e){
+			e.stopPropagation()
+		}
+		if(!this.collection.spreadsheetId && this.state.destination)
+			this.selectPokemonBasedOn(this.state.destination)
 		setInterval(() => { this.listSection.loadMoreWhenScrolledDown() }, 500)
+	}
+
+	selectPokemonBasedOn(destination){
+		for(var n in this.data.pokemons){
+			var pokemon = this.data.pokemons[n]
+			var name = pokemon.name.toLowerCase().replace(" ", "-").replace("♀","-f").replace("♂","-m").replace("'","").replace(".","").replace("ébé","ebe").replace(":","")
+			if(pokemon.id == destination || name == destination.toLowerCase()){
+				this.selectPokemon(pokemon)
+				return
+			}
+		}
 	}
 
 	loadScript() {
