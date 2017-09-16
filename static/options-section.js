@@ -14,6 +14,10 @@ class OptionsSection {
 			"Script": { method: (input) => (new Function(input))(), default: "return [stuff.newPokemon('pikachu'), stuff.newPokemon({name:'Charizard', form: 'Mega X'}), stuff.newPokemon(151)]" }
 		}
 
+		this.exportMethods = {
+			"Reddit Markdown": (pokemons) => this.getMarkdownTable(pokemons)
+		}
+
 		this.optionsElement = document.getElementById("options-section")
 		this.optionsSubElement = document.getElementById("options-sub-section")
 	}
@@ -91,7 +95,28 @@ class OptionsSection {
 	}
 
 	showExportMenu() {
-		var topbar = newTag("div", this.optionsSubElement, { text: "Coming soon, to a site near YOU!" })
+		var topbar = newTag("div", this.optionsSubElement)
+		newTag("li", topbar, { text: "Export current pokémons as" })
+		var exportSelect = newTag("select", topbar)
+		newTag("option", exportSelect)
+		for (var i in this.exportMethods) {
+			var option = newTag("option", exportSelect, { text: i })
+			option.value = i
+		}
+		exportSelect.onchange = () => {
+			var exportMethod = this.exportMethods[exportSelect.value]
+			if (exportMethod) {
+				bottombar.style.display = ""
+				textarea.value = exportMethod(stuff.state.currentPokemons)
+			} else {
+				bottombar.style.display = "none"
+			}
+		}
+		var bottombar = newTag("div", this.optionsSubElement)
+		bottombar.style.display = "none"
+		var textarea = newTag("textarea", bottombar)
+		textarea.style.width = "30rem"
+		textarea.style.height = "8rem"
 	}
 
 	showAddMenu() {
@@ -117,5 +142,35 @@ class OptionsSection {
 		list = list.concat(stuff.collection.pokemons)
 		list = list.concat(stuff.collection.lookingFor)
 		return list
+	}
+
+	getMarkdownTable(pokemons){
+		var table = `Pokemon| Ability| Nature| IVs| Moves| Pokeball
+---|---|----|----|----|----
+`
+		for(var n in pokemons){
+			var pokemon = pokemons[n]
+			table += (pokemon.shiny ? "★ " : "") + 
+				PokeText.formName(pokemon) +
+				(pokemon.gender ? " " + pokemon.gender : "") +
+				(pokemon.amount ? " (" + pokemon.amount + ")" : "") + "| "
+			if(pokemon.ability)
+				table += pokemon.ability
+			table += "| "
+			if(pokemon.nature)
+				table += pokemon.nature
+			table += "| "
+			if(pokemon.ivs)
+				table += pokemon.ivs.hp + "/" + pokemon.ivs.atk + "/" + pokemon.ivs.def + "/" + 
+					pokemon.ivs.spa + "/" + pokemon.ivs.spd + "/" + pokemon.ivs.spe
+			table += "| "
+			if(pokemon.learntMoves)
+				table += pokemon.learntMoves.join(", ")
+			table += "| "
+			for(var i in pokemon.balls)
+				table += "[](/" + pokemon.balls[i].replace(" ","").replace("é","e").toLowerCase() + ") "
+			table += "\n"
+		}
+		return table
 	}
 }
