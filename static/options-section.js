@@ -11,7 +11,7 @@ class OptionsSection {
 		}
 
 		this.importMethods = {
-			"Script": {method: (input) => (new Function(input))(), default: "return [stuff.newPokemon('pikachu'), stuff.newPokemon({name:'Charizard', form: 'Mega X'}), stuff.newPokemon(151)]" }
+			"Script": { method: (input) => (new Function(input))(), default: "return [stuff.newPokemon('pikachu'), stuff.newPokemon({name:'Charizard', form: 'Mega X'}), stuff.newPokemon(151)]" }
 		}
 
 		this.optionsElement = document.getElementById("options-section")
@@ -91,14 +91,15 @@ class OptionsSection {
 	}
 
 	showExportMenu() {
-
+		var topbar = newTag("div", this.optionsSubElement, { text: "Coming soon, to a site near YOU!" })
 	}
 
 	showAddMenu() {
-
+		var topbar = newTag("div", this.optionsSubElement, { text: "Coming soon, to a site near YOU!" })
 	}
 
 	showDeleteMenu() {
+		var topbar = newTag("div", this.optionsSubElement, { text: "Coming soon, to a site near YOU!" })
 		/*
 				newTag("li", topbar, { text: "to tab" })
 				var tabSelect = newTag("select", topbar)

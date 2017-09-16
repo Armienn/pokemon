@@ -163,7 +163,7 @@ class HeaderSection {
 
 	updateNavPokemonTabs() {
 		this.navGroups.pokemons = {}
-		if (!(stuff.collection.pokemons.length || stuff.collection.lookingFor.length))
+		if (!(stuff.collection.pokemons.length || stuff.collection.lookingFor.length || stuff.collection.local.length))
 			return
 		var index = 0
 		if (stuff.collection.local.length) {
