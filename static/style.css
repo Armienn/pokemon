@@ -22,6 +22,12 @@ time, mark, audio, video {
     border: none;
 }
 
+@media (max-device-width: 736px){
+    html{
+        font-size: 24px;
+    }
+}
+
 article{
     width: 100vw;
     height: 100vh;
