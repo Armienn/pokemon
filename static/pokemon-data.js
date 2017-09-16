@@ -129,17 +129,6 @@ class PokemonData {
 			for (var i in stuff.collection.pokemons)
 				pokes = pokes.concat(stuff.collection.pokemons[i].pokemons)
 			pokes = this.getBreedables(pokes)
-		} else if (stuff.state.currentTab == "custom") {
-			try {
-				stuff.state.customPokemon = new Function(document.getElementById('custom-pokemon').value);
-				pokes = stuff.state.customPokemon()
-			}
-			catch (e) {
-				console.error(e)
-				pokes = []
-			}
-			if (!pokes)
-				pokes = []
 		} else if (stuff.state.currentTab == "all") {
 			pokes = pokes
 		} else if (stuff.state.currentTab)

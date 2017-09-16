@@ -17,8 +17,8 @@ class HeaderSection {
 				},
 				custom: {
 					text: "☷",
-					click: () => { stuff.selectTab("custom"); this.customPokemonElement.style.display = "" },
-					active: () => stuff.state.currentTab == "custom",
+					click: () => stuff.optionsSection.toggle(),
+					active: () => false,
 					style: { fontSize: "1.3rem" }
 				}
 			},
@@ -75,6 +75,8 @@ class HeaderSection {
 		this.filterListElement = document.getElementById("filter-list")
 		this.currentFilterList = document.getElementById("current-filter-list")
 		this.customPokemonElement = document.getElementById("custom-pokemon-section")
+		this.optionsElement = document.getElementById("options-section")
+		this.optionsSubElement = document.getElementById("options-sub-section")
 	}
 
 	setup() {
@@ -93,7 +95,6 @@ class HeaderSection {
 			"Hidden ability": { type: "select", filter: this.hiddenAbilityFilter, options: ["Show only", "Don't show"] },
 			"Custom filter": { type: "custom" }
 		}
-		this.updateNavPokemonTabs()
 	}
 
 	show() {
@@ -289,7 +290,8 @@ class HeaderSection {
 				textareaElement.style.width = "20rem"
 				textareaElement.style.height = "1rem"
 				textareaElement.value = "return pokeB.stats.hp - pokeA.stats.hp"
-				var addElement = newTag("button", customSortElement)
+				var addElement = newTag("div", customSortElement)
+				addElement.className = "button"
 				addElement.innerHTML = "Update"
 				addElement.onclick = function () {
 					stuff.headerSection.sorts["Custom sort"] = stuff.headerSection.addCustomSort(label, textareaElement.value)

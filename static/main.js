@@ -6,6 +6,7 @@ class PokemonStuff {
 		this.headerSection = new HeaderSection()
 		this.infoSection = new InfoSection()
 		this.listSection = new ListSection()
+		this.optionsSection = new OptionsSection()
 		this.state = new State()
 		this.settings = new Settings()
 		this.data = new PokemonData()
@@ -14,6 +15,7 @@ class PokemonStuff {
 	}
 
 	update() {
+		this.optionsSection.updateOptions()
 		this.headerSection.updateNavPokemonTabs()
 		this.updatePokemons()
 		this.show()
@@ -111,8 +113,7 @@ class PokemonStuff {
 		}
 		this.state.loaded = true
 		this.headerSection.setup()
-		this.updatePokemons()
-		this.show()
+		this.update()
 		document.getElementById("copy").onclick = function () {
 			document.getElementById("copy").style.display = "none"
 		}

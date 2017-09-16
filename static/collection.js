@@ -27,11 +27,18 @@ class Collection {
 		return tab
 	}
 
-	addLocalTab(title, pokemons, id) {
-		var tab = this.newTab(title, pokemons, id)
-		if (!id)
-			tab.id = this.local.length ? this.local[this.local.length - 1].id + 1 : 1
-		this.local.push(tab)
+	addLocalTab(title, pokemons) {
+		var tab = this.newTab(title, pokemons, title)
+		var added = false
+		for (var i in this.local) {
+			if (this.local[i].title == title) {
+				this.local[i] = tab
+				added = true
+				break
+			}
+		}
+		if (!added)
+			this.local.push(tab)
 		return tab
 	}
 

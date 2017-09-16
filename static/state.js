@@ -32,9 +32,6 @@ class State {
 		this.script
 		this.spreadsheet
 		this.destination
-
-		// other stuff
-		this.customPokemon = function(){ }
 	}
 
 	get thingsAreLoaded(){

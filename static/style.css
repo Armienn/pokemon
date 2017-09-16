@@ -414,3 +414,35 @@ td img{
     margin: -10px;
     margin-right: 0;
 }
+#options-section, #options-sub-section{
+    overflow: hidden;
+    font-weight: bold;
+}
+ #options-sub-section{
+    margin-top: 0.5rem;
+}
+.button{
+    cursor: pointer;
+    font-weight: bold;
+    background-color: rgba(255, 255, 255, 0.5);
+    color: black;
+    padding: 0.3rem 0.8rem;
+    opacity: 0.4;
+    transition: .3s ease-in-out;
+}
+.button:hover{
+    opacity: 1;
+    color: white;
+}
+.hidden-options{
+    max-height: 0rem;
+    transition: 0.3s ease;
+}
+#options-section.shown-options{
+    max-height: 4rem;
+    transition: 0.3s ease;
+}
+#options-sub-section.shown-options{
+    max-height: 50rem;
+    transition: 0.5s ease;
+}
