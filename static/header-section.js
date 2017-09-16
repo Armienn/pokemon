@@ -40,13 +40,13 @@ class HeaderSection {
 			colours: {
 				day: {
 					text: "☀",
-					click: () => { stuff.settings.colorScheme = "day"; stuff.updateColors() },
+					click: () => { stuff.settings.setColorScheme("day"); stuff.updateColors() },
 					active: () => stuff.settings.colorScheme == "day",
 					style: { fontSize: "1.2rem" }
 				},
 				night: {
 					text: "☽",
-					click: () => { stuff.settings.colorScheme = "night"; stuff.updateColors() },
+					click: () => { stuff.settings.setColorScheme("night"); stuff.updateColors() },
 					active: () => stuff.settings.colorScheme == "night",
 					style: { fontSize: "1.2rem" }
 				}

@@ -49,7 +49,7 @@ class PokemonStuff {
 		this.loadBaseData()
 		this.loadCollectionData()
 		this.loadDestination()
-		this.loadCookieSettings()
+		this.settings.load()
 	}
 
 	loadBaseData() {
@@ -96,10 +96,6 @@ class PokemonStuff {
 	loadDestination() {
 		if (window.location.hash)
 			this.state.destination = window.location.hash.substring(1)
-	}
-
-	loadCookieSettings() {
-
 	}
 
 	tryLoad() {
