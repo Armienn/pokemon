@@ -13,7 +13,7 @@ class ListSection {
 		this.nextLimit = 50
 
 		this.basePokemonColumns = [
-			new PokemonColumn("", (pokemon) => "<img src='" + PokeText.spriteName(pokemon) + "'/>"),
+			new PokemonColumn("", (pokemon) => "<img src='" + PokeText.spriteName(pokemon) + "'  style='height: 2rem;'/>"),
 			new PokemonColumn("Pokemon", (pokemon) => PokeText.formName(pokemon) + (pokemon.nickname ? " [" + pokemon.nickname + "]" : "")),
 			new PokemonColumn("Types", (pokemon) => PokeText.types(pokemon)),
 			new PokemonColumn("Abilities", (pokemon) => PokeText.abilities(pokemon)),
@@ -27,7 +27,7 @@ class ListSection {
 		]
 
 		this.tabPokemonColumns = [
-			new PokemonColumn("", (pokemon) => "<img src='" + PokeText.spriteName(pokemon) + "'/>"),
+			new PokemonColumn("", (pokemon) => "<img src='" + PokeText.spriteName(pokemon) + "' style='height: 2rem;'/>"),
 			new PokemonColumn("Pokemon", (pokemon) =>
 				PokeText.formName(pokemon) +
 				(pokemon.gender && pokemon.gender != "—" ? " " + PokeText.gender(pokemon) : "") +

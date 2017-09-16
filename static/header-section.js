@@ -9,7 +9,7 @@ class HeaderSection {
 		this.navGroups = {
 			base: {
 				all: {
-					text: "<img src='static/pokeball-white.png' style='height:1.5rem;padding-top:0.6rem;'></img>", //⊖
+					text: "<img src='static/pokeball-white.png' style='height:1.5rem;padding-top:0.6rem;' />", //⊖
 					click: () => stuff.selectTab("all"),
 					active: () => stuff.state.currentTab == "all",
 					style: { fontSize: "1.5rem", paddingBottom: "0.2rem" }
