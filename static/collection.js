@@ -8,6 +8,7 @@ class Collection {
 		this.spreadsheetId
 		this.pokemons = []
 		this.lookingFor = []
+		this.local = []
 	}
 
 	addTab(title, pokemons, id) {
@@ -23,6 +24,14 @@ class Collection {
 		if (!id)
 			tab.id = this.lookingFor.length ? this.lookingFor[this.lookingFor.length - 1].id + 1 : 1
 		this.lookingFor.push(tab)
+		return tab
+	}
+
+	addLocalTab(title, pokemons, id) {
+		var tab = this.newTab(title, pokemons, id)
+		if (!id)
+			tab.id = this.local.length ? this.local[this.local.length - 1].id + 1 : 1
+		this.local.push(tab)
 		return tab
 	}
 

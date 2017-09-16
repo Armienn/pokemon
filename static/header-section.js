@@ -5,6 +5,7 @@ class HeaderSection {
 		this.title = "Pokémon Stuff"
 		this.titleLink = "https://github.com/Armienn/pokemon#pok%C3%A9mon-stuff"
 		this.subtitle = ""
+		this.showLocal = false
 
 		this.navGroups = {
 			base: {
@@ -166,6 +167,27 @@ class HeaderSection {
 		if (!(stuff.collection.pokemons.length || stuff.collection.lookingFor.length))
 			return
 		var index = 0
+		if (stuff.collection.local.length) {
+			this.navGroups.pokemons[index] = "|"
+			index++
+			if (this.showLocal) {
+				for (var i in stuff.collection.local) {
+					var tab = stuff.collection.local[i]
+					this.navGroups.pokemons[index] = {
+						text: tab.title,
+						click: tab.click,
+						active: tab.active
+					}
+					index++
+				}
+			}
+			this.navGroups.pokemons[index] = {
+				text: this.showLocal ? "◀" : "▶",
+				click: () => { this.showLocal = !this.showLocal; this.updateNavPokemonTabs() },
+				active: () => false
+			}
+			index++
+		}
 		this.navGroups.pokemons[index] = "|"
 		index++
 		if (stuff.collection.collectorName) {
