@@ -114,6 +114,7 @@ class OptionsSection {
 		}
 		var bottombar = newTag("div", this.optionsSubElement)
 		bottombar.style.display = "none"
+		newTag("p", bottombar, { text: "Ctrl+A to select everything, Ctrl+C to copy" })
 		var textarea = newTag("textarea", bottombar)
 		textarea.style.width = "30rem"
 		textarea.style.height = "8rem"

@@ -114,12 +114,6 @@ class PokemonStuff {
 		this.state.loaded = true
 		this.headerSection.setup()
 		this.update()
-		document.getElementById("copy").onclick = function () {
-			document.getElementById("copy").style.display = "none"
-		}
-		document.getElementById("pokemon-copy-table").onclick = function (e) {
-			e.stopPropagation()
-		}
 		if (!this.collection.spreadsheetId && this.state.destination)
 			this.selectPokemonBasedOn(this.state.destination)
 		setInterval(() => { this.listSection.loadMoreWhenScrolledDown() }, 500)
