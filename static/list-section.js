@@ -123,6 +123,8 @@ class ListSection {
 			columns = this.tabPokemonColumns
 		for (var i in columns) {
 			var element = newTag("th", pokeElement)
+			if(pokemon.notes)
+				element.title = pokemon.notes
 			element.innerHTML = columns[i].column(pokemon)
 		}
 		pokeElement.onclick = function () {
