@@ -125,51 +125,69 @@ class OptionsSection {
 	}
 
 	showDeleteMenu() {
-		var topbar = newTag("div", this.optionsSubElement, { text: "Coming soon, to a site near YOU!" })
-		/*
-				newTag("li", topbar, { text: "to tab" })
-				var tabSelect = newTag("select", topbar)
-				var allTabs = this.getAllTabs()
-				for (var i in allTabs) {
-					var option = newTag("option", tabSelect, { text: allTabs[i].title })
-					option.value = i
-				}
-				*/
+		var topbar = newTag("div", this.optionsSubElement)
+		if (!stuff.collection.local.length) {
+			newTag("li", topbar, { text: "No local tabs to delete!" })
+			return
+		}
+		newTag("li", topbar, { text: "Delete" })
+		var tabSelect = newTag("select", topbar)
+		newTag("option", tabSelect)
+		for (var i in stuff.collection.local) {
+			var option = newTag("option", tabSelect, { text: stuff.collection.local[i].title })
+			option.value = i
+		}
+		tabSelect.onchange = () => {
+			if (tabSelect.value > -1)
+				bottombar.style.display = ""
+			else
+				bottombar.style.display = "none"
+		}
+		var bottombar = newTag("div", this.optionsSubElement)
+		bottombar.style.display = "none"
+		newTag("li", bottombar, { text: "Deletion cannot be undone" })
+		var deleteButton = newTag("li", bottombar, { text: "Delete" })
+		deleteButton.className = "button"
+		deleteButton.onclick = () => {
+			var deleted = stuff.collection.local.splice(tabSelect.value, 1)[0]
+			tabSelect.innerHTML = ""
+			newTag("option", tabSelect)
+			for (var i in stuff.collection.local) {
+				var option = newTag("option", tabSelect, { text: stuff.collection.local[i].title })
+				option.value = i
+			}
+			stuff.headerSection.updateNavPokemonTabs()
+			if(deleted == stuff.state.currentTab)
+				stuff.selectTab("all")
+			stuff.show()
+		}
 	}
 
-	getAllTabs() {
-		var list = []
-		list = list.concat(stuff.collection.local)
-		list = list.concat(stuff.collection.pokemons)
-		list = list.concat(stuff.collection.lookingFor)
-		return list
-	}
-
-	getMarkdownTable(pokemons){
+	getMarkdownTable(pokemons) {
 		var table = `Pokemon| Ability| Nature| IVs| Moves| Pokeball
 ---|---|----|----|----|----
 `
-		for(var n in pokemons){
+		for (var n in pokemons) {
 			var pokemon = pokemons[n]
-			table += (pokemon.shiny ? "★ " : "") + 
+			table += (pokemon.shiny ? "★ " : "") +
 				PokeText.formName(pokemon) +
 				(pokemon.gender ? " " + pokemon.gender : "") +
 				(pokemon.amount ? " (" + pokemon.amount + ")" : "") + "| "
-			if(pokemon.ability)
+			if (pokemon.ability)
 				table += pokemon.ability
 			table += "| "
-			if(pokemon.nature)
+			if (pokemon.nature)
 				table += pokemon.nature
 			table += "| "
-			if(pokemon.ivs)
-				table += pokemon.ivs.hp + "/" + pokemon.ivs.atk + "/" + pokemon.ivs.def + "/" + 
+			if (pokemon.ivs)
+				table += pokemon.ivs.hp + "/" + pokemon.ivs.atk + "/" + pokemon.ivs.def + "/" +
 					pokemon.ivs.spa + "/" + pokemon.ivs.spd + "/" + pokemon.ivs.spe
 			table += "| "
-			if(pokemon.learntMoves)
+			if (pokemon.learntMoves)
 				table += pokemon.learntMoves.join(", ")
 			table += "| "
-			for(var i in pokemon.balls)
-				table += "[](/" + pokemon.balls[i].replace(" ","").replace("é","e").toLowerCase() + ") "
+			for (var i in pokemon.balls)
+				table += "[](/" + pokemon.balls[i].replace(" ", "").replace("é", "e").toLowerCase() + ") "
 			table += "\n"
 		}
 		return table
