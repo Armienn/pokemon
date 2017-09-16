@@ -32,6 +32,10 @@ class PokemonData {
 		this.pokemons = []
 		this.moves = {}
 		this.abilities = {}
+		this.natures = {}
+		this.eggGroups = []
+		this.types = { }
+		this.typeNames = []
 		this.typeColors = {
 			Bug: "#A8B820",
 			Dark: "#705848",
@@ -51,90 +55,6 @@ class PokemonData {
 			Rock: "#B8A038",
 			Steel: "#B8B8D0",
 			Water: "#6890F0"
-		}
-		this.types = {
-			Normal: { strengths: [], weaknesses: ["Fighting"], immunities: ["Ghost"] },
-			Fire: { strengths: ["Bug", "Fairy", "Fire", "Grass", "Ice", "Steel"], weaknesses: ["Ground", "Rock", "Water"], immunities: [] },
-			Water: { strengths: ["Fire", "Ice", "Steel", "Water"], weaknesses: ["Electric", "Grass"], immunities: [] },
-			Electric: { strengths: ["Electric", "Flying", "Steel"], weaknesses: ["Ground"], immunities: [] },
-			Grass: { strengths: ["Electric", "Grass", "Water", "Ground"], weaknesses: ["Bug", "Fire", "Flying", "Ice", "Poison"], immunities: [] },
-			Ice: { strengths: ["Ice"], weaknesses: ["Fighting", "Fire", "Rock", "Steel"], immunities: [] },
-			Fighting: { strengths: ["Bug", "Dark", "Rock"], weaknesses: ["Fairy", "Flying", "Psychic"], immunities: [] },
-			Poison: { strengths: ["Bug", "Fairy", "Fighting", "Grass", "Poison"], weaknesses: ["Ground", "Psychic"], immunities: [] },
-			Ground: { strengths: ["Poison", "Rock"], weaknesses: ["Grass", "Ice", "Water"], immunities: ["Electric"] },
-			Flying: { strengths: ["Bug", "Fighting", "Grass"], weaknesses: ["Electric", "Ice", "Rock"], immunities: ["Ground"] },
-			Psychic: { strengths: ["Fighting", "Psychic"], weaknesses: ["Bug", "Dark", "Ghost"], immunities: [] },
-			Bug: { strengths: ["Fighting", "Grass", "Ground"], weaknesses: ["Fire", "Flying", "Rock"], immunities: [] },
-			Rock: { strengths: ["Fire", "Flying", "Normal", "Poison"], weaknesses: ["Fighting", "Grass", "Ground", "Steel", "Water"], immunities: [] },
-			Ghost: { strengths: ["Bug", "Poison"], weaknesses: ["Dark", "Ghost"], immunities: ["Fighting", "Normal"] },
-			Dragon: { strengths: ["Electric", "Fire", "Grass", "Water"], weaknesses: ["Dragon", "Fairy", "Ice"], immunities: [] },
-			Dark: { strengths: ["Dark", "Ghost"], weaknesses: ["Bug", "Fairy", "Fighting"], immunities: ["Psychic"] },
-			Steel: { strengths: ["Bug", "Dragon", "Fairy", "Flying", "Grass", "Ice", "Normal", "Psychic", "Rock", "Steel"], weaknesses: ["Fighting", "Fire", "Ground"], immunities: ["Poison"] },
-			Fairy: { strengths: ["Bug", "Dark", "Fighting"], weaknesses: ["Poison", "Steel"], immunities: ["Dragon"] }
-		}
-		this.typeNames = [
-			"Bug",
-			"Dark",
-			"Dragon",
-			"Electric",
-			"Fairy",
-			"Fighting",
-			"Fire",
-			"Flying",
-			"Ghost",
-			"Grass",
-			"Ground",
-			"Ice",
-			"Normal",
-			"Poison",
-			"Psychic",
-			"Rock",
-			"Steel",
-			"Water"
-		]
-		this.eggGroupNames = [
-			"Monster",
-			"Water 1",
-			"Water 2",
-			"Water 3",
-			"Human-Like",
-			"Bug",
-			"Mineral",
-			"Flying",
-			"Amorphous",
-			"Field",
-			"Fairy",
-			"Ditto",
-			"Grass",
-			"Dragon",
-			"Undiscovered"
-		]
-		this.natures = {
-			"Adamant": { "positive": "Attack", "negative": "Sp. Atk" },
-			"Bashful": { "positive": "Sp. Atk", "negative": "Sp. Atk" },
-			"Bold": { "positive": "Defense", "negative": "Attack" },
-			"Brave": { "positive": "Attack", "negative": "Speed" },
-			"Calm": { "positive": "Sp. Def", "negative": "Attack" },
-			"Careful": { "positive": "Sp. Def", "negative": "Sp. Atk" },
-			"Docile": { "positive": "Defense", "negative": "Defense" },
-			"Gentle": { "positive": "Sp. Def", "negative": "Defense" },
-			"Hardy": { "positive": "Attack", "negative": "Attack" },
-			"Hasty": { "positive": "Speed", "negative": "Defense" },
-			"Impish": { "positive": "Defense", "negative": "Sp. Atk" },
-			"Jolly": { "positive": "Speed", "negative": "Sp. Atk" },
-			"Lax": { "positive": "Defense", "negative": "Sp. Def" },
-			"Lonely": { "positive": "Attack", "negative": "Defense" },
-			"Mild": { "positive": "Sp. Atk", "negative": "Defense" },
-			"Modest": { "positive": "Sp. Atk", "negative": "Attack" },
-			"Naive": { "positive": "Speed", "negative": "Sp. Def" },
-			"Naughty": { "positive": "Attack", "negative": "Sp. Def" },
-			"Quiet": { "positive": "Sp. Atk", "negative": "Speed" },
-			"Quirky": { "positive": "Sp. Def", "negative": "Sp. Def" },
-			"Rash": { "positive": "Sp. Atk", "negative": "Sp. Def" },
-			"Relaxed": { "positive": "Defense", "negative": "Speed" },
-			"Sassy": { "positive": "Sp. Def", "negative": "Speed" },
-			"Serious": { "positive": "Speed", "negative": "Speed" },
-			"Timid": { "positive": "Speed", "negative": "Attack" }
 		}
 	}
 
@@ -184,6 +104,10 @@ class PokemonData {
 	}
 
 	getPokemonFrom(idformthing) {
+		if (idformthing > 0)
+			return this.findPokemon(+idformthing)
+		if (typeof idformthing == "string")
+			idformthing = { name: idformthing }
 		if (!idformthing.id && idformthing.name) {
 			var possiblePokes = this.pokemons.filter(e => idformthing.name.toLowerCase() == e.name.toLowerCase())
 			if (possiblePokes.length)
@@ -206,7 +130,16 @@ class PokemonData {
 				pokes = pokes.concat(stuff.collection.pokemons[i].pokemons)
 			pokes = this.getBreedables(pokes)
 		} else if (stuff.state.currentTab == "custom") {
-			pokes = stuff.state.customPokemon()
+			try {
+				stuff.state.customPokemon = new Function(document.getElementById('custom-pokemon').value);
+				pokes = stuff.state.customPokemon()
+			}
+			catch (e) {
+				console.error(e)
+				pokes = []
+			}
+			if (!pokes)
+				pokes = []
 		} else if (stuff.state.currentTab == "all") {
 			pokes = pokes
 		} else if (stuff.state.currentTab)

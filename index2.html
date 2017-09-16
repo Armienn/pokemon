@@ -24,8 +24,23 @@
 			<label>
 				Custom Pokémon:
 			</label>
-			<textarea id="custom-pokemon" style="height: 14rem; width: 32rem;"></textarea>
-			<button id="custom-pokemon-update">Update</button>
+			<textarea id="custom-pokemon" style="height: 14rem; width: 32rem;">
+var list = []
+var pokemon = stuff.newPokemon({name:"Beedrill",form:"Mega"})
+pokemon.ivs = {hp:31,atk:31,def:31,spa:31,spd:31,spe:31}
+pokemon.evs = {hp:0,atk:0,def:0,spa:0,spd:0,spe:252}
+pokemon.nature = "Jolly"
+pokemon.got = true
+list.push(pokemon)
+for(var n in stuff.data.pokemons){
+	pokemon = new Pokemon(stuff.data.pokemons[n])
+	pokemon.ivs = {hp:31,atk:31,def:31,spa:31,spd:31,spe:31}
+	pokemon.evs = {hp:0,atk:0,def:0,spa:0,spd:0,spe:252}
+	pokemon.nature = "Jolly"
+	list.push(pokemon)
+}
+return list</textarea>
+			<button id="custom-pokemon-update" onclick="stuff.updatePokemons()">Update</button>
 		</ul>
 		<ul>
 			<ul id="filter-adder" style="display: inline-table;">

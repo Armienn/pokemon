@@ -16,7 +16,7 @@ class HeaderSection {
 				},
 				custom: {
 					text: "☷",
-					click: () => stuff.state.selectTab("custom"),
+					click: () => {stuff.state.selectTab("custom"); this.customPokemonElement.style.display = "" },
 					active: () => stuff.state.currentTab == "custom",
 					style: { fontSize: "1.3rem" }
 				}
@@ -73,6 +73,7 @@ class HeaderSection {
 		this.filterAdderElement = document.getElementById("filter-adder")
 		this.filterListElement = document.getElementById("filter-list")
 		this.currentFilterList = document.getElementById("current-filter-list")
+		this.customPokemonElement = document.getElementById("custom-pokemon-section")
 	}
 
 	setup() {
@@ -154,6 +155,7 @@ class HeaderSection {
 		let element = newTag("li", groupElement, entry)
 		element.className = entry.active() ? "active" : "inactive"
 		element.onclick = () => {
+			this.customPokemonElement.style.display = "none"
 			entry.click()
 			this.showNavList()
 		}

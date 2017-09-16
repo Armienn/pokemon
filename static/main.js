@@ -13,40 +13,28 @@ class PokemonStuff {
 		this.spreadsheetParser = new SpreadsheetParser()
 	}
 
+	update(){
+		this.headerSection.updateNavPokemonTabs()
+		this.updatePokemons()
+		this.show()
+	}
+
 	updatePokemons() {
-		if(!this.state.loaded)
+		if (!this.state.loaded)
 			return
 		this.state.currentPokemons = this.data.getFilteredPokemons()
 		this.listSection.show()
 		this.headerSection.updateFilterTabs()
 	}
 
-	selectPokemon(pokemon, element){
-		if(!pokemon || this.state.currentPokemon == pokemon){
+	selectPokemon(pokemon, element) {
+		if (!pokemon || this.state.currentPokemon == pokemon) {
 			this.infoSection.closeInfo()
 			return
 		}
-		this.infoSection.closeInfo(()=>{
+		this.infoSection.closeInfo(() => {
 			this.infoSection.showInfo(pokemon, element)
 		})
-	}
-
-	tryLoad() {
-		if (!this.state.thingsAreLoaded)
-			return
-		if (this.state.externalInventory.load) {
-			if (this.state.script)
-				this.loadScript()
-			else if (this.state.spreadsheet)
-				this.loadSpreadsheet()
-			if (!this.state.externalInventory.isLoaded)
-				return
-		}
-		this.state.loaded = true
-		this.headerSection.setup()
-		this.updatePokemons()
-		this.show()
-		setInterval(() => { this.listSection.loadMoreWhenScrolledDown() }, 500)
 	}
 
 	load() {
@@ -57,19 +45,25 @@ class PokemonStuff {
 	}
 
 	loadBaseData() {
-		requestJSON("https://armienn.github.io/pokemon/data-sumo/moves.json", (moves) => {
-			this.data.moves = moves
-			this.state.thingsLoaded.moves = true
+		this.loadJSONData("pokemons")
+		this.loadJSONData("moves")
+		this.loadJSONData("abilities")
+		this.loadJSONData("natures")
+		this.loadJSONData("eggGroups", "egg-groups")
+		requestJSON("https://armienn.github.io/pokemon/data-sumo/types.json", (types) => {
+			this.data.types = types
+			this.data.typeNames = Object.keys(types)
+			this.state.thingsLoaded.types = true
 			this.tryLoad()
 		})
-		requestJSON("https://armienn.github.io/pokemon/data-sumo/pokemons.json", (pokemons) => {
-			this.data.pokemons = pokemons
-			this.state.thingsLoaded.pokemons = true
-			this.tryLoad()
-		})
-		requestJSON("https://armienn.github.io/pokemon/data-sumo/abilities.json", (abilities) => {
-			this.data.abilities = abilities
-			this.state.thingsLoaded.abilities = true
+	}
+
+	loadJSONData(thing, file){
+		if(!file)
+			file = thing
+		requestJSON("https://armienn.github.io/pokemon/data-sumo/"+file+".json", (data) => {
+			this.data[thing] = data
+			this.state.thingsLoaded[thing] = true
 			this.tryLoad()
 		})
 	}
@@ -100,6 +94,24 @@ class PokemonStuff {
 
 	}
 
+	tryLoad() {
+		if (!this.state.thingsAreLoaded)
+			return
+		if (this.state.externalInventory.load) {
+			if (this.state.script)
+				this.loadScript()
+			else if (this.state.spreadsheet)
+				this.loadSpreadsheet()
+			if (!this.state.externalInventory.isLoaded)
+				return
+		}
+		this.state.loaded = true
+		this.headerSection.setup()
+		this.updatePokemons()
+		this.show()
+		setInterval(() => { this.listSection.loadMoreWhenScrolledDown() }, 500)
+	}
+
 	loadScript() {
 		var pokemons = new Function(this.state.script)()
 		this.state.script = undefined
@@ -126,6 +138,10 @@ class PokemonStuff {
 		document.getElementsByTagName("body")[0].style.color = this.settings.colors.textColor
 		document.getElementsByTagName("section")[0].style.backgroundColor = this.settings.colors.headerColor
 		document.getElementsByTagName("header")[0].style.backgroundColor = this.settings.colors.headerColor
+	}
+
+	newPokemon(args){
+		return this.data.getPokemonFrom(args)
 	}
 }
 
@@ -179,46 +195,46 @@ function textContains(text, substring) {
 	return text.toLowerCase().indexOf(substring.toLowerCase()) > -1
 }
 
-function prependZeroes(number, characters){
+function prependZeroes(number, characters) {
 	number = number.toString()
-	while(number.length < characters){
+	while (number.length < characters) {
 		number = "0" + number
 	}
 	return number
 }
 
-function parseStatType(text){
-	if(["hp","health"].indexOf(text.trim().toLowerCase())>-1)
+function parseStatType(text) {
+	if (["hp", "health"].indexOf(text.trim().toLowerCase()) > -1)
 		return "hp"
-	if(["atk","attack"].indexOf(text.trim().toLowerCase())>-1)
+	if (["atk", "attack"].indexOf(text.trim().toLowerCase()) > -1)
 		return "atk"
-	if(["def","defense"].indexOf(text.trim().toLowerCase())>-1)
+	if (["def", "defense"].indexOf(text.trim().toLowerCase()) > -1)
 		return "def"
-	if(["spa","sp. atk","sp. attack","special attack"].indexOf(text.trim().toLowerCase())>-1)
+	if (["spa", "sp. atk", "sp. attack", "special attack"].indexOf(text.trim().toLowerCase()) > -1)
 		return "spa"
-	if(["spd","sp. def","sp. defense","special defense"].indexOf(text.trim().toLowerCase())>-1)
+	if (["spd", "sp. def", "sp. defense", "special defense"].indexOf(text.trim().toLowerCase()) > -1)
 		return "spd"
-	if(["spe","speed"].indexOf(text.trim().toLowerCase()))
+	if (["spe", "speed"].indexOf(text.trim().toLowerCase()))
 		return "spe"
 }
 
 function HSVtoRGB(h, s, v) {
-		var r, g, b, i, f, p, q, t
-		i = Math.floor(h * 6)
-		f = h * 6 - i
-		p = v * (1 - s)
-		q = v * (1 - f * s)
-		t = v * (1 - (1 - f) * s)
-		switch (i % 6) {
-			case 0: r = v, g = t, b = p; break;
-			case 1: r = q, g = v, b = p; break;
-			case 2: r = p, g = v, b = t; break;
-			case 3: r = p, g = q, b = v; break;
-			case 4: r = t, g = p, b = v; break;
-			case 5: r = v, g = p, b = q; break;
-		}
-		return Math.round(r * 255) + "," + Math.round(g * 255) + "," + Math.round(b * 255)
+	var r, g, b, i, f, p, q, t
+	i = Math.floor(h * 6)
+	f = h * 6 - i
+	p = v * (1 - s)
+	q = v * (1 - f * s)
+	t = v * (1 - (1 - f) * s)
+	switch (i % 6) {
+		case 0: r = v, g = t, b = p; break;
+		case 1: r = q, g = v, b = p; break;
+		case 2: r = p, g = v, b = t; break;
+		case 3: r = p, g = q, b = v; break;
+		case 4: r = t, g = p, b = v; break;
+		case 5: r = v, g = p, b = q; break;
 	}
+	return Math.round(r * 255) + "," + Math.round(g * 255) + "," + Math.round(b * 255)
+}
 
 var stuff = new PokemonStuff()
 stuff.load()

@@ -30,7 +30,7 @@ class Collection {
 		var tab = {}
 		tab.title = title
 		tab.id = id
-		tab.pokemons = pokemons
+		tab.pokemons = pokemons ? pokemons : []
 		tab.click = () => {
 			stuff.state.selectTab(tab)
 		}

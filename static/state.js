@@ -23,7 +23,10 @@ class State {
 		this.thingsLoaded = {
 			pokemons: false,
 			moves: false,
-			abilities: false
+			abilities: false,
+			types: false,
+			natures: false,
+			eggGroups: false
 		}
 		this.externalInventory = { load: false, tabsLoaded: [] }
 		this.script
@@ -31,23 +34,7 @@ class State {
 		this.destination
 
 		// other stuff
-		this.customPokemon = function(){ 
-			var list = []
-			var pokemon = stuff.data.getPokemonFrom({name:"Beedrill",form:"Mega"})
-			pokemon.ivs = {hp:31,atk:31,def:31,spa:31,spd:31,spe:31}
-			pokemon.evs = {hp:0,atk:0,def:0,spa:0,spd:0,spe:252}
-			pokemon.nature = "Jolly"
-			pokemon.got = true
-			list.push(pokemon)
-			for(var n in stuff.data.pokemons){
-				pokemon = new Pokemon(stuff.data.pokemons[n])
-				pokemon.ivs = {hp:31,atk:31,def:31,spa:31,spd:31,spe:31}
-				pokemon.evs = {hp:0,atk:0,def:0,spa:0,spd:0,spe:252}
-				pokemon.nature = "Jolly"
-				list.push(pokemon)
-			}
-			return list
-		}
+		this.customPokemon = function(){ }
 	}
 
 	get thingsAreLoaded(){
