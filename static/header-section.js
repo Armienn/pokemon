@@ -99,6 +99,8 @@ class HeaderSection {
 		this.showSubtitle()
 		this.showNavList()
 		this.filterAdderElement.innerHTML = ""
+		if (stuff.state.externalInventory.load)
+			this.showCompletionModeSwitcher()
 		this.showSearch()
 		this.showFilterSelect()
 		this.showSortingChooser()
@@ -201,6 +203,33 @@ class HeaderSection {
 				active: tab.active
 			}
 			index++
+		}
+	}
+
+	showCompletionModeSwitcher() {
+		var element = newTag("li", this.filterAdderElement, true)
+		element.innerHTML = "Normal mode"
+		element.style.cursor = "pointer"
+		element.onclick = function () {
+			switch (stuff.state.completionMode) {
+				case "normal":
+					stuff.state.completionMode = "families"
+					element.innerHTML = "Completion: Families"
+					break
+				case "families":
+					stuff.state.completionMode = "pokemons"
+					element.innerHTML = "Completion: Pokemons"
+					break
+				case "pokemons":
+					stuff.state.completionMode = "forms"
+					element.innerHTML = "Completion: Forms"
+					break
+				case "forms":
+					stuff.state.completionMode = "normal"
+					element.innerHTML = "Normal mode"
+					break
+			}
+			stuff.updatePokemons()
 		}
 	}
 
@@ -370,7 +399,7 @@ class HeaderSection {
 		}
 	}
 
-	addCustomFilterEntry(label){
+	addCustomFilterEntry(label) {
 		var filterElement = newTag("li", this.filterListElement)
 		filterElement.title = "Return true for the pokemon you want to see"
 		newTag("label", filterElement).innerHTML = label
@@ -380,15 +409,15 @@ class HeaderSection {
 		inputElement.value = "return pokemon.form.startsWith('Mega')"
 		var addElement = newTag("button", filterElement)
 		addElement.innerHTML = "Add"
-		addElement.onclick = ()=>{
+		addElement.onclick = () => {
 			this.addCustomFilter(label, inputElement.value)
 			stuff.updatePokemons()
 		}
 	}
 
-	addCustomFilter(label, input, filterFunction){
+	addCustomFilter(label, input, filterFunction) {
 		var title = label + " <span class='close-mark'>❌</span>"
-		stuff.state.filters[title] = function(pokemon){return new Function("var pokemon = this;" + input).call(pokemon)}
+		stuff.state.filters[title] = function (pokemon) { return new Function("var pokemon = this;" + input).call(pokemon) }
 	}
 
 	addFilter(label, input, filterFunction) {
