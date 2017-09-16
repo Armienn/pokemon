@@ -84,8 +84,15 @@ class SpreadsheetParser {
 		var showBreedables = this.tryValues(["showbreedables"], entry)
 		stuff.settings.showBreedables = !!showBreedables && showBreedables.toLowerCase().trim() !== "no" && showBreedables.toLowerCase().trim() !== "false"
 		var colorScheme = this.tryValues(["colorscheme"], entry).toLowerCase()
-		if (colorScheme == "custom")
+		if (colorScheme == "custom"){
 			stuff.settings.colorScheme = colorScheme
+			stuff.headerSection.navGroups.colours.custom = {
+				text: "●",
+				click: () => { stuff.settings.colorScheme = "custom"; stuff.updateColors() },
+				active: () => stuff.settings.colorScheme == "custom",
+				style: { fontSize: "1.2rem" }
+			}
+		}
 		if ((colorScheme == "night" || colorScheme == "day") && !(localStorage && localStorage.colorScheme))
 			stuff.settings.colorScheme = colorScheme
 		stuff.settings.colorSchemes.custom[0] = this.tryValues(["custombackgroundcolor", "backgroundcolor"], entry)
