@@ -22,9 +22,9 @@ time, mark, audio, video {
     border: none;
 }
 
-@media (max-device-width: 736px){
+@media (max-device-width: 720px){
     html{
-        font-size: 24px;
+        font-size: 28px;
     }
 }
 
@@ -227,6 +227,12 @@ nav li{
 #pokemon-info tr:hover {
     background-color: transparent;
     cursor: default;
+}
+
+#info-sections{
+    flex-wrap: wrap;
+    justify-content: space-around;
+    display: flex;
 }
 
 #pokemon-info th {
