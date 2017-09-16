@@ -14,25 +14,7 @@
 		<h1 id="main-title"><a href="https://github.com/Armienn/pokemon#pok%C3%A9mon-stuff">Pokémon Stuff</a></h1>
 		<h4 id="sub-title" style="display: none;">Pokémon</h4>
 		<nav>
-			<ul>
-				<li id="nav-all" class="active" style="font-size: 1.5rem; padding-bottom: 0.2rem;">⊖</li>
-				<li id="nav-custom" class="inactive" style="font-size: 1.3rem;">☷</li>
-				<ul id="nav-mine" style="display: none;">|
-					<li id="nav-all-mine" class="inactive">Unknown's Pokémon</li>
-					<li id="nav-breedables" class="inactive">Breedables</li>
-				</ul>
-				<ul id="nav-inventory" style="display: none;">|
-				</ul>
-				<ul id="nav-looking-for" style="display: none;">|
-				</ul>
-				<li style="margin-left:2rem;">
-					<span class="active" id="mode-table">▤</span>
-					<span class="inactive" id="mode-grid">▦</span>
-				</li>
-				<li>
-					<span class="active" id="mode-night">☽</span>
-					<span class="inactive" id="mode-day">☀</span>
-				</li>
+			<ul id="nav-list">
 			</ul>
 		</nav>
 	</header>
@@ -42,18 +24,33 @@
 			<label>
 				Custom Pokémon:
 			</label>
-			<textarea id="custom-pokemon" style="height: 14rem; width: 32rem;"></textarea>
-			<button id="custom-pokemon-update">Update</button>
+			<textarea id="custom-pokemon" style="height: 14rem; width: 32rem;">
+var list = []
+var pokemon = stuff.newPokemon({name:"Beedrill",form:"Mega"})
+pokemon.ivs = {hp:31,atk:31,def:31,spa:31,spd:31,spe:31}
+pokemon.evs = {hp:0,atk:0,def:0,spa:0,spd:0,spe:252}
+pokemon.nature = "Jolly"
+pokemon.got = true
+list.push(pokemon)
+for(var n in stuff.data.pokemons){
+	pokemon = new Pokemon(stuff.data.pokemons[n])
+	pokemon.ivs = {hp:31,atk:31,def:31,spa:31,spd:31,spe:31}
+	pokemon.evs = {hp:0,atk:0,def:0,spa:0,spd:0,spe:252}
+	pokemon.nature = "Jolly"
+	list.push(pokemon)
+}
+return list</textarea>
+			<button id="custom-pokemon-update" onclick="stuff.updatePokemons()">Update</button>
 		</ul>
 		<ul>
 			<ul id="filter-adder" style="display: inline-table;">
-				<ul id="filter-list">
-				</ul>
+			</ul>
+			<ul id="filter-list">
 			</ul>
 			<ul id="custom-adder" style="display: inline-table;">
-				<li id="custom-sort">
-				</li>
 			</ul>
+			<li id="custom-sort">
+			</li>
 		</ul>
 		<ul id="current-filter-list">
 		</ul>
@@ -69,91 +66,16 @@
 					<section id="pokemon-info" class="hidden-info">
 						<h2 id="name-header"></h2>
 						<p id="description-header"></p>
-						<section>
-							
+
+						<section id="info-sections">
 							<section id="image-section">
-								
 							</section>
-
-							<section id="info-section">
-								<table cellspacing="0" cellpadding="0">
-									<thead>
-									</thead>
-									<tbody>
-									</tbody>
-								</table>
-							</section>
-
-							<section id="info-b-section">
-								<table cellspacing="0" cellpadding="0">
-									<thead>
-									</thead>
-									<tbody>
-									</tbody>
-								</table>
-							</section>
-
-							<section>
-								<table cellspacing="0" cellpadding="0">
-									<thead>
-									</thead>
-									<tbody id="defenses-section">
-									</tbody>
-								</table>
-							</section>
-
-							<section id="stat-section">
-								<table cellspacing="0" cellpadding="0">
-									<thead>
-									</thead>
-									<tbody>
-									</tbody>
-								</table>
-							</section>
-
-							<section>
-								<table cellspacing="0" cellpadding="0">
-									<thead>
-									</thead>
-									<tbody id="family-section">
-									</tbody>
-								</table>
-							</section>
-
 						</section>
+
 						<h3 id="moves-header">Moves ▶</h3>
 						<section id="moves-section" class="hidden-moves">
-							<table id="moves-level" cellspacing="0" cellpadding="0">
-								<thead>
-								</thead>
-								<tbody>
-								</tbody>
-							</table>
-							<table id="moves-evolution" cellspacing="0" cellpadding="0">
-								<thead>
-								</thead>
-								<tbody>
-								</tbody>
-							</table>
-							<table id="moves-egg" cellspacing="0" cellpadding="0">
-								<thead>
-								</thead>
-								<tbody>
-								</tbody>
-							</table>
-							<table id="moves-tm" cellspacing="0" cellpadding="0">
-								<thead>
-								</thead>
-								<tbody>
-								</tbody>
-							</table>
-							<table id="moves-tutor" cellspacing="0" cellpadding="0">
-								<thead>
-								</thead>
-								<tbody>
-								</tbody>
-							</table>
 						</section>
+
 						<h3 id="close-header">◬</h3>
 					</section>
 
@@ -185,17 +107,21 @@
 		</div>
 	</div>
 
-	<div id="loading">
+	<div id="loading" style="color: white; text-align: center; padding-top:50vh;">
         <img src="static/pokeball-white.png">
 	</div>
 
 </article>
-<script src="static/header-layout.js"></script>
-<script src="static/info-layout.js"></script>
-<script src="static/table-layout.js"></script>
-<script src="static/pokemon.js"></script>
-<script src="static/sheet-loading.js"></script>
-<script src="static/setup.js"></script>
+<script src="static/spreadsheet-parser.js"></script>
+<script src="static/poke-text.js"></script>
+<script src="static/pokemon-data.js"></script>
+<script src="static/header-section.js"></script>
+<script src="static/info-section.js"></script>
+<script src="static/list-section.js"></script>
+<script src="static/collection.js"></script>
+<script src="static/settings.js"></script>
+<script src="static/state.js"></script>
+<script src="static/main.js"></script>
 
 </body>
 </html>

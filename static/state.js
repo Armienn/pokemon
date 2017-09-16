@@ -43,12 +43,4 @@ class State {
 				return false
 		return true
 	}
-
-	selectTab(tab) {
-		window.location.hash = ""
-		if(typeof tab !== "string")
-			window.location.hash = tab.id
-		this.currentTab = tab
-		stuff.updatePokemons()
-	}
 }

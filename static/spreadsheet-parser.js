@@ -61,7 +61,7 @@ class SpreadsheetParser {
 			for (var i in response.feed.entry)
 				this.loadPokemon(response.feed.entry[i], tab)
 			if (tab.id == stuff.state.destination)
-				stuff.state.selectTab(tab)
+				stuff.selectTab(tab)
 			stuff.state.externalInventory.tabsLoaded[tab.id] = true
 			this.updateExternalInventoryLoadedness()
 			stuff.tryLoad()

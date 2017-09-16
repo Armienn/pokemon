@@ -10,13 +10,13 @@ class HeaderSection {
 			base: {
 				all: {
 					text: "<img src='static/pokeball-white.png' style='height:1.5rem;padding-top:0.6rem;'></img>", //⊖
-					click: () => stuff.state.selectTab("all"),
+					click: () => stuff.selectTab("all"),
 					active: () => stuff.state.currentTab == "all",
 					style: { fontSize: "1.5rem", paddingBottom: "0.2rem" }
 				},
 				custom: {
 					text: "☷",
-					click: () => { stuff.state.selectTab("custom"); this.customPokemonElement.style.display = "" },
+					click: () => { stuff.selectTab("custom"); this.customPokemonElement.style.display = "" },
 					active: () => stuff.state.currentTab == "custom",
 					style: { fontSize: "1.3rem" }
 				}
@@ -171,7 +171,7 @@ class HeaderSection {
 		if (stuff.collection.collectorName) {
 			this.navGroups.pokemons[index] = {
 				text: stuff.collection.collectorName + "'s Pokémon",
-				click: () => stuff.state.selectTab("mine"),
+				click: () => stuff.selectTab("mine"),
 				active: () => stuff.state.currentTab == "mine"
 			}
 			index++
@@ -179,7 +179,7 @@ class HeaderSection {
 		if (stuff.settings.showBreedables) {
 			this.navGroups.pokemons[index] = {
 				text: "Breedables",
-				click: () => stuff.state.selectTab("breedables"),
+				click: () => stuff.selectTab("breedables"),
 				active: () => stuff.state.currentTab == "breedables"
 			}
 			index++

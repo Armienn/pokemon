@@ -32,7 +32,7 @@ class Collection {
 		tab.id = id
 		tab.pokemons = pokemons ? pokemons : []
 		tab.click = () => {
-			stuff.state.selectTab(tab)
+			stuff.selectTab(tab)
 		}
 		tab.active = () => stuff.state.currentTab == tab
 		return tab

@@ -13,7 +13,7 @@ class PokemonStuff {
 		this.spreadsheetParser = new SpreadsheetParser()
 	}
 
-	update(){
+	update() {
 		this.headerSection.updateNavPokemonTabs()
 		this.updatePokemons()
 		this.show()
@@ -35,6 +35,14 @@ class PokemonStuff {
 		this.infoSection.closeInfo(() => {
 			this.infoSection.showInfo(pokemon, element)
 		})
+	}
+	
+	selectTab(tab) {
+		window.location.hash = ""
+		if(typeof tab !== "string")
+			window.location.hash = tab.id
+		this.state.currentTab = tab
+		this.updatePokemons()
 	}
 
 	load() {
@@ -58,10 +66,10 @@ class PokemonStuff {
 		})
 	}
 
-	loadJSONData(thing, file){
-		if(!file)
+	loadJSONData(thing, file) {
+		if (!file)
 			file = thing
-		requestJSON("https://armienn.github.io/pokemon/data-sumo/"+file+".json", (data) => {
+		requestJSON("https://armienn.github.io/pokemon/data-sumo/" + file + ".json", (data) => {
 			this.data[thing] = data
 			this.state.thingsLoaded[thing] = true
 			this.tryLoad()
@@ -109,22 +117,22 @@ class PokemonStuff {
 		this.headerSection.setup()
 		this.updatePokemons()
 		this.show()
-		document.getElementById("copy").onclick = function(){
+		document.getElementById("copy").onclick = function () {
 			document.getElementById("copy").style.display = "none"
 		}
-		document.getElementById("pokemon-copy-table").onclick = function(e){
+		document.getElementById("pokemon-copy-table").onclick = function (e) {
 			e.stopPropagation()
 		}
-		if(!this.collection.spreadsheetId && this.state.destination)
+		if (!this.collection.spreadsheetId && this.state.destination)
 			this.selectPokemonBasedOn(this.state.destination)
 		setInterval(() => { this.listSection.loadMoreWhenScrolledDown() }, 500)
 	}
 
-	selectPokemonBasedOn(destination){
-		for(var n in this.data.pokemons){
+	selectPokemonBasedOn(destination) {
+		for (var n in this.data.pokemons) {
 			var pokemon = this.data.pokemons[n]
-			var name = pokemon.name.toLowerCase().replace(" ", "-").replace("♀","-f").replace("♂","-m").replace("'","").replace(".","").replace("ébé","ebe").replace(":","")
-			if(pokemon.id == destination || name == destination.toLowerCase()){
+			var name = pokemon.name.toLowerCase().replace(" ", "-").replace("♀", "-f").replace("♂", "-m").replace("'", "").replace(".", "").replace("ébé", "ebe").replace(":", "")
+			if (pokemon.id == destination || name == destination.toLowerCase()) {
 				this.selectPokemon(pokemon)
 				return
 			}
@@ -132,12 +140,23 @@ class PokemonStuff {
 	}
 
 	loadScript() {
-		var pokemons = new Function(this.state.script)()
+		var pokemons
+		try {
+			pokemons = new Function(this.state.script)()
+		}
+		catch (e) {
+			document.getElementById("loading").innerHTML = "Failed to run script: " + e.message
+			document.getElementById("loading").onclick = ()=>{
+				this.state.externalInventory.load = false
+				this.tryLoad()
+			}
+			return
+		}
 		this.state.script = undefined
 		if (!pokemons)
 			return
 		var tab = this.collection.addTab("Pokémon list", pokemons)
-		this.state.selectTab(tab)
+		this.selectTab(tab)
 		this.state.externalInventory.isLoaded = true
 	}
 
@@ -159,7 +178,7 @@ class PokemonStuff {
 		document.getElementsByTagName("header")[0].style.backgroundColor = this.settings.colors.headerColor
 	}
 
-	newPokemon(args){
+	newPokemon(args) {
 		return this.data.getPokemonFrom(args)
 	}
 }
