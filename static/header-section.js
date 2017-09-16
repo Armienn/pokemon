@@ -74,7 +74,6 @@ class HeaderSection {
 		this.filterAdderElement = document.getElementById("filter-adder")
 		this.filterListElement = document.getElementById("filter-list")
 		this.currentFilterList = document.getElementById("current-filter-list")
-		this.customPokemonElement = document.getElementById("custom-pokemon-section")
 		this.optionsElement = document.getElementById("options-section")
 		this.optionsSubElement = document.getElementById("options-sub-section")
 	}
@@ -157,7 +156,6 @@ class HeaderSection {
 		let element = newTag("li", groupElement, entry)
 		element.className = entry.active() ? "active" : "inactive"
 		element.onclick = () => {
-			this.customPokemonElement.style.display = "none"
 			entry.click()
 			this.showNavList()
 		}
