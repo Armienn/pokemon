@@ -15,8 +15,10 @@ class SpreadsheetParser {
 				title.toLowerCase().indexOf("resource") > -1 ||
 				title.toLowerCase() == "db"
 			) {
-				if (i == "0")
+				if (i == "0") {
+					stuff.state.externalInventory.tabsLoaded["config"] = false
 					requestJSON(this.getWorksheetUrl(spreadsheet.id, 1), (r) => { this.parseConfig(r) })
+				}
 				continue
 			}
 			this.addNewTab(title, i)
@@ -87,6 +89,9 @@ class SpreadsheetParser {
 		stuff.settings.colorSchemes.custom[0] = this.tryValues(["custombackgroundcolor", "backgroundcolor"], entry)
 		stuff.settings.colorSchemes.custom[1] = this.tryValues(["customtextcolor", "textcolor"], entry)
 		stuff.settings.colorSchemes.custom[2] = this.tryValues(["customheadercolor", "headercolor"], entry)
+		stuff.state.externalInventory.tabsLoaded["config"] = true
+		this.updateExternalInventoryLoadedness()
+		stuff.tryLoad()
 	}
 
 	loadPokemon(entry, tab) {

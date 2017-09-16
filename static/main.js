@@ -57,17 +57,17 @@ class PokemonStuff {
 	}
 
 	loadBaseData() {
-		requestJSON("https://armienn.github.io/pokemon/static/moves.json", (moves) => {
+		requestJSON("https://armienn.github.io/pokemon/data-sumo/moves.json", (moves) => {
 			this.data.moves = moves
 			this.state.thingsLoaded.moves = true
 			this.tryLoad()
 		})
-		requestJSON("https://armienn.github.io/pokemon/static/pokemons.json", (pokemons) => {
+		requestJSON("https://armienn.github.io/pokemon/data-sumo/pokemons.json", (pokemons) => {
 			this.data.pokemons = pokemons
 			this.state.thingsLoaded.pokemons = true
 			this.tryLoad()
 		})
-		requestJSON("https://armienn.github.io/pokemon/static/abilities.json", (abilities) => {
+		requestJSON("https://armienn.github.io/pokemon/data-sumo/abilities.json", (abilities) => {
 			this.data.abilities = abilities
 			this.state.thingsLoaded.abilities = true
 			this.tryLoad()
