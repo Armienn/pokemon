@@ -1,9 +1,10 @@
 "use strict";
 
 class PokemonColumn {
-	constructor(columnHeader, column) {
+	constructor(columnHeader, column, title) {
 		this.columnHeader = columnHeader
 		this.column = column
+		this.title = title
 	}
 }
 
@@ -17,12 +18,12 @@ class ListSection {
 			new PokemonColumn("Pokemon", (pokemon) => PokeText.formName(pokemon) + (pokemon.nickname ? " [" + pokemon.nickname + "]" : "")),
 			new PokemonColumn("Types", (pokemon) => PokeText.types(pokemon)),
 			new PokemonColumn("Abilities", (pokemon) => PokeText.abilities(pokemon)),
-			new PokemonColumn("HP", (pokemon) => PokeText.stat(pokemon.stats.hp)),
-			new PokemonColumn("Atk", (pokemon) => PokeText.stat(pokemon.stats.atk)),
-			new PokemonColumn("Def", (pokemon) => PokeText.stat(pokemon.stats.def)),
-			new PokemonColumn("SpA", (pokemon) => PokeText.stat(pokemon.stats.spa)),
-			new PokemonColumn("SpD", (pokemon) => PokeText.stat(pokemon.stats.spd)),
-			new PokemonColumn("Spe", (pokemon) => PokeText.stat(pokemon.stats.spe)),
+			new PokemonColumn("HP", (pokemon) => PokeText.stat(pokemon.stats.hp), (pokemon)=>"Total base stat: " + stuff.data.getTotalBaseStat(pokemon)),
+			new PokemonColumn("Atk", (pokemon) => PokeText.stat(pokemon.stats.atk), (pokemon)=>"Total base stat: " + stuff.data.getTotalBaseStat(pokemon)),
+			new PokemonColumn("Def", (pokemon) => PokeText.stat(pokemon.stats.def), (pokemon)=>"Total base stat: " + stuff.data.getTotalBaseStat(pokemon)),
+			new PokemonColumn("SpA", (pokemon) => PokeText.stat(pokemon.stats.spa), (pokemon)=>"Total base stat: " + stuff.data.getTotalBaseStat(pokemon)),
+			new PokemonColumn("SpD", (pokemon) => PokeText.stat(pokemon.stats.spd), (pokemon)=>"Total base stat: " + stuff.data.getTotalBaseStat(pokemon)),
+			new PokemonColumn("Spe", (pokemon) => PokeText.stat(pokemon.stats.spe), (pokemon)=>"Total base stat: " + stuff.data.getTotalBaseStat(pokemon)),
 			new PokemonColumn("Egg groups", (pokemon) => PokeText.eggGroups(pokemon))
 		]
 
@@ -126,6 +127,8 @@ class ListSection {
 			if(pokemon.notes)
 				element.title = pokemon.notes
 			element.innerHTML = columns[i].column(pokemon)
+			if(columns[i].title)
+				element.title = columns[i].title(pokemon)
 		}
 		pokeElement.onclick = function () {
 			stuff.selectPokemon(pokemon, pokeElement)
