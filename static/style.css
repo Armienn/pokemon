@@ -22,7 +22,18 @@ time, mark, audio, video {
     border: none;
 }
 
-@media (max-device-width: 720px){
+html{
+    font-size: 15px;
+}
+
+@media (max-device-width: 720px)
+    and (orientation: landscape){
+    html{
+        font-size: 20px;
+    }
+}
+@media (max-device-width: 720px)
+    and (orientation: portrait){
     html{
         font-size: 28px;
     }
