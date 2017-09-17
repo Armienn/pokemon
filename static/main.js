@@ -113,6 +113,7 @@ class PokemonStuff {
 		}
 		this.state.loaded = true
 		this.headerSection.setup()
+		this.collection.loadLocalTabs()
 		this.update()
 		if (!this.collection.spreadsheetId && this.state.destination)
 			this.selectPokemonBasedOn(this.state.destination)
@@ -167,10 +168,6 @@ class PokemonStuff {
 		document.getElementsByTagName("body")[0].style.color = this.settings.colors.textColor
 		document.getElementsByTagName("section")[0].style.backgroundColor = this.settings.colors.headerColor
 		document.getElementsByTagName("header")[0].style.backgroundColor = this.settings.colors.headerColor
-	}
-
-	newPokemon(args) {
-		return this.data.getPokemonFrom(args)
 	}
 }
 

@@ -2,12 +2,25 @@
 
 class Pokemon {
 	constructor(pokemon) {
-		if (pokemon) {
+		if(!pokemon)
+			return
+		// if pokemon is a base pokemon
+		if (typeof pokemon !== "Pokemon" && !pokemon.base && pokemon.abilities) {
 			this.base = pokemon
 			this.id = pokemon.id
 			this.name = pokemon.name
 			this.form = pokemon.form
+			return
 		}
+		var poke = stuff.data.getPokemonFrom(pokemon)
+		if(!poke)
+			return
+		this.base = poke.base
+		for(var i in pokemon)
+			this[i] = pokemon[i]
+		this.id = poke.base.id
+		this.name = poke.base.name
+		this.form = poke.base.form
 	}
 
 	get forms() { return this.base.forms }
