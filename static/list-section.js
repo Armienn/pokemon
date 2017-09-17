@@ -76,26 +76,32 @@ class ListSection {
 			new PokemonColumn("Nature", (pokemon) => pokemon.nature ? pokemon.nature : ""),
 			new PokemonColumn("HP", (pokemon) => PokeText.IVEV("hp", pokemon),
 			{
+				title: (pokemon) => "Stat at lvl 50: " + stuff.data.getStatAtLevel(pokemon, "hp", 50),
 				headerOnClick: () => stuff.headerSection.setSortingMethod("HP")
 			}),
 			new PokemonColumn("Atk", (pokemon) => PokeText.IVEV("atk", pokemon),
 			{
+				title: (pokemon) => "Stat at lvl 50: " + stuff.data.getStatAtLevel(pokemon, "atk", 50),
 				headerOnClick: () => stuff.headerSection.setSortingMethod("Attack")
 			}),
 			new PokemonColumn("Def", (pokemon) => PokeText.IVEV("def", pokemon),
 			{
+				title: (pokemon) => "Stat at lvl 50: " + stuff.data.getStatAtLevel(pokemon, "def", 50),
 				headerOnClick: () => stuff.headerSection.setSortingMethod("Defense")
 			}),
 			new PokemonColumn("SpA", (pokemon) => PokeText.IVEV("spa", pokemon),
 			{
+				title: (pokemon) => "Stat at lvl 50: " + stuff.data.getStatAtLevel(pokemon, "spa", 50),
 				headerOnClick: () => stuff.headerSection.setSortingMethod("Sp. Attack")
 			}),
 			new PokemonColumn("SpD", (pokemon) => PokeText.IVEV("spd", pokemon),
 			{
+				title: (pokemon) => "Stat at lvl 50: " + stuff.data.getStatAtLevel(pokemon, "spd", 50),
 				headerOnClick: () => stuff.headerSection.setSortingMethod("Sp. Defense")
 			}),
 			new PokemonColumn("Spe", (pokemon) => PokeText.IVEV("spe", pokemon),
 			{
+				title: (pokemon) => "Stat at lvl 50: " + stuff.data.getStatAtLevel(pokemon, "spe", 50),
 				headerOnClick: () => stuff.headerSection.setSortingMethod("Speed")
 			}),
 			new PokemonColumn("Moves", (pokemon) => pokemon.learntMoves ? pokemon.learntMoves.join(", ") : ""),

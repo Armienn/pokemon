@@ -283,6 +283,7 @@ class HeaderSection {
 			optionElement.value = i
 			optionElement.innerHTML = i
 		}
+		stuff.state.sorting = stuff.headerSection.sorts["ID"]
 		this.selectElement.onchange = function () {
 			var customSortElement = document.getElementById("custom-sort")
 			if (this.value == "Custom sort") {

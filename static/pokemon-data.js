@@ -349,6 +349,6 @@ class PokemonData {
 			case "negative-nature": nature = 0.9; break;
 			default: nature = 1; break;
 		}
-		return (Math.floor((2 * base + iv + ev / 4) * level / 100) + 5) * nature
+		return Math.floor((Math.floor((2 * base + iv + ev / 4) * level / 100) + 5) * nature)
 	}
 }
