@@ -141,7 +141,57 @@ Modest Nature
 	}
 
 	showAddMenu() {
-		var topbar = newTag("div", this.optionsSubElement, { text: "Coming soon, to a site near YOU!" })
+		var topbar = newTag("div", this.optionsSubElement)
+		newTag("li", topbar, { text: "Pokemon" })
+		var pokemonInput = newTag("input", topbar)
+		var datalistElement = newTag("datalist", topbar)
+		datalistElement.id = "datalistpokes"
+		pokemonInput.setAttribute("list", "datalistpokes")
+		var last = ""
+		pokemonInput.oninput = () => { // this is ugly as sin
+			datalistElement.innerHTML = ""
+			if (pokemonInput.value == last)
+				return
+			last = pokemonInput.value
+			if (last.length < 2)
+				return
+			var count = 0
+			var fit = ""
+			for (var i in stuff.data.pokemons) {
+				var pokemon = stuff.data.pokemons[i]
+				var name = pokemon.name + (pokemon.form == "Base" ? "" : " " + pokemon.form)
+				if (name.toLocaleLowerCase().indexOf(pokemonInput.value.toLocaleLowerCase()) > -1) {
+					newTag("option", datalistElement).value = name
+					fit = name
+					count++
+					if (count > 10)
+						break
+				}
+			}
+			if (count == 1) {
+				addButton.style.display = ""
+				pokemonInput.value = fit
+				pokemonInput.blur()
+			}
+			else
+				addButton.style.display = "none"
+		}
+		var addButton = newTag("li", topbar, { text: "Add to current tab" })
+		addButton.className = "button"
+		addButton.style.display = "none"
+		addButton.onclick = () => {
+			var things = pokemonInput.value.replace(" ", "|").split("|")
+			var tab = stuff.state.currentTab
+			if(typeof stuff.state.currentTab == "string"){
+				tab = stuff.collection.getLocalTab("My tab")
+				if(!tab)
+					tab = stuff.collection.addLocalTab("My tab")
+				stuff.state.currentTab = tab
+			}
+			tab.pokemons.push(new Pokemon({ name: things[0], form: things[1] }))
+			stuff.collection.saveLocalTabs()
+			stuff.update()
+		}
 	}
 
 	showDeleteMenu() {

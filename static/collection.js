@@ -44,6 +44,13 @@ class Collection {
 		return tab
 	}
 
+	getLocalTab(title){
+		for (var i in this.local)
+			if (this.local[i].title == title)
+				return this.local[i]
+		return false
+	}
+
 	newTab(title, pokemons, id) {
 		var tab = {}
 		tab.title = title
