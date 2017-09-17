@@ -187,6 +187,7 @@ Modest Nature
 				if(!tab)
 					tab = stuff.collection.addLocalTab("My tab")
 				stuff.state.currentTab = tab
+				stuff.headerSection.showLocal = true
 			}
 			var pokemon = new Pokemon({ name: things[0], form: things[1] })
 			tab.pokemons.push(pokemon)

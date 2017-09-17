@@ -38,10 +38,10 @@ class PokemonStuff {
 			this.infoSection.showInfo(pokemon, element)
 		})
 	}
-	
+
 	selectTab(tab) {
 		window.location.hash = ""
-		if(stuff.collection.pokemons.includes(tab) || stuff.collection.lookingFor.includes(tab))
+		if (stuff.collection.pokemons.includes(tab) || stuff.collection.lookingFor.includes(tab))
 			window.location.hash = tab.id
 		this.state.currentTab = tab
 		this.updatePokemons()
@@ -83,9 +83,10 @@ class PokemonStuff {
 			return
 		var argument = window.location.search.substring(1)
 		this.state.externalInventory.load = true
-		if (argument.startsWith("script:"))
-			request("https://" + argument.substring(7), (response) => {
-				this.state.script = response
+		var args = argument.split(":")
+		if (args[0] == "script" || args[0] == "json" || args[0] == "smogon")
+			request("https://" + args[1], (response) => {
+				this.state.script = { type: args[0], content: response }
 				this.tryLoad()
 			})
 		else
@@ -105,7 +106,11 @@ class PokemonStuff {
 			return
 		if (this.state.externalInventory.load) {
 			if (this.state.script)
-				this.loadScript()
+				switch (this.state.script.type) {
+					case "script": this.loadScript((content) => new Function(content)()); break;
+					case "json": this.loadScript((content) => Porting.importJSON(content)); break;
+					case "smogon": this.loadScript((content) => Porting.importSmogon(content)); break;
+				}
 			else if (this.state.spreadsheet)
 				this.loadSpreadsheet()
 			if (!this.state.externalInventory.isLoaded)
@@ -115,7 +120,7 @@ class PokemonStuff {
 		this.headerSection.setup()
 		this.collection.loadLocalTabs()
 		this.update()
-		if (!this.collection.spreadsheetId && this.state.destination)
+		if (!this.collection.pokemons.length && this.state.destination)
 			this.selectPokemonBasedOn(this.state.destination)
 		setInterval(() => { this.listSection.loadMoreWhenScrolledDown() }, 500)
 	}
@@ -131,14 +136,14 @@ class PokemonStuff {
 		}
 	}
 
-	loadScript() {
+	loadScript(parser) {
 		var pokemons
 		try {
-			pokemons = new Function(this.state.script)()
+			pokemons = parser(this.state.script.content)
 		}
 		catch (e) {
-			document.getElementById("loading").innerHTML = "Failed to run script: " + e.message
-			document.getElementById("loading").onclick = ()=>{
+			document.getElementById("loading").innerHTML = "Failed to load external collection: " + e.message
+			document.getElementById("loading").onclick = () => {
 				this.state.externalInventory.load = false
 				this.tryLoad()
 			}
