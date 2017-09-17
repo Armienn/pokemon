@@ -11,10 +11,12 @@ class OptionsSection {
 		}
 
 		this.importMethods = {
-			"Script": { method: (input) => (new Function(input))(), default: "return [new Pokemon('pikachu'), new Pokemon({name:'Charizard', form: 'Mega X'}), new Pokemon(151)]" }
+			"Script": { method: (input) => (new Function(input))(), default: "return [new Pokemon('pikachu'), new Pokemon({name:'Charizard', form: 'Mega X'}), new Pokemon(151)]" },
+			"JSON": { method: (input) => Porting.importJSON(input), default: '[{"id":6, "form":"Mega X", "nickname":"Burninator"}]' }
 		}
 
 		this.exportMethods = {
+			"JSON": (pokemons) => Porting.exportJSON(pokemons),
 			"Reddit Markdown": (pokemons) => Porting.exportMarkdown(pokemons)
 		}
 
