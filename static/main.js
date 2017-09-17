@@ -41,7 +41,7 @@ class PokemonStuff {
 	
 	selectTab(tab) {
 		window.location.hash = ""
-		if(typeof tab !== "string")
+		if(stuff.collection.pokemons.includes(tab) || stuff.collection.lookingFor.includes(tab))
 			window.location.hash = tab.id
 		this.state.currentTab = tab
 		this.updatePokemons()
