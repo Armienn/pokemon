@@ -12,7 +12,25 @@ class OptionsSection {
 
 		this.importMethods = {
 			"Script": { method: (input) => (new Function(input))(), default: "return [new Pokemon('pikachu'), new Pokemon({name:'Charizard', form: 'Mega X'}), new Pokemon(151)]" },
-			"JSON": { method: (input) => Porting.importJSON(input), default: '[{"id":6, "form":"Mega X", "nickname":"Burninator"}]' }
+			"JSON": { method: (input) => Porting.importJSON(input), default: '[{"id":6, "form":"Mega X", "nickname":"Burninator"}]' },
+			"Smogon": {
+				method: (input) => Porting.importSmogon(input), default: `Togekiss @ Leftovers
+Ability: Serene Grace
+EVs: 252 HP / 80 Def / 176 Spe
+Timid Nature
+- Nasty Plot
+- Air Slash
+- Heal Bell
+- Roost
+
+Dragalge @ Draco Plate
+Ability: Adaptability
+EVs: 228 HP / 252 SpA / 28 Spe
+Modest Nature
+- Draco Meteor
+- Sludge Wave
+- Focus Blast
+- Toxic Spikes` }
 		}
 
 		this.exportMethods = {
@@ -160,7 +178,7 @@ class OptionsSection {
 				option.value = i
 			}
 			stuff.headerSection.updateNavPokemonTabs()
-			if(deleted == stuff.state.currentTab)
+			if (deleted == stuff.state.currentTab)
 				stuff.selectTab("all")
 			stuff.show()
 		}
