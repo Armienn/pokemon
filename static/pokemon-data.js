@@ -16,8 +16,9 @@ class Pokemon {
 		if (!poke)
 			return
 		this.base = poke.base
-		for (var i in pokemon)
-			this[i] = pokemon[i]
+		if (typeof pokemon != "string")
+			for (var i in pokemon)
+				this[i] = pokemon[i]
 		this.id = poke.base.id
 		this.name = poke.base.name
 		this.form = poke.base.form
@@ -153,9 +154,9 @@ class PokemonData {
 			pokes = pokes.filter(stuff.state.filters[i])
 		if (stuff.state.searchFilter)
 			pokes = pokes.filter(stuff.state.searchFilter)
-		if (stuff.state.sorting){
+		if (stuff.state.sorting) {
 			pokes.sort(stuff.state.sorting)
-			if(stuff.state.reverseSort)
+			if (stuff.state.reverseSort)
 				pokes.reverse()
 		}
 		return pokes
@@ -334,17 +335,17 @@ class PokemonData {
 	}
 
 	getStatAtLevel(pokemon, stat, level) {
-		if(pokemon.id == 292 && stat == "hp")
+		if (pokemon.id == 292 && stat == "hp")
 			return 1
 		var base = +pokemon.stats[stat]
 		var iv = pokemon.ivs ? +pokemon.ivs[stat] : 0
 		iv = iv ? iv : 0
 		var ev = pokemon.evs ? +pokemon.evs[stat] : 0
 		ev = ev ? ev : 0
-		if(stat == "hp")
+		if (stat == "hp")
 			return Math.floor((2 * base + iv + ev / 4) * level / 100) + 10 + level
 		var nature = PokeText.natureCssClass(stat, pokemon)
-		switch(nature){
+		switch (nature) {
 			case "positive-nature": nature = 1.1; break;
 			case "negative-nature": nature = 0.9; break;
 			default: nature = 1; break;
