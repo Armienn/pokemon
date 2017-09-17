@@ -56,12 +56,12 @@ class HeaderSection {
 
 		this.sorts = {
 			"ID": (a, b) => { return a.id - b.id },
-			"HP": (a, b) => { return b.stats.hp - a.stats.hp },
-			"Attack": (a, b) => { return b.stats.atk - a.stats.atk },
-			"Defense": (a, b) => { return b.stats.def - a.stats.def },
-			"Sp. Attack": (a, b) => { return b.stats.spa - a.stats.spa },
-			"Sp. Defense": (a, b) => { return b.stats.spd - a.stats.spd },
-			"Speed": (a, b) => { return b.stats.spe - a.stats.spe },
+			"HP": (a, b) => { return a.ivs || b.ivs || a.evs || b.evs ? stuff.data.getStatAtLevel(b, "hp", 50) - stuff.data.getStatAtLevel(a, "hp", 50) : b.stats.hp - a.stats.hp },
+			"Attack": (a, b) => { return a.ivs || b.ivs || a.evs || b.evs ? stuff.data.getStatAtLevel(b, "atk", 50) - stuff.data.getStatAtLevel(a, "atk", 50) : b.stats.atk - a.stats.atk },
+			"Defense": (a, b) => { return a.ivs || b.ivs || a.evs || b.evs ? stuff.data.getStatAtLevel(b, "def", 50) - stuff.data.getStatAtLevel(a, "def", 50) : b.stats.def - a.stats.def },
+			"Sp. Attack": (a, b) => { return a.ivs || b.ivs || a.evs || b.evs ? stuff.data.getStatAtLevel(b, "spa", 50) - stuff.data.getStatAtLevel(a, "spa", 50) : b.stats.spa - a.stats.spa },
+			"Sp. Defense": (a, b) => { return a.ivs || b.ivs || a.evs || b.evs ? stuff.data.getStatAtLevel(b, "spd", 50) - stuff.data.getStatAtLevel(a, "spd", 50) : b.stats.spd - a.stats.spd },
+			"Speed": (a, b) => { return a.ivs || b.ivs || a.evs || b.evs ? stuff.data.getStatAtLevel(b, "spe", 50) - stuff.data.getStatAtLevel(a, "spe", 50) : b.stats.spe - a.stats.spe },
 			"Total base stats": (a, b) => { return stuff.data.getTotalBaseStat(b) - stuff.data.getTotalBaseStat(a) },
 			"Custom sort": (a, b) => { return b.stats.hp - a.stats.hp }
 		}

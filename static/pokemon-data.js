@@ -2,7 +2,7 @@
 
 class Pokemon {
 	constructor(pokemon) {
-		if(!pokemon)
+		if (!pokemon)
 			return
 		// if pokemon is a base pokemon
 		if (typeof pokemon !== "Pokemon" && !pokemon.base && pokemon.abilities) {
@@ -13,10 +13,10 @@ class Pokemon {
 			return
 		}
 		var poke = stuff.data.getPokemonFrom(pokemon)
-		if(!poke)
+		if (!poke)
 			return
 		this.base = poke.base
-		for(var i in pokemon)
+		for (var i in pokemon)
 			this[i] = pokemon[i]
 		this.id = poke.base.id
 		this.name = poke.base.name
@@ -47,7 +47,7 @@ class PokemonData {
 		this.abilities = {}
 		this.natures = {}
 		this.eggGroups = []
-		this.types = { }
+		this.types = {}
 		this.typeNames = []
 		this.typeColors = {
 			Bug: "#A8B820",
@@ -328,5 +328,24 @@ class PokemonData {
 		for (var i in pokemon.stats)
 			count += pokemon.stats[i]
 		return count
+	}
+
+	getStatAtLevel(pokemon, stat, level) {
+		if(pokemon.id == 292 && stat == "hp")
+			return 1
+		var base = +pokemon.stats[stat]
+		var iv = pokemon.ivs ? +pokemon.ivs[stat] : 0
+		iv = iv ? iv : 0
+		var ev = pokemon.evs ? +pokemon.evs[stat] : 0
+		ev = ev ? ev : 0
+		if(stat == "hp")
+			return Math.floor((2 * base + iv + ev / 4) * level / 100) + 10 + level
+		var nature = PokeText.natureCssClass(stat, pokemon)
+		switch(nature){
+			case "positive-nature": nature = 1.1; break;
+			case "negative-nature": nature = 0.9; break;
+			default: nature = 1; break;
+		}
+		return (Math.floor((2 * base + iv + ev / 4) * level / 100) + 5) * nature
 	}
 }

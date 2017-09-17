@@ -57,7 +57,10 @@ class ListSection {
 		]
 
 		this.tabPokemonColumns = [
-			new PokemonColumn("", (pokemon) => "<img src='" + PokeText.spriteName(pokemon) + "' style='height: 2rem;'/>"),
+			new PokemonColumn("", (pokemon) => "<img src='" + PokeText.spriteName(pokemon) + "' style='height: 2rem;'/>",
+			{
+				headerOnClick: () => stuff.headerSection.setSortingMethod("ID")
+			}),
 			new PokemonColumn("Pokemon", (pokemon) =>
 				PokeText.formName(pokemon) +
 				(pokemon.gender && pokemon.gender != "—" ? " " + PokeText.gender(pokemon) : "") +
@@ -71,12 +74,30 @@ class ListSection {
 				return PokeText.abilities(pokemon)
 			}),
 			new PokemonColumn("Nature", (pokemon) => pokemon.nature ? pokemon.nature : ""),
-			new PokemonColumn("HP", (pokemon) => PokeText.IVEV("hp", pokemon)),
-			new PokemonColumn("Atk", (pokemon) => PokeText.IVEV("atk", pokemon)),
-			new PokemonColumn("Def", (pokemon) => PokeText.IVEV("def", pokemon)),
-			new PokemonColumn("SpA", (pokemon) => PokeText.IVEV("spa", pokemon)),
-			new PokemonColumn("SpD", (pokemon) => PokeText.IVEV("spd", pokemon)),
-			new PokemonColumn("Spe", (pokemon) => PokeText.IVEV("spe", pokemon)),
+			new PokemonColumn("HP", (pokemon) => PokeText.IVEV("hp", pokemon),
+			{
+				headerOnClick: () => stuff.headerSection.setSortingMethod("HP")
+			}),
+			new PokemonColumn("Atk", (pokemon) => PokeText.IVEV("atk", pokemon),
+			{
+				headerOnClick: () => stuff.headerSection.setSortingMethod("Attack")
+			}),
+			new PokemonColumn("Def", (pokemon) => PokeText.IVEV("def", pokemon),
+			{
+				headerOnClick: () => stuff.headerSection.setSortingMethod("Defense")
+			}),
+			new PokemonColumn("SpA", (pokemon) => PokeText.IVEV("spa", pokemon),
+			{
+				headerOnClick: () => stuff.headerSection.setSortingMethod("Sp. Attack")
+			}),
+			new PokemonColumn("SpD", (pokemon) => PokeText.IVEV("spd", pokemon),
+			{
+				headerOnClick: () => stuff.headerSection.setSortingMethod("Sp. Defense")
+			}),
+			new PokemonColumn("Spe", (pokemon) => PokeText.IVEV("spe", pokemon),
+			{
+				headerOnClick: () => stuff.headerSection.setSortingMethod("Speed")
+			}),
 			new PokemonColumn("Moves", (pokemon) => pokemon.learntMoves ? pokemon.learntMoves.join(", ") : ""),
 			new PokemonColumn("Ball", (pokemon) => PokeText.balls(pokemon))
 		]
