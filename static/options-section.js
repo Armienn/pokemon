@@ -85,6 +85,7 @@ Modest Nature
 		}
 		newTag("li", topbar, { text: "as tab" })
 		var tabInput = newTag("input", topbar)
+		tabInput.placeholder = "My tab"
 		var middlebar = newTag("div", this.optionsSubElement)
 		middlebar.style.display = "none"
 		var textarea = newTag("textarea", middlebar)
