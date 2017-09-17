@@ -83,7 +83,7 @@ Modest Nature
 				bottombar.style.display = "none"
 			}
 		}
-		newTag("li", topbar, { text: "as tab" })
+		newTag("li", topbar, { text: "into tab" })
 		var tabInput = newTag("input", topbar)
 		tabInput.placeholder = "My tab"
 		var middlebar = newTag("div", this.optionsSubElement)
@@ -101,8 +101,14 @@ Modest Nature
 			var pokemons, tab
 			try {
 				pokemons = importMethod.method(textarea.value)
-				if (pokemons)
-					tab = stuff.collection.addLocalTab(title, pokemons)
+				if (pokemons) {
+					tab = stuff.collection.getLocalTab(title)
+					if (tab) {
+						tab.pokemons = tab.pokemons.concat(pokemons)
+						stuff.collection.saveLocalTabs()
+					} else
+						tab = stuff.collection.addLocalTab(title, pokemons)
+				}
 			}
 			catch (e) {
 				console.error(e)
@@ -183,9 +189,9 @@ Modest Nature
 		addButton.onclick = () => {
 			var things = pokemonInput.value.replace(" ", "|").split("|")
 			var tab = stuff.state.currentTab
-			if(typeof stuff.state.currentTab == "string"){
+			if (typeof stuff.state.currentTab == "string") {
 				tab = stuff.collection.getLocalTab("My tab")
-				if(!tab)
+				if (!tab)
 					tab = stuff.collection.addLocalTab("My tab")
 				stuff.state.currentTab = tab
 				stuff.headerSection.showLocal = true
