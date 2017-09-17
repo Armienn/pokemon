@@ -17,9 +17,9 @@ class ListSection {
 
 		this.basePokemonColumns = [
 			new PokemonColumn("", (pokemon) => "<img src='" + PokeText.spriteName(pokemon) + "'  style='height: 2rem;'/>",
-			{
-				headerOnClick: () => stuff.headerSection.setSortingMethod("ID")
-			}),
+				{
+					headerOnClick: () => stuff.headerSection.setSortingMethod("ID")
+				}),
 			new PokemonColumn("Pokemon", (pokemon) => PokeText.formName(pokemon) + (pokemon.nickname ? " [" + pokemon.nickname + "]" : "")),
 			new PokemonColumn("Types", (pokemon) => PokeText.types(pokemon)),
 			new PokemonColumn("Abilities", (pokemon) => PokeText.abilities(pokemon)),
@@ -29,38 +29,38 @@ class ListSection {
 					headerOnClick: () => stuff.headerSection.setSortingMethod("HP")
 				}),
 			new PokemonColumn("Atk", (pokemon) => PokeText.stat(pokemon.stats.atk),
-			{
-				title: (pokemon) => "Total base stat: " + stuff.data.getTotalBaseStat(pokemon),
-				headerOnClick: () => stuff.headerSection.setSortingMethod("Attack")
-			}),
+				{
+					title: (pokemon) => "Total base stat: " + stuff.data.getTotalBaseStat(pokemon),
+					headerOnClick: () => stuff.headerSection.setSortingMethod("Attack")
+				}),
 			new PokemonColumn("Def", (pokemon) => PokeText.stat(pokemon.stats.def),
-			{
-				title: (pokemon) => "Total base stat: " + stuff.data.getTotalBaseStat(pokemon),
-				headerOnClick: () => stuff.headerSection.setSortingMethod("Defense")
-			}),
+				{
+					title: (pokemon) => "Total base stat: " + stuff.data.getTotalBaseStat(pokemon),
+					headerOnClick: () => stuff.headerSection.setSortingMethod("Defense")
+				}),
 			new PokemonColumn("SpA", (pokemon) => PokeText.stat(pokemon.stats.spa),
-			{
-				title: (pokemon) => "Total base stat: " + stuff.data.getTotalBaseStat(pokemon),
-				headerOnClick: () => stuff.headerSection.setSortingMethod("Sp. Attack")
-			}),
+				{
+					title: (pokemon) => "Total base stat: " + stuff.data.getTotalBaseStat(pokemon),
+					headerOnClick: () => stuff.headerSection.setSortingMethod("Sp. Attack")
+				}),
 			new PokemonColumn("SpD", (pokemon) => PokeText.stat(pokemon.stats.spd),
-			{
-				title: (pokemon) => "Total base stat: " + stuff.data.getTotalBaseStat(pokemon),
-				headerOnClick: () => stuff.headerSection.setSortingMethod("Sp. Defense")
-			}),
+				{
+					title: (pokemon) => "Total base stat: " + stuff.data.getTotalBaseStat(pokemon),
+					headerOnClick: () => stuff.headerSection.setSortingMethod("Sp. Defense")
+				}),
 			new PokemonColumn("Spe", (pokemon) => PokeText.stat(pokemon.stats.spe),
-			{
-				title: (pokemon) => "Total base stat: " + stuff.data.getTotalBaseStat(pokemon),
-				headerOnClick: () => stuff.headerSection.setSortingMethod("Speed")
-			}),
+				{
+					title: (pokemon) => "Total base stat: " + stuff.data.getTotalBaseStat(pokemon),
+					headerOnClick: () => stuff.headerSection.setSortingMethod("Speed")
+				}),
 			new PokemonColumn("Egg groups", (pokemon) => PokeText.eggGroups(pokemon))
 		]
 
 		this.tabPokemonColumns = [
 			new PokemonColumn("", (pokemon) => "<img src='" + PokeText.spriteName(pokemon) + "' style='height: 2rem;'/>",
-			{
-				headerOnClick: () => stuff.headerSection.setSortingMethod("ID")
-			}),
+				{
+					headerOnClick: () => stuff.headerSection.setSortingMethod("ID")
+				}),
 			new PokemonColumn("Pokemon", (pokemon) =>
 				PokeText.formName(pokemon) +
 				(pokemon.gender && pokemon.gender != "—" ? " " + PokeText.gender(pokemon) : "") +
@@ -75,35 +75,35 @@ class ListSection {
 			}),
 			new PokemonColumn("Nature", (pokemon) => pokemon.nature ? pokemon.nature : ""),
 			new PokemonColumn("HP", (pokemon) => PokeText.IVEV("hp", pokemon),
-			{
-				title: (pokemon) => "Stat at lvl 50: " + stuff.data.getStatAtLevel(pokemon, "hp", 50),
-				headerOnClick: () => stuff.headerSection.setSortingMethod("HP")
-			}),
+				{
+					title: (pokemon) => "Stat at lvl 50: " + stuff.data.getStatAtLevel(pokemon, "hp", 50),
+					headerOnClick: () => stuff.headerSection.setSortingMethod("HP")
+				}),
 			new PokemonColumn("Atk", (pokemon) => PokeText.IVEV("atk", pokemon),
-			{
-				title: (pokemon) => "Stat at lvl 50: " + stuff.data.getStatAtLevel(pokemon, "atk", 50),
-				headerOnClick: () => stuff.headerSection.setSortingMethod("Attack")
-			}),
+				{
+					title: (pokemon) => "Stat at lvl 50: " + stuff.data.getStatAtLevel(pokemon, "atk", 50),
+					headerOnClick: () => stuff.headerSection.setSortingMethod("Attack")
+				}),
 			new PokemonColumn("Def", (pokemon) => PokeText.IVEV("def", pokemon),
-			{
-				title: (pokemon) => "Stat at lvl 50: " + stuff.data.getStatAtLevel(pokemon, "def", 50),
-				headerOnClick: () => stuff.headerSection.setSortingMethod("Defense")
-			}),
+				{
+					title: (pokemon) => "Stat at lvl 50: " + stuff.data.getStatAtLevel(pokemon, "def", 50),
+					headerOnClick: () => stuff.headerSection.setSortingMethod("Defense")
+				}),
 			new PokemonColumn("SpA", (pokemon) => PokeText.IVEV("spa", pokemon),
-			{
-				title: (pokemon) => "Stat at lvl 50: " + stuff.data.getStatAtLevel(pokemon, "spa", 50),
-				headerOnClick: () => stuff.headerSection.setSortingMethod("Sp. Attack")
-			}),
+				{
+					title: (pokemon) => "Stat at lvl 50: " + stuff.data.getStatAtLevel(pokemon, "spa", 50),
+					headerOnClick: () => stuff.headerSection.setSortingMethod("Sp. Attack")
+				}),
 			new PokemonColumn("SpD", (pokemon) => PokeText.IVEV("spd", pokemon),
-			{
-				title: (pokemon) => "Stat at lvl 50: " + stuff.data.getStatAtLevel(pokemon, "spd", 50),
-				headerOnClick: () => stuff.headerSection.setSortingMethod("Sp. Defense")
-			}),
+				{
+					title: (pokemon) => "Stat at lvl 50: " + stuff.data.getStatAtLevel(pokemon, "spd", 50),
+					headerOnClick: () => stuff.headerSection.setSortingMethod("Sp. Defense")
+				}),
 			new PokemonColumn("Spe", (pokemon) => PokeText.IVEV("spe", pokemon),
-			{
-				title: (pokemon) => "Stat at lvl 50: " + stuff.data.getStatAtLevel(pokemon, "spe", 50),
-				headerOnClick: () => stuff.headerSection.setSortingMethod("Speed")
-			}),
+				{
+					title: (pokemon) => "Stat at lvl 50: " + stuff.data.getStatAtLevel(pokemon, "spe", 50),
+					headerOnClick: () => stuff.headerSection.setSortingMethod("Speed")
+				}),
 			new PokemonColumn("Moves", (pokemon) => pokemon.learntMoves ? pokemon.learntMoves.join(", ") : ""),
 			new PokemonColumn("Ball", (pokemon) => PokeText.balls(pokemon))
 		]
@@ -161,7 +161,7 @@ class ListSection {
 		for (var i in columns) {
 			var element = newTag("th", tableHeader)
 			element.innerHTML = columns[i].columnHeader
-			if(columns[i].headerOnClick)
+			if (columns[i].headerOnClick)
 				element.onclick = columns[i].headerOnClick
 		}
 	}
@@ -192,16 +192,24 @@ class ListSection {
 		pokeElement.onclick = function () {
 			stuff.selectPokemon(pokemon, pokeElement)
 		}
-		if (this.nextPoke % 2)
+		if (this.nextPoke % 2) {
 			pokeElement.className = pokemon.got ? "got-odd" : "odd"
-		else
+			if (pokemon.hue)
+				pokeElement.style.backgroundColor = "rgba(" + HSVtoRGB(pokemon.hue, 1, 0.6) + ",0.5)"
+		}
+		else {
 			pokeElement.className = pokemon.got ? "got-even" : "even"
+			if (pokemon.hue)
+				pokeElement.style.backgroundColor = "rgba(" + HSVtoRGB(pokemon.hue, 1, 1) + ",0.5)"
+		}
 	}
 
 	addPokemonGridElement(pokemon) {
 		var pokeElement = newTag("li", this.gridElement)
 		if (pokemon.got)
 			pokeElement.className = "got"
+		if (pokemon.hue)
+			pokeElement.style.backgroundColor = "rgba(" + HSVtoRGB(pokemon.hue, 1, 0.6) + ",0.5)"
 		pokeElement.innerHTML = "<img src='" + PokeText.spriteName(pokemon) + "'/>"
 		pokeElement.onclick = function () {
 			stuff.selectPokemon(pokemon)
