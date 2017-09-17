@@ -153,8 +153,11 @@ class PokemonData {
 			pokes = pokes.filter(stuff.state.filters[i])
 		if (stuff.state.searchFilter)
 			pokes = pokes.filter(stuff.state.searchFilter)
-		if (stuff.state.sorting)
+		if (stuff.state.sorting){
 			pokes.sort(stuff.state.sorting)
+			if(stuff.state.reverseSort)
+				pokes.reverse()
+		}
 		return pokes
 	}
 

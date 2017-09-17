@@ -17,6 +17,7 @@ class State {
 		this.filters = {}
 		this.searchFilter
 		this.sorting
+		this.reverseSort
 
 		// Loading stuff
 		this.loaded = false

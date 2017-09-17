@@ -69,6 +69,7 @@ class HeaderSection {
 		this.filters = {}
 
 		this.selectElement
+		this.reverseElement
 
 		this.titleElement = document.getElementById("main-title")
 		this.subtitleElement = document.getElementById("sub-title")
@@ -103,7 +104,7 @@ class HeaderSection {
 		this.showSubtitle()
 		this.showNavList()
 		this.filterAdderElement.innerHTML = ""
-		if (stuff.state.externalInventory.load)
+		if (stuff.collection.pokemons.length || stuff.collection.lookingFor.length || stuff.collection.local.length)
 			this.showCompletionModeSwitcher()
 		this.showSearch()
 		this.showFilterSelect()
@@ -307,11 +308,29 @@ class HeaderSection {
 				stuff.updatePokemons()
 			}
 		}
+		this.reverseElement = newTag("li", filterElement)
+		this.reverseElement.className = stuff.state.reverseSort ? "active" : "inactive"
+		this.reverseElement.innerHTML = "reverse"
+		this.reverseElement.style.fontWeight = "bold"
+		this.reverseElement.style.cursor = "pointer"
+		this.reverseElement.onclick = () => {
+			stuff.state.reverseSort = !stuff.state.reverseSort
+			this.reverseElement.className = stuff.state.reverseSort ? "active" : "inactive"
+			stuff.updatePokemons()
+		}
 	}
 
-	setSortingMethod(method){
+	setSortingMethod(method) {
+		if (this.selectElement.value == method) {
+			stuff.state.reverseSort = !stuff.state.reverseSort
+			this.reverseElement.className = stuff.state.reverseSort ? "active" : "inactive"
+		}
 		this.selectElement.value = method
 		this.selectElement.onchange()
+	}
+
+	reverseSort() {
+		this.reverseElement.onclick()
 	}
 
 	addCustomSort(label, input, filterFunction) {
@@ -337,7 +356,7 @@ class HeaderSection {
 	showFilterSelect() {
 		var filterElement = newTag("li", this.filterAdderElement, true)
 		filterElement.title = "Filters remove pokemons that do not fit the filter"
-		newTag("label", filterElement).innerHTML = "Add filter:"
+		newTag("label", filterElement).innerHTML = "Filter:"
 		var selectElement = newTag("select", filterElement)
 		newTag("option", selectElement)
 		for (var i in this.filters) {
