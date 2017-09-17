@@ -229,11 +229,17 @@ nav li{
     max-height: 25rem;
     transition: max-height 1s ease;
 }
+.edit{
+    float: right;
+    padding-right: 1rem;
+    margin-top: -0.5rem;
+    font-size: 2rem;
+    cursor: pointer;
+}
 
 #pokemon-info section section {
     float: left;
     width: auto;
-    height: 14rem;
 }
 #pokemon-info tr:hover {
     background-color: transparent;

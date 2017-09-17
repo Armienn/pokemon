@@ -86,7 +86,7 @@ class HeaderSection {
 			"Type": { type: "basic", filter: this.hasItemInFilter("types"), options: stuff.data.typeNames },
 			"Ability": { type: "basic", filter: this.hasItemInFilter("ability", "abilities"), options: Object.keys(stuff.data.abilities) },
 			"Move": { type: "basic", filter: this.hasItemInFilter("moves"), options: Object.keys(stuff.data.moves) },
-			"Egg group": { type: "basic", filter: this.hasItemInFilter("eggGroups"), options: stuff.data.eggGroupNames },
+			"Egg group": { type: "basic", filter: this.hasItemInFilter("eggGroups"), options: stuff.data.eggGroups },
 			"Gender ratios": { type: "multi", filter: this.hasItemInFilter("ratio"), options: ["7:1", "3:1", "1:1", "1:3", "1:7", "—"] },
 			"Generation": { type: "multi", filter: this.generationFilter, options: ["1", "2", "3", "4", "5", "6", "7"] },
 			"Legendary": { type: "select", filter: this.legendaryFilter, options: ["Show only", "Don't show"] },
@@ -312,7 +312,7 @@ class HeaderSection {
 		}
 		this.reverseElement = newTag("li", filterElement)
 		this.reverseElement.className = stuff.state.reverseSort ? "active" : "inactive"
-		this.reverseElement.innerHTML = "reverse"
+		this.reverseElement.innerHTML = "Reverse"
 		this.reverseElement.style.fontWeight = "bold"
 		this.reverseElement.style.cursor = "pointer"
 		this.reverseElement.onclick = () => {

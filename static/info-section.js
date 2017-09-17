@@ -84,8 +84,63 @@ class InfoSection {
 					for (var i in pokemon.evolvesTo)
 						this.familyRow(rows, "Evolves to |", pokemon.evolvesTo[i], compact)
 					return rows
-				}),
+				})
 		]
+		this.editSections = [
+			this.Section(
+				(pokemon) => {
+					var rows = []
+					if (pokemon.forms)
+						this.formEditRow(rows, pokemon, "Form |")
+					else
+						this.simpleRow(rows, "Form |", "<span style='margin-left:1rem'>" + pokemon.form + "</span>")
+					this.simpleEditRow(rows, pokemon, "Nickname |", "nickname")
+					this.selectEditRow(rows, pokemon, "Ability |", "ability", pokemon.abilities.filter((e) => e))
+					this.simpleEditRow(rows, pokemon, "Nature |", "nature", Object.keys(stuff.data.natures))
+					this.genderShinyEditRow(rows, pokemon, "Gender / Shiny |")
+					this.simpleEditRow(rows, pokemon, "Level |", "level")
+					return rows
+				}),
+			this.Section(
+				(pokemon) => {
+					var rows = []
+					var moves = []
+					for (var i in pokemon.moves)
+						moves.push(pokemon.moves[i].name)
+					this.doubleEditRow(rows, pokemon, "OT / TID |", "ot", "tid")
+					this.simpleEditRow(rows, pokemon, "Language |", "language")
+					this.simpleEditRow(rows, pokemon, "Move |", ["learntMoves", 0], moves)
+					this.simpleEditRow(rows, pokemon, "Move |", ["learntMoves", 1], moves)
+					this.simpleEditRow(rows, pokemon, "Move |", ["learntMoves", 2], moves)
+					this.simpleEditRow(rows, pokemon, "Move |", ["learntMoves", 3], moves)
+					return rows
+				}),
+			this.Section(
+				(pokemon) => {
+					var rows = []
+					this.statEditRow(rows, pokemon, "HP IV |", "ivs", "hp")
+					this.statEditRow(rows, pokemon, "Attack IV |", "ivs", "atk")
+					this.statEditRow(rows, pokemon, "Defense IV |", "ivs", "def")
+					this.statEditRow(rows, pokemon, "Sp. Atk IV |", "ivs", "spa")
+					this.statEditRow(rows, pokemon, "Sp. Def IV |", "ivs", "spd")
+					this.statEditRow(rows, pokemon, "Speed IV |", "ivs", "spe")
+					return rows
+				}),
+			this.Section(
+				(pokemon) => {
+					var rows = []
+					this.statEditRow(rows, pokemon, "HP EV |", "evs", "hp")
+					this.statEditRow(rows, pokemon, "Attack EV |", "evs", "atk")
+					this.statEditRow(rows, pokemon, "Defense EV |", "evs", "def")
+					this.statEditRow(rows, pokemon, "Sp. Atk EV |", "evs", "spa")
+					this.statEditRow(rows, pokemon, "Sp. Def EV |", "evs", "spd")
+					this.statEditRow(rows, pokemon, "Speed EV |", "evs", "spe")
+					return rows
+				})
+		]
+
+		this.editMode = false
+		this.edits = []
 
 		this.infoElement = document.getElementById("pokemon-info")
 		this.infoRowElement = document.getElementById("pokemon-info-row")
@@ -101,6 +156,7 @@ class InfoSection {
 	}
 
 	closeInfo(onDone) {
+		this.editMode = false
 		if (!stuff.state.currentPokemon) {
 			if (onDone)
 				onDone()
@@ -162,7 +218,9 @@ class InfoSection {
 	}
 
 	showPokemonInfo() {
-		this.showName(stuff.state.currentPokemon)
+		if (this.editMode)
+			return this.showPokemonEdit()
+		this.showHeader(stuff.state.currentPokemon)
 		this.showDescription(stuff.state.currentPokemon)
 		this.showImage(stuff.state.currentPokemon)
 		this.sectionsElement.removeChild(this.imageElement)
@@ -173,7 +231,7 @@ class InfoSection {
 		this.showMoves(stuff.state.currentPokemon)
 	}
 
-	showName(pokemon) {
+	showHeader(pokemon) {
 		this.nameElement.innerHTML = ""
 		if (!pokemon.base)
 			this.nameElement.innerHTML = "#" + pokemon.id + " - "
@@ -186,6 +244,14 @@ class InfoSection {
 			this.nameElement.innerHTML += " <span style='font-size:1rem;'>- Lv." + pokemon.level + "</span>"
 		if (pokemon.language)
 			this.nameElement.innerHTML += " <span style='font-size:1rem;'>- " + pokemon.language + "</span>"
+		if (typeof stuff.state.currentTab != "string" && stuff.state.currentPokemon.base) {
+			var edit = newTag("span", this.nameElement, { text: "⚙" })
+			edit.className = "edit"
+			edit.onclick = () => {
+				this.editMode = true
+				this.showPokemonEdit()
+			}
+		}
 		var colorA = stuff.data.typeColors[pokemon.types[0]]
 		var colorB = pokemon.types[1] ? stuff.data.typeColors[pokemon.types[1]] : stuff.data.typeColors[pokemon.types[0]]
 		this.nameElement.style.background = "linear-gradient(to right, " + colorA + ", " + colorB + ")"
@@ -233,7 +299,10 @@ class InfoSection {
 		delete cells.options
 		for (var i in cells) {
 			var cell = newTag(cells[i].tag, row)
-			cell.innerHTML = typeof cells[i].content == "string" ? cells[i].content : cells[i].content(stuff.state.currentPokemon)
+			if (typeof cells[i].content == "string")
+				cell.innerHTML = cells[i].content
+			else
+				cells[i].content(cell)
 			for (var j in cells[i].style)
 				cell.style[j] = cells[i].style[j]
 		}
@@ -424,5 +493,249 @@ class InfoSection {
 		cells.style = { cursor: "pointer", height: compact ? "1.33rem" : "" }
 		cells.options = { onclick: () => { stuff.selectPokemon(pokemon.base) } }
 		rows.push(cells)
+	}
+
+	// edit mode stuff
+
+	showPokemonEdit() {
+		this.edits = []
+		this.showEditHeader(stuff.state.currentPokemon)
+		this.showEditNote(stuff.state.currentPokemon)
+		this.showImage(stuff.state.currentPokemon)
+		this.sectionsElement.removeChild(this.imageElement)
+		this.sectionsElement.innerHTML = ""
+		this.sectionsElement.appendChild(this.imageElement)
+		for (var i in this.editSections)
+			this.showSection(this.editSections[i])
+		this.showButtons(stuff.state.currentPokemon)
+		this.showMoves(stuff.state.currentPokemon)
+	}
+
+	showEditHeader(pokemon) {
+		this.nameElement.innerHTML = "#" + pokemon.id + " - "
+		this.nameElement.innerHTML += pokemon.name
+	}
+
+	showButtons(pokemon) {
+		var div = newTag("div", this.sectionsElement)
+		div.style.backgroundColor = "rgba(128,128,128,0.5)"
+		div.style.display = "table"
+		div.style.width = "10rem"
+		var button = newTag("ul", div, { text: "Save changes" })
+		button.className = "button"
+		button.onclick = () => {
+			for (var i in this.edits)
+				this.edits[i](pokemon)
+			this.editMode = false
+			stuff.collection.saveLocalTabs()
+			this.showPokemonInfo()
+			stuff.update()
+		}
+		var cancel = newTag("ul", div, { text: "Cancel" })
+		cancel.className = "button"
+		cancel.style.marginTop = "0.5rem"
+		cancel.onclick = () => {
+			this.editMode = false
+			this.showPokemonInfo()
+		}
+		var deleteButton = newTag("ul", div, { text: "Delete" })
+		deleteButton.className = "button"
+		deleteButton.style.marginTop = "0.5rem"
+		deleteButton.onclick = () => {
+			this.editMode = false
+			var currentTab = stuff.state.currentTab
+			if (typeof currentTab != "string") {
+				var index = currentTab.pokemons.indexOf(pokemon)
+				if (index > -1)
+					currentTab.pokemons.splice(index, 1)
+			}
+			stuff.collection.saveLocalTabs()
+			stuff.selectPokemon()
+			stuff.update()
+		}
+	}
+
+	showEditNote(pokemon) {
+		this.descriptionElement.innerHTML = ""
+		var input = newTag("input", this.descriptionElement)
+		input.style.width = "30rem"
+		input.placeholder = "Notes"
+		if (pokemon.notes)
+			input.value = pokemon.notes
+		this.edits.push((pokemon) => {
+			var value = input.value
+			if (!value)
+				return
+			pokemon.notes = value
+		})
+	}
+
+	simpleEditRow(rows, pokemon, title, key, options) {
+		var deep = typeof key != "string"
+		rows.push([
+			this.Title(title),
+			this.Content((cell) => {
+				var input = newTag("input", cell)
+				input.style.width = "10rem"
+				input.style.boxSizing = "border-box"
+				if (!deep) {
+					if (pokemon[key])
+						input.value = pokemon[key]
+				} else {
+					if (pokemon[key[0]] && pokemon[key[0]][key[1]])
+						input.value = pokemon[key[0]][key[1]]
+				}
+				if (options) {
+					var datalist = newTag("datalist", cell)
+					datalist.id = "edit-list-" + (deep ? key[0] + key[1] : key)
+					input.setAttribute("list", datalist.id)
+					for (var i in options)
+						newTag("option", datalist, { text: options[i] }).value = options[i]
+				}
+				this.edits.push((pokemon) => {
+					var value = input.value
+					if (!value)
+						return
+					if (!deep)
+						return pokemon[key] = value
+					if (!pokemon[key[0]])
+						pokemon[key[0]] = key[1] > -1 ? [] : {}
+					pokemon[key[0]][key[1]] = value
+				})
+			})
+		])
+	}
+
+	doubleEditRow(rows, pokemon, title, key, key2) {
+		rows.push([
+			this.Title(title),
+			this.Content((cell) => {
+				var input = newTag("input", cell)
+				input.style.width = "4.5rem"
+				input.style.marginRight = "0"
+				input.style.boxSizing = "border-box"
+				if (pokemon[key])
+					input.value = pokemon[key]
+				var input2 = newTag("input", cell)
+				input2.style.width = "4.5rem"
+				input2.style.marginLeft = "1rem"
+				input2.style.boxSizing = "border-box"
+				if (pokemon[key2])
+					input2.value = pokemon[key2]
+				this.edits.push((pokemon) => {
+					var value = input.value
+					if (!value)
+						return
+					return pokemon[key] = value
+				})
+				this.edits.push((pokemon) => {
+					var value = input2.value
+					if (!value)
+						return
+					return pokemon[key2] = value
+				})
+			})
+		])
+	}
+
+	selectEditRow(rows, pokemon, title, key, options) {
+		rows.push([
+			this.Title(title),
+			this.Content((cell) => {
+				var select = newTag("select", cell)
+				select.style.width = "10rem"
+				newTag("option", select)
+				for (var i in options)
+					newTag("option", select, { text: options[i] }).value = options[i]
+				if (pokemon[key])
+					select.value = pokemon[key]
+				this.edits.push((pokemon) => {
+					var value = select.value
+					if (!value)
+						return
+					pokemon[key] = value
+				})
+			})
+		])
+	}
+
+	formEditRow(rows, pokemon, title) {
+		rows.push([
+			this.Title(title),
+			this.Content((cell) => {
+				var select = newTag("select", cell)
+				select.style.width = "10rem"
+				for (var i in pokemon.forms)
+					newTag("option", select, { text: pokemon.forms[i] }).value = pokemon.forms[i]
+				if (pokemon.form)
+					select.value = pokemon.form
+				this.edits.push((pokemon) => {
+					var value = select.value
+					if (!value)
+						return
+					pokemon.form = value
+					pokemon.base = new Pokemon({ id: pokemon.id, form: pokemon.form }).base
+				})
+			})
+		])
+	}
+
+	statEditRow(rows, pokemon, title, key, stat) {
+		rows.push([
+			this.Title(title),
+			this.Content((cell) => {
+				var input = newTag("input", cell)
+				input.style.width = "3rem"
+				if (pokemon[key] && pokemon[key][stat])
+					input.value = pokemon[key][stat]
+				this.edits.push((pokemon) => {
+					var value = input.value
+					if (!value)
+						return
+					if (!pokemon[key])
+						pokemon[key] = {}
+					pokemon[key][stat] = value
+				})
+			})
+		])
+	}
+
+	genderShinyEditRow(rows, pokemon, title) {
+		rows.push([
+			this.Title(title),
+			this.Content((cell) => {
+				var genders = ["-", "m", "f"]
+				var gender = 0
+				if (pokemon.gender && (pokemon.gender == "♂" || pokemon.gender.toLowerCase() == "m" || pokemon.gender.toLowerCase() == "male"))
+					gender = 1
+				if (pokemon.gender && (pokemon.gender == "♀" || pokemon.gender.toLowerCase() == "f" || pokemon.gender.toLowerCase() == "female"))
+					gender = 2
+				var shiny = pokemon.shiny
+				var genderThing = newTag("span", cell)
+				genderThing.innerHTML = PokeText.gender({ gender: genders[gender] })
+				genderThing.style.marginLeft = "0.5rem"
+				genderThing.onclick = () => {
+					gender++
+					if (gender > 2)
+						gender = 0
+					genderThing.innerHTML = PokeText.gender({ gender: genders[gender] })
+				}
+				var shinyThing = newTag("span", cell)
+				shinyThing.innerHTML = "<span style='color:" + (shiny ? "#f11" : "#888") + "; margin-left:0.5rem;'>★</span>"
+				shinyThing.onclick = () => {
+					shiny = !shiny
+					shinyThing.innerHTML = "<span style='color:" + (shiny ? "#f11" : "#888") + "; margin-left:0.5rem;'>★</span>"
+				}
+				this.edits.push((pokemon) => {
+					var value = genders[gender]
+					if (pokemon.ratio == "—")
+						pokemon.gender = "-"
+					else if (value != "-")
+						pokemon.gender = value
+					if (shiny)
+						pokemon.shiny = true
+				})
+			})
+		])
 	}
 }
