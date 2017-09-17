@@ -15,7 +15,7 @@ class State {
 		// filters and search
 		this.query
 		this.filters = {}
-		this.searchFilter
+		this.searchQuery = ""
 		this.sorting
 		this.reverseSort
 

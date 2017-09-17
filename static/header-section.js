@@ -266,8 +266,9 @@ class HeaderSection {
 		var inputElement = newTag("input", filterElement)
 		inputElement.placeholder = "Search"
 		inputElement.style.width = "15rem"
+		inputElement.value = stuff.state.searchQuery
 		inputElement.oninput = () => {
-			stuff.state.searchFilter = this.getSearchFilter(inputElement.value)
+			stuff.state.searchQuery = inputElement.value
 			stuff.updatePokemons()
 		}
 	}
@@ -492,12 +493,6 @@ class HeaderSection {
 	}
 
 	// ----- Filters ----------
-	getSearchFilter(query) {
-		return function (pokemon) {
-			query = query.trim().toLowerCase()
-			return PokeText.formName(pokemon).toLowerCase().indexOf(query) > -1
-		}
-	}
 
 	hasItemInFilter(key, fallbackKey) {
 		return function (...items) {

@@ -152,8 +152,11 @@ class PokemonData {
 
 		for (var i in stuff.state.filters)
 			pokes = pokes.filter(stuff.state.filters[i])
-		if (stuff.state.searchFilter)
-			pokes = pokes.filter(stuff.state.searchFilter)
+		if (stuff.state.searchQuery)
+			pokes = pokes.filter((pokemon) => {
+				var query = stuff.state.searchQuery.trim().toLowerCase()
+				return PokeText.formName(pokemon).toLowerCase().indexOf(query) > -1
+			})
 		if (stuff.state.sorting) {
 			pokes.sort(stuff.state.sorting)
 			if (stuff.state.reverseSort)

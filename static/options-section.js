@@ -188,8 +188,10 @@ Modest Nature
 					tab = stuff.collection.addLocalTab("My tab")
 				stuff.state.currentTab = tab
 			}
-			tab.pokemons.push(new Pokemon({ name: things[0], form: things[1] }))
+			var pokemon = new Pokemon({ name: things[0], form: things[1] })
+			tab.pokemons.push(pokemon)
 			stuff.collection.saveLocalTabs()
+			stuff.selectPokemon(pokemon)
 			stuff.update()
 		}
 	}
