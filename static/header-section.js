@@ -68,6 +68,8 @@ class HeaderSection {
 
 		this.filters = {}
 
+		this.selectElement
+
 		this.titleElement = document.getElementById("main-title")
 		this.subtitleElement = document.getElementById("sub-title")
 		this.navListElement = document.getElementById("nav-list")
@@ -274,13 +276,13 @@ class HeaderSection {
 		document.getElementById("custom-adder").innerHTML = ""
 		var filterElement = newTag("li", document.getElementById("custom-adder"), true)
 		newTag("label", filterElement).innerHTML = label
-		var selectElement = newTag("select", filterElement)
+		this.selectElement = newTag("select", filterElement)
 		for (var i in this.sorts) {
-			var optionElement = newTag("option", selectElement)
+			var optionElement = newTag("option", this.selectElement)
 			optionElement.value = i
 			optionElement.innerHTML = i
 		}
-		selectElement.onchange = function () {
+		this.selectElement.onchange = function () {
 			var customSortElement = document.getElementById("custom-sort")
 			if (this.value == "Custom sort") {
 				newTag("label", customSortElement).innerHTML = label
@@ -305,6 +307,11 @@ class HeaderSection {
 				stuff.updatePokemons()
 			}
 		}
+	}
+
+	setSortingMethod(method){
+		this.selectElement.value = method
+		this.selectElement.onchange()
 	}
 
 	addCustomSort(label, input, filterFunction) {

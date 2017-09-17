@@ -1,10 +1,11 @@
 "use strict";
 
 class PokemonColumn {
-	constructor(columnHeader, column, title) {
+	constructor(columnHeader, column, options = {}) {
 		this.columnHeader = columnHeader
 		this.column = column
-		this.title = title
+		for (var i in options)
+			this[i] = options[i]
 	}
 }
 
@@ -15,16 +16,43 @@ class ListSection {
 		this.adding = false
 
 		this.basePokemonColumns = [
-			new PokemonColumn("", (pokemon) => "<img src='" + PokeText.spriteName(pokemon) + "'  style='height: 2rem;'/>"),
+			new PokemonColumn("", (pokemon) => "<img src='" + PokeText.spriteName(pokemon) + "'  style='height: 2rem;'/>",
+			{
+				headerOnClick: () => stuff.headerSection.setSortingMethod("ID")
+			}),
 			new PokemonColumn("Pokemon", (pokemon) => PokeText.formName(pokemon) + (pokemon.nickname ? " [" + pokemon.nickname + "]" : "")),
 			new PokemonColumn("Types", (pokemon) => PokeText.types(pokemon)),
 			new PokemonColumn("Abilities", (pokemon) => PokeText.abilities(pokemon)),
-			new PokemonColumn("HP", (pokemon) => PokeText.stat(pokemon.stats.hp), (pokemon)=>"Total base stat: " + stuff.data.getTotalBaseStat(pokemon)),
-			new PokemonColumn("Atk", (pokemon) => PokeText.stat(pokemon.stats.atk), (pokemon)=>"Total base stat: " + stuff.data.getTotalBaseStat(pokemon)),
-			new PokemonColumn("Def", (pokemon) => PokeText.stat(pokemon.stats.def), (pokemon)=>"Total base stat: " + stuff.data.getTotalBaseStat(pokemon)),
-			new PokemonColumn("SpA", (pokemon) => PokeText.stat(pokemon.stats.spa), (pokemon)=>"Total base stat: " + stuff.data.getTotalBaseStat(pokemon)),
-			new PokemonColumn("SpD", (pokemon) => PokeText.stat(pokemon.stats.spd), (pokemon)=>"Total base stat: " + stuff.data.getTotalBaseStat(pokemon)),
-			new PokemonColumn("Spe", (pokemon) => PokeText.stat(pokemon.stats.spe), (pokemon)=>"Total base stat: " + stuff.data.getTotalBaseStat(pokemon)),
+			new PokemonColumn("HP", (pokemon) => PokeText.stat(pokemon.stats.hp),
+				{
+					title: (pokemon) => "Total base stat: " + stuff.data.getTotalBaseStat(pokemon),
+					headerOnClick: () => stuff.headerSection.setSortingMethod("HP")
+				}),
+			new PokemonColumn("Atk", (pokemon) => PokeText.stat(pokemon.stats.atk),
+			{
+				title: (pokemon) => "Total base stat: " + stuff.data.getTotalBaseStat(pokemon),
+				headerOnClick: () => stuff.headerSection.setSortingMethod("Attack")
+			}),
+			new PokemonColumn("Def", (pokemon) => PokeText.stat(pokemon.stats.def),
+			{
+				title: (pokemon) => "Total base stat: " + stuff.data.getTotalBaseStat(pokemon),
+				headerOnClick: () => stuff.headerSection.setSortingMethod("Defense")
+			}),
+			new PokemonColumn("SpA", (pokemon) => PokeText.stat(pokemon.stats.spa),
+			{
+				title: (pokemon) => "Total base stat: " + stuff.data.getTotalBaseStat(pokemon),
+				headerOnClick: () => stuff.headerSection.setSortingMethod("Sp. Attack")
+			}),
+			new PokemonColumn("SpD", (pokemon) => PokeText.stat(pokemon.stats.spd),
+			{
+				title: (pokemon) => "Total base stat: " + stuff.data.getTotalBaseStat(pokemon),
+				headerOnClick: () => stuff.headerSection.setSortingMethod("Sp. Defense")
+			}),
+			new PokemonColumn("Spe", (pokemon) => PokeText.stat(pokemon.stats.spe),
+			{
+				title: (pokemon) => "Total base stat: " + stuff.data.getTotalBaseStat(pokemon),
+				headerOnClick: () => stuff.headerSection.setSortingMethod("Speed")
+			}),
 			new PokemonColumn("Egg groups", (pokemon) => PokeText.eggGroups(pokemon))
 		]
 
@@ -106,11 +134,13 @@ class ListSection {
 		for (var i in columns) {
 			var element = newTag("th", tableHeader)
 			element.innerHTML = columns[i].columnHeader
+			if(columns[i].headerOnClick)
+				element.onclick = columns[i].headerOnClick
 		}
 	}
 
 	loadMoreWhenScrolledDown() {
-		if(this.adding)
+		if (this.adding)
 			return
 		var main = document.getElementById("main")
 		if (main.scrollTop > main.scrollHeight - main.clientHeight - 200) {
@@ -126,10 +156,10 @@ class ListSection {
 			columns = this.tabPokemonColumns
 		for (var i in columns) {
 			var element = newTag("th", pokeElement)
-			if(pokemon.notes)
+			if (pokemon.notes)
 				element.title = pokemon.notes
 			element.innerHTML = columns[i].column(pokemon)
-			if(columns[i].title)
+			if (columns[i].title)
 				element.title = columns[i].title(pokemon)
 		}
 		pokeElement.onclick = function () {
