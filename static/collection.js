@@ -28,17 +28,14 @@ class Collection {
 	}
 
 	addLocalTab(title, pokemons, skipSave) {
-		var tab = this.newTab(title, pokemons, title)
-		var added = false
-		for (var i in this.local) {
-			if (this.local[i].title == title) {
-				this.local[i] = tab
-				added = true
-				break
-			}
-		}
-		if (!added)
+		if(!pokemons)
+			pokemons = []
+		var tab = this.getLocalTab(title)
+		if(!tab){
+			tab = this.newTab(title, [], title)
 			this.local.push(tab)
+		}
+		tab.pokemons = tab.pokemons.concat(pokemons)
 		if(!skipSave)
 			this.saveLocalTabs()
 		return tab

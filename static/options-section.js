@@ -7,6 +7,7 @@ class OptionsSection {
 			"Import": () => this.showImportMenu(),
 			"Export": () => this.showExportMenu(),
 			"Add pokémon": () => this.showAddMenu(),
+			"Add tab": () => this.showAddTabMenu(),
 			"Delete tab": () => this.showDeleteMenu()
 		}
 
@@ -83,9 +84,7 @@ Modest Nature
 				bottombar.style.display = "none"
 			}
 		}
-		newTag("li", topbar, { text: "into tab" })
-		var tabInput = newTag("input", topbar)
-		tabInput.placeholder = "My tab"
+		newTag("li", topbar, { text: "into current tab" })
 		var middlebar = newTag("div", this.optionsSubElement)
 		middlebar.style.display = "none"
 		var textarea = newTag("textarea", middlebar)
@@ -96,18 +95,20 @@ Modest Nature
 		var importButton = newTag("li", bottombar, { text: "Import" })
 		importButton.className = "button"
 		importButton.onclick = () => {
-			var title = tabInput.value ? tabInput.value : "My tab"
 			var importMethod = this.importMethods[importSelect.value]
-			var pokemons, tab
+			var pokemons
 			try {
 				pokemons = importMethod.method(textarea.value)
 				if (pokemons) {
-					tab = stuff.collection.getLocalTab(title)
-					if (tab) {
-						tab.pokemons = tab.pokemons.concat(pokemons)
-						stuff.collection.saveLocalTabs()
-					} else
-						tab = stuff.collection.addLocalTab(title, pokemons)
+					var tab = stuff.state.currentTab
+					if (typeof tab == "string")
+						tab = stuff.collection.getLocalTab("My tab")
+					if (!tab)
+						tab = stuff.collection.addLocalTab(title, [], true)
+					tab.pokemons = tab.pokemons.concat(pokemons)
+					stuff.headerSection.updateNavPokemonTabs()
+					stuff.selectTab(tab)
+					stuff.collection.saveLocalTabs()
 				}
 			}
 			catch (e) {
@@ -115,8 +116,6 @@ Modest Nature
 			}
 			stuff.headerSection.showLocal = true
 			stuff.headerSection.updateNavPokemonTabs()
-			if (tab)
-				stuff.selectTab(tab)
 			stuff.show()
 		}
 	}
@@ -201,6 +200,20 @@ Modest Nature
 			stuff.collection.saveLocalTabs()
 			stuff.selectPokemon(pokemon)
 			stuff.update()
+		}
+	}
+
+	showAddTabMenu() {
+		var topbar = newTag("div", this.optionsSubElement)
+		var tabInput = newTag("input", topbar)
+		tabInput.placeholder = "My tab"
+		var addButton = newTag("li", topbar, { text: "Add" })
+		addButton.className = "button"
+		addButton.onclick = () => {
+			var title = tabInput.value ? tabInput.value : "My tab"
+			var tab = stuff.collection.addLocalTab(title, [])
+			stuff.headerSection.updateNavPokemonTabs()
+			stuff.show()
 		}
 	}
 
