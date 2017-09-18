@@ -104,7 +104,7 @@ Modest Nature
 					if (typeof tab == "string")
 						tab = stuff.collection.getLocalTab("My tab")
 					if (!tab)
-						tab = stuff.collection.addLocalTab(title, [], true)
+						tab = stuff.collection.addLocalTab("My tab", [], true)
 					tab.pokemons = tab.pokemons.concat(pokemons)
 					stuff.headerSection.updateNavPokemonTabs()
 					stuff.selectTab(tab)
