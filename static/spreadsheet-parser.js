@@ -83,8 +83,10 @@ class SpreadsheetParser {
 		stuff.collection.collectorUrl = this.tryValues(["contacturl"], entry)
 		var showBreedables = this.tryValues(["showbreedables"], entry)
 		stuff.settings.showBreedables = !!showBreedables && showBreedables.toLowerCase().trim() !== "no" && showBreedables.toLowerCase().trim() !== "false"
-		var colorScheme = this.tryValues(["colorscheme"], entry).toLowerCase()
-		if (colorScheme == "custom"){
+		var colorScheme = this.tryValues(["colorscheme"], entry)
+		if (colorScheme)
+			colorScheme = colorScheme.toLowerCase()
+		if (colorScheme == "custom") {
 			stuff.settings.colorScheme = colorScheme
 			stuff.headerSection.navGroups.colours.custom = {
 				text: "●",
