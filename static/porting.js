@@ -77,35 +77,179 @@ class Porting {
 		}
 		return table
 	}
-	
-	static exportTable(pokemons) {
-		var table = `Pokemon| Ability| Nature| IVs| Moves| Pokeball
----|---|----|----|----|----
-`
-		for (var n in pokemons) {
-			var pokemon = pokemons[n]
-			table += (pokemon.shiny ? "★ " : "") +
-				PokeText.formName(pokemon) +
-				(pokemon.gender ? " " + pokemon.gender : "") +
-				(pokemon.amount ? " (" + pokemon.amount + ")" : "") + "| "
-			if (pokemon.ability)
-				table += pokemon.ability
-			table += "| "
-			if (pokemon.nature)
-				table += pokemon.nature
-			table += "| "
-			if (pokemon.ivs)
-				table += pokemon.ivs.hp + "/" + pokemon.ivs.atk + "/" + pokemon.ivs.def + "/" +
-					pokemon.ivs.spa + "/" + pokemon.ivs.spd + "/" + pokemon.ivs.spe
-			table += "| "
-			if (pokemon.learntMoves)
-				table += pokemon.learntMoves.join(", ")
-			table += "| "
-			for (var i in pokemon.balls)
-				table += "[](/" + pokemon.balls[i].replace(" ", "").replace("é", "e").toLowerCase() + ") "
-			table += "\n"
+
+	static get tableSetup() {
+		return {
+			pokemon: {
+				states: ["Pokémon", "Pokémon + form"],
+				header: "Pokémon", entry: (p, s) => {
+					if (s != "Pokémon + form" || p.form == "Base")
+						return p.name
+					return p.name + " (" + p.form + ")"
+				}
+			},
+			id: { header: "ID" },
+			form: { header: "Form" },
+			nature: { header: "Nature" },
+			ability: { header: "Ability" },
+			ivs: {
+				states: ["IVs - Combined", "IVs - Individual"],
+				header: (s) => s == "IVs - Combined" ?
+					"IVs" :
+					["HP IV", "Atk IV", "Def IV", "SpA IV", "SpD IV", "Spe IV"],
+				entry: (p, s) => {
+					if (!p.ivs)
+						return s == "IVs - Combined" ? "" : ["", "", "", "", "", ""]
+					return s == "IVs - Combined" ?
+						p.ivs.hp + "/" + p.ivs.atk + "/" + p.ivs.def + "/" + p.ivs.spa + "/" + p.ivs.spd + "/" + p.ivs.spe :
+						[p.ivs.hp, p.ivs.atk, p.ivs.def, p.ivs.spa, p.ivs.spd, p.ivs.spe]
+				}
+			},
+			evs: {
+				states: ["EVs - Combined", "EVs - Individual"],
+				header: (s) => s == "EVs - Combined" ?
+					"EVs" :
+					["HP EV", "Atk EV", "Def EV", "SpA EV", "SpD EV", "Spe EV"],
+				entry: (p, s) => {
+					if (!p.evs)
+						return s == "EVs - Combined" ? "" : ["", "", "", "", "", ""]
+					return s == "EVs - Combined" ?
+						p.evs.hp + "/" + p.evs.atk + "/" + p.evs.def + "/" + p.evs.spa + "/" + p.evs.spd + "/" + p.evs.spe :
+						[p.evs.hp, p.evs.atk, p.evs.def, p.evs.spa, p.evs.spd, p.evs.spe]
+				}
+			},
+			hiddenPower: { header: "Hidden Power" },
+			learntMoves: {
+				states: ["Moves - Combined", "Moves - Individual"],
+				header: (s) => s == "Moves - Combined" ?
+					"Moves" :
+					["Move 1", "Move 2", "Move 3", "Move 4"],
+				entry: (p, s) => {
+					if (!p.learntMoves)
+						return s == "Moves - Combined" ? "" : ["", "", "", ""]
+					return s == "Moves - Combined" ?
+						p.learntMoves.join(" / ") :
+						[p.learntMoves[0], p.learntMoves[1], p.learntMoves[2], p.learntMoves[3]]
+				}
+			},
+			gender: { header: "Gender" },
+			amount: { header: "Quantity" },
+			shiny: { header: "Shiny", entry: (p) => p.shiny ? "★" : "" },
+			nickname: { header: "Nickname" },
+			ot: { header: "OT" },
+			tid: { header: "TID" },
+			level: { header: "Level" },
+			language: { header: "Language" },
+			notes: { header: "Notes" },
+			balls: {
+				states: ["Balls - Combined", "Balls - Individual"],
+				header: (s) => s == "Balls - Combined" ?
+					"Balls" :
+					stuff.data.pokeballs,
+				entry: (p, s) => {
+					if (s == "Balls - Combined") {
+						if (!p.balls)
+							return ""
+						return p.balls.join(" / ")
+					}
+					var list = []
+					list[stuff.data.pokeballs.length - 1] = ""
+					if (!p.balls)
+						return list
+					for (var i in stuff.data.pokeballs) {
+						var fit = p.balls.filter((e) => e.toLowerCase().replace("é", "e").indexOf(stuff.data.pokeballs[i].toLowerCase().replace("é", "e")) > -1)
+						if (fit.length)
+							list[i] = "x"
+					}
+					return list
+				}
+			},
 		}
+	}
+	
+	static exportMarkdownTable(pokemons) {
+		var separator = "|"
+		var table = Porting.createTable(pokemons)
+		var sub = []
+		for(var i in table[0])
+			sub[i] = "-".repeat(table[0][i].length)
+		table.splice(1, 0, sub)
+		for (var i in table) {
+			for (var j in table[i]) {
+				var val = table[i][j]
+				if (!val)
+					val = ""
+				table[i][j] = ("" + val).replace(new RegExp(separator, "g"), "")
+			}
+			table[i] = table[i].join(separator)
+		}
+		table = table.join("\n")
 		return table
+	}
+
+	static exportTable(pokemons, separator) {
+		var table = Porting.createTable(pokemons)
+		for (var i in table) {
+			for (var j in table[i]) {
+				var val = table[i][j]
+				if (!val)
+					val = ""
+				table[i][j] = ("" + val).replace(new RegExp(separator, "g"), "")
+			}
+			table[i] = table[i].join(separator)
+		}
+		table = table.join("\n")
+		return table
+	}
+
+	static createTable(pokemons, alternateSetup) {
+		var setup = Porting.tableSetup
+		for (var i in alternateSetup)
+			setup[i] = alternateSetup[i]
+		var table = [Porting.createTableHeader(setup)]
+		for (var i in pokemons)
+			table.push(Porting.createTableEntry(pokemons[i], setup))
+		return table
+	}
+
+	static createTableHeader(setup) {
+		var header = []
+		for (var i in stuff.settings.tableSetup) {
+			var column = stuff.settings.tableSetup[i]
+			if (!column.state)
+				continue
+			var head = setup[column.thing].header
+			if (typeof head != "string")
+				head = head(column.state)
+			if (typeof head == "string") {
+				header.push(head)
+				continue
+			}
+			for (var j in head)
+				header.push(head[j])
+		}
+		return header
+	}
+
+	static createTableEntry(pokemon, setup) {
+		var entry = []
+		for (var i in stuff.settings.tableSetup) {
+			var column = stuff.settings.tableSetup[i]
+			if (!column.state)
+				continue
+			if (!setup[column.thing].entry) {
+				entry.push(pokemon[column.thing])
+				continue
+			}
+			var text = setup[column.thing].entry(pokemon, column.state)
+			if (typeof text == "string") {
+				entry.push(text)
+				continue
+			}
+			for (var j in text)
+				entry.push(text[j])
+		}
+		return entry
 	}
 
 	static importTable(input, separator) {
@@ -146,7 +290,7 @@ class Porting {
 
 	static parsePokemonTableEntry(entry, headers) {
 		var id = Number(Porting.find(entry, headers, ["dexno", "no", "number", "id"]))
-		var name = Porting.find(entry, headers, ["pokemon", "name"])
+		var name = Porting.find(entry, headers, ["pokemon", "pokémon", "name"])
 		var form = Porting.find(entry, headers, ["form"])
 		if (name) {
 			var splitName = name.split("(")

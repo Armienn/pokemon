@@ -53,6 +53,7 @@ Charizard	Mega X	Adamant	Lure Ball`
 
 		this.exportMethods = {
 			"JSON": { method: (pokemons) => Porting.exportJSON(pokemons) },
+			//"test": { method: (pokemons) => Porting.exportTable(pokemons, ",") },
 			"Reddit Markdown": { method: (pokemons) => Porting.exportMarkdown(pokemons), table: true }
 		}
 

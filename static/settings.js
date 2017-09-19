@@ -9,13 +9,7 @@ class Settings {
 		}
 		this.colorScheme = "night"
 		this.showBreedables = false
-		this.tableSetup = {
-			pokemon: { index: 0, state: true },
-			id: { index: 1, state: true },
-			base: { index: 2, state: true },
-			ability: { index: 3, state: true },
-			nature: { index: 4, state: true },
-		}
+		this.tableSetup = this.defaultTableSetup()
 	}
 
 	get colors() {
@@ -26,16 +20,31 @@ class Settings {
 		}
 	}
 
-	setColorScheme(scheme){
+	setColorScheme(scheme) {
 		this.colorScheme = scheme
 		localStorage.colorScheme = scheme
 	}
 
-	load(){
-		if(localStorage){
+	load() {
+		if (localStorage) {
 			var scheme = localStorage.colorScheme
-			if(scheme)
+			if (scheme)
 				this.colorScheme = scheme
+			var tableSetup = localStorage.tableSetup
+			if (tableSetup)
+				this.tableSetup = tableSetup
 		}
+	}
+
+	defaultTableSetup() {
+		var info = Porting.tableSetup
+		var setup = []
+		for (var i in info)
+			setup.push({ thing: i, state: info[i].states ? info[i].states[0] : true })
+		return setup
+	}
+
+	saveTableSetup(){
+		localStorage.tableSetup = this.tableSetup
 	}
 }
