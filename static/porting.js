@@ -84,7 +84,7 @@ class Porting {
 		for (var i in rows)
 			table.push(rows[i].split(separator))
 		for (var i in table[0])
-			table[0][i] = table[0][i].toLowerCase()
+			table[0][i] = table[0][i].toLowerCase().trim()
 		return Porting.parseTable(table)
 	}
 
@@ -105,6 +105,15 @@ class Porting {
 					return typeof entry[j] == "string" ? entry[j].trim() : entry[j]
 	}
 
+	static findExisting(value, possibilities) {
+		if (!value)
+			return value
+		for (var i in possibilities)
+			if (value.toLowerCase().trim().indexOf(possibilities[i].toLowerCase()) > -1)
+				return possibilities[i]
+		return value
+	}
+
 	static parsePokemonTableEntry(entry, headers) {
 		var id = Number(Porting.find(entry, headers, ["dexno", "no", "number", "id"]))
 		var name = Porting.find(entry, headers, ["pokemon", "name"])
@@ -121,21 +130,37 @@ class Porting {
 		if (!pokemon)
 			return
 		pokemon.nature = Porting.find(entry, headers, ["nature"])
+		pokemon.nature = Porting.findExisting(pokemon.nature, Object.keys(stuff.data.natures))
 		pokemon.ability = Porting.find(entry, headers, ["ability"])
+		pokemon.ability = Porting.findExisting(pokemon.ability, pokemon.abilities.filter((e) => e))
 		pokemon.ivs = {}
-		pokemon.ivs.hp = Porting.find(entry, headers, ["hpiv", "ivhp", "hp"]) || "x"
-		pokemon.ivs.atk = Porting.find(entry, headers, ["atkiv", "attackiv", "attack", "ivattack", "ivatk", "atk"]) || "x"
-		pokemon.ivs.def = Porting.find(entry, headers, ["defiv", "defenseiv", "defense", "ivdefense", "ivdef", "def"]) || "x"
-		pokemon.ivs.spa = Porting.find(entry, headers, ["spaiv", "spatkiv", "spatk", "ivspatk", "ivspa", "spa"]) || "x"
-		pokemon.ivs.spd = Porting.find(entry, headers, ["spdiv", "spdefiv", "spdef", "ivspdef", "ivspd", "spd"]) || "x"
-		pokemon.ivs.spe = Porting.find(entry, headers, ["speiv", "speediv", "speed", "ivspeed", "ivspe", "spe"]) || "x"
+		var ivs = Porting.find(entry, headers, ["ivs", "iv"])
+		if (ivs) {
+			var split = ivs.split("/")
+			if (split.length < 2)
+				split = ivs.split(",")
+			pokemon.ivs = { hp: split[0], atk: split[1], def: split[2], spa: split[3], spd: split[4], spe: split[5] }
+		}
+		pokemon.ivs.hp = Porting.find(entry, headers, ["hpiv", "ivhp", "hp"]) || pokemon.ivs.hp || "x"
+		pokemon.ivs.atk = Porting.find(entry, headers, ["atkiv", "attackiv", "attack", "ivattack", "ivatk", "atk"]) || pokemon.ivs.atk || "x"
+		pokemon.ivs.def = Porting.find(entry, headers, ["defiv", "defenseiv", "defense", "ivdefense", "ivdef", "def"]) || pokemon.ivs.def || "x"
+		pokemon.ivs.spa = Porting.find(entry, headers, ["spaiv", "spatkiv", "spatk", "ivspatk", "ivspa", "spa"]) || pokemon.ivs.spa || "x"
+		pokemon.ivs.spd = Porting.find(entry, headers, ["spdiv", "spdefiv", "spdef", "ivspdef", "ivspd", "spd"]) || pokemon.ivs.spd || "x"
+		pokemon.ivs.spe = Porting.find(entry, headers, ["speiv", "speediv", "speed", "ivspeed", "ivspe", "spe"]) || pokemon.ivs.spe || "x"
 		pokemon.evs = {}
-		pokemon.evs.hp = Porting.find(entry, headers, ["hpev", "evhp"]) || "x"
-		pokemon.evs.atk = Porting.find(entry, headers, ["atkev", "attackev", "evattack", "evatk"]) || "x"
-		pokemon.evs.def = Porting.find(entry, headers, ["defev", "defenseev", "evdefense", "evdef"]) || "x"
-		pokemon.evs.spa = Porting.find(entry, headers, ["spaev", "spatkev", "evspatk", "evspa"]) || "x"
-		pokemon.evs.spd = Porting.find(entry, headers, ["spdev", "spdefev", "evspdef", "evspd"]) || "x"
-		pokemon.evs.spe = Porting.find(entry, headers, ["speev", "speedev", "evspeed", "evspe"]) || "x"
+		var evs = Porting.find(entry, headers, ["evs", "ev"])
+		if (evs) {
+			var split = evs.split("/")
+			if (split.length < 2)
+				split = evs.split(",")
+			pokemon.evs = { hp: split[0], atk: split[1], def: split[2], spa: split[3], spd: split[4], spe: split[5] }
+		}
+		pokemon.evs.hp = Porting.find(entry, headers, ["hpev", "evhp"]) || pokemon.evs.hp || "x"
+		pokemon.evs.atk = Porting.find(entry, headers, ["atkev", "attackev", "evattack", "evatk"]) || pokemon.evs.atk || "x"
+		pokemon.evs.def = Porting.find(entry, headers, ["defev", "defenseev", "evdefense", "evdef"]) || pokemon.evs.def || "x"
+		pokemon.evs.spa = Porting.find(entry, headers, ["spaev", "spatkev", "evspatk", "evspa"]) || pokemon.evs.spa || "x"
+		pokemon.evs.spd = Porting.find(entry, headers, ["spdev", "spdefev", "evspdef", "evspd"]) || pokemon.evs.spd || "x"
+		pokemon.evs.spe = Porting.find(entry, headers, ["speev", "speedev", "evspeed", "evspe"]) || pokemon.evs.spe || "x"
 		pokemon.hiddenPower = Porting.find(entry, headers, ["hiddenpower", "hidden"])
 		pokemon.learntMoves = [
 			Porting.find(entry, headers, ["move1", "eggmove1", "moveslot1"]),
@@ -175,40 +200,24 @@ class Porting {
 		pokemon.balls = []
 		var balls = Porting.find(entry, headers, ["pokeball", "ball", "pokeballs", "balls"])
 		if (balls) {
-			balls = balls.split(",")
+			var split = balls.split(",")
+			if (split.length < 2)
+				split = balls.split("[](/")
+			if (split.length < 2)
+				split = balls.split("/")
+			balls = split
 			for (var i in balls)
 				balls[i] = balls[i].trim()
 			pokemon.balls = balls.filter(e => e)
 		}
 		if (pokemon.balls.length == 0) {
+			for (var i in stuff.data.pokeballs) {
+				var ball = Porting.find(entry, headers, [stuff.data.pokeballs[i].toLowerCase()])
+				if (ball) pokemon.balls.push(stuff.data.pokeballs[i])
+			}
 			if (Porting.find(entry, headers, ["poke"])) pokemon.balls.push("Poké Ball")
-			if (Porting.find(entry, headers, ["great"])) pokemon.balls.push("Great Ball")
-			if (Porting.find(entry, headers, ["ultra"])) pokemon.balls.push("Ultra Ball")
-			if (Porting.find(entry, headers, ["master"])) pokemon.balls.push("Master Ball")
-			if (Porting.find(entry, headers, ["safari"])) pokemon.balls.push("Safari Ball")
-			if (Porting.find(entry, headers, ["level"])) pokemon.balls.push("Level Ball")
-			if (Porting.find(entry, headers, ["lure"])) pokemon.balls.push("Lure Ball")
-			if (Porting.find(entry, headers, ["moon"])) pokemon.balls.push("Moon Ball")
-			if (Porting.find(entry, headers, ["friend"])) pokemon.balls.push("Friend Ball")
-			if (Porting.find(entry, headers, ["love"])) pokemon.balls.push("Love Ball")
-			if (Porting.find(entry, headers, ["heavy"])) pokemon.balls.push("Heavy Ball")
-			if (Porting.find(entry, headers, ["fast"])) pokemon.balls.push("Fast Ball")
-			if (Porting.find(entry, headers, ["sport"])) pokemon.balls.push("Sport Ball")
-			if (Porting.find(entry, headers, ["premier"])) pokemon.balls.push("Premier Ball")
-			if (Porting.find(entry, headers, ["repeat"])) pokemon.balls.push("Repeat Ball")
-			if (Porting.find(entry, headers, ["timer"])) pokemon.balls.push("Timer Ball")
-			if (Porting.find(entry, headers, ["nest"])) pokemon.balls.push("Nest Ball")
-			if (Porting.find(entry, headers, ["net"])) pokemon.balls.push("Net Ball")
-			if (Porting.find(entry, headers, ["dive"])) pokemon.balls.push("Dive Ball")
-			if (Porting.find(entry, headers, ["luxury"])) pokemon.balls.push("Luxury Ball")
-			if (Porting.find(entry, headers, ["heal"])) pokemon.balls.push("Heal Ball")
-			if (Porting.find(entry, headers, ["quick"])) pokemon.balls.push("Quick Ball")
-			if (Porting.find(entry, headers, ["dusk"])) pokemon.balls.push("Dusk Ball")
-			if (Porting.find(entry, headers, ["cherish"])) pokemon.balls.push("Cherish Ball")
-			if (Porting.find(entry, headers, ["dream"])) pokemon.balls.push("Dream Ball")
-			if (Porting.find(entry, headers, ["beast"])) pokemon.balls.push("Beast Ball")
 		}
-		if (pokemon.balls.length == 0) { // compatibility with richi3f's sheet
+		if (pokemon.balls.length == 0) { // compatibility with richi3f's sheet 
 			if (Porting.find(entry, headers, ["_dcgjs"])) pokemon.balls.push("Poké Ball")
 			if (Porting.find(entry, headers, ["_ddv49"])) pokemon.balls.push("Great Ball")
 			if (Porting.find(entry, headers, ["_d415a"])) pokemon.balls.push("Ultra Ball")
@@ -235,6 +244,11 @@ class Porting {
 			if (Porting.find(entry, headers, ["_e8rn7"])) pokemon.balls.push("Cherish Ball")
 			if (Porting.find(entry, headers, ["_ea67k"])) pokemon.balls.push("Dream Ball")
 			if (Porting.find(entry, headers, ["_ebks1"])) pokemon.balls.push("Beast Ball")
+		}
+		for (var i in pokemon.balls) {
+			pokemon.balls[i] = Porting.findExisting(pokemon.balls[i].trim(), ["poke"].concat(stuff.data.pokeballs))
+			if (!pokemon.balls[i].endsWith("all"))
+				pokemon.balls[i] += " Ball"
 		}
 		return pokemon
 	}

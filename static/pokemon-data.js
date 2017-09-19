@@ -70,6 +70,34 @@ class PokemonData {
 			Steel: "#B8B8D0",
 			Water: "#6890F0"
 		}
+		this.pokeballs = [
+			"Poké",
+			"Great",
+			"Ultra",
+			"Master",
+			"Safari",
+			"Level",
+			"Lure",
+			"Moon",
+			"Friend",
+			"Love",
+			"Heavy",
+			"Fast",
+			"Sport",
+			"Premier",
+			"Repeat",
+			"Timer",
+			"Nest",
+			"Net",
+			"Dive",
+			"Luxury",
+			"Heal",
+			"Quick",
+			"Dusk",
+			"Cherish",
+			"Dream",
+			"Beast"
+		]
 	}
 
 	findPokemon(id, form) {
