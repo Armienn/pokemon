@@ -3,19 +3,9 @@
 class OptionsSection {
 	constructor() {
 
-		this.options = {
-			"Import": () => this.showImportMenu(),
-			"Export": () => this.showExportMenu(),
-			"Add pokémon": () => this.showAddMenu(),
-			"Add tab": () => this.showAddTabMenu(),
-			"Delete tab": () => this.showDeleteMenu()
-		}
-
-		this.importMethods = {
-			"Script": { method: (input) => (new Function(input))(), default: "return [new Pokemon('pikachu'), new Pokemon({name:'Charizard', form: 'Mega X'}), new Pokemon(151)]" },
-			"JSON": { method: (input) => Porting.importJSON(input), default: '[{"id":6, "form":"Mega X", "nickname":"Burninator"}]' },
-			"Smogon": {
-				method: (input) => Porting.importSmogon(input), default: `Togekiss @ Leftovers
+		var defaultScript = "return [new Pokemon('pikachu'), new Pokemon({name:'Charizard', form: 'Mega X'}), new Pokemon(151)]"
+		var defaultJSON = '[{"id":6, "form":"Mega X", "nickname":"Burninator"}]'
+		var defaultSmogon = `Togekiss @ Leftovers
 Ability: Serene Grace
 EVs: 252 HP / 80 Def / 176 Spe
 Timid Nature
@@ -31,27 +21,39 @@ Modest Nature
 - Draco Meteor
 - Sludge Wave
 - Focus Blast
-- Toxic Spikes` },
-			"CSV": {
-				method: (input) => Porting.importTable(input, ","), default: `Pokemon,Form,Nature,Ball
+- Toxic Spikes`
+		var defaultCSV = `Pokemon,Form,Nature,Ball
 Duosion,Base,Jolly,Great Ball
-Charizard,Mega X,Adamant,Lure Ball` },
-			"TSV": {
-				method: (input) => Porting.importTable(input, "\t"), default: `Pokemon	Form	Nature	Ball
+Charizard,Mega X,Adamant,Lure Ball`
+		var defaultTSV = `Pokemon	Form	Nature	Ball
 Duosion	Base	Jolly	Great Ball
-Charizard	Mega X	Adamant	Lure Ball` },
-			"Reddit Markdown": {
-				method: (input) => Porting.importTable(input, "|"), default: `|Pokemon|Ball|Nature|Ability|Egg Moves|Quantity|
+Charizard	Mega X	Adamant	Lure Ball`
+		var defaultMarkdown = `|Pokemon|Ball|Nature|Ability|Egg Moves|Quantity|
 |:---:|-|-|-|-|-|-|
 |Buizel|[](/safariball)|Jolly|Swift Swim|Aqua Ring, Soak, Double Slap, Switcheroo| 1|
 |Larvitar|[](/safariball)|Adamant|Guts|Dragon Dance, Pursuit, Stealth Rock, Ancient Power|6|
 |Psyduck|[](/safariball)|Modest|Swift Swim|Encore, Hypnosis, Clear Smog, Cross Chop|2|`
-			}
+
+		this.options = {
+			"Import": () => this.showImportMenu(),
+			"Export": () => this.showExportMenu(),
+			"Add pokémon": () => this.showAddMenu(),
+			"Add tab": () => this.showAddTabMenu(),
+			"Delete tab": () => this.showDeleteMenu()
+		}
+
+		this.importMethods = {
+			"Script": { method: (input) => (new Function(input))(), default: defaultScript },
+			"JSON": { method: (input) => Porting.importJSON(input), default: defaultJSON },
+			"Smogon": { method: (input) => Porting.importSmogon(input), default: defaultSmogon },
+			"CSV": { method: (input) => Porting.importTable(input, ","), default: defaultCSV },
+			"TSV": { method: (input) => Porting.importTable(input, "\t"), default: defaultTSV },
+			"Reddit Markdown": { method: (input) => Porting.importTable(input, "|"), default: defaultMarkdown }
 		}
 
 		this.exportMethods = {
-			"JSON": (pokemons) => Porting.exportJSON(pokemons),
-			"Reddit Markdown": (pokemons) => Porting.exportMarkdown(pokemons)
+			"JSON": { method: (pokemons) => Porting.exportJSON(pokemons) },
+			"Reddit Markdown": { method: (pokemons) => Porting.exportMarkdown(pokemons), table: true }
 		}
 
 		this.optionsElement = document.getElementById("options-section")
@@ -146,19 +148,29 @@ Charizard	Mega X	Adamant	Lure Ball` },
 		}
 		exportSelect.onchange = () => {
 			var exportMethod = this.exportMethods[exportSelect.value]
+			tableSetup.style.display = "none"
 			if (exportMethod) {
 				bottombar.style.display = ""
-				textarea.value = exportMethod(stuff.state.currentPokemons)
+				//if (exportMethod.table)
+				//	tableSetup.style.display = ""
+				textarea.value = exportMethod.method(stuff.state.currentPokemons)
 			} else {
 				bottombar.style.display = "none"
 			}
 		}
 		var bottombar = newTag("div", this.optionsSubElement)
 		bottombar.style.display = "none"
+		var tableSetup = this.showTableSetup(bottombar)
 		newTag("p", bottombar, { text: "Ctrl+A to select everything, Ctrl+C to copy" })
 		var textarea = newTag("textarea", bottombar)
 		textarea.style.width = "30rem"
 		textarea.style.height = "8rem"
+	}
+
+	showTableSetup(parent) {
+		var div = newTag("div", parent, { text: "asdfasf" })
+		div.style.display = "none"
+		return div
 	}
 
 	showAddMenu() {

@@ -9,6 +9,13 @@ class Settings {
 		}
 		this.colorScheme = "night"
 		this.showBreedables = false
+		this.tableSetup = {
+			pokemon: { index: 0, state: true },
+			id: { index: 1, state: true },
+			base: { index: 2, state: true },
+			ability: { index: 3, state: true },
+			nature: { index: 4, state: true },
+		}
 	}
 
 	get colors() {
