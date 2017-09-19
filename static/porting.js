@@ -78,12 +78,12 @@ class Porting {
 		return table
 	}
 
-	static importTable(input, separator){
-		var rows = input.split("\n")
+	static importTable(input, separator) {
+		var rows = input.trim().split("\n")
 		var table = []
-		for(var i in rows)
+		for (var i in rows)
 			table.push(rows[i].split(separator))
-		for(var i in table[0])
+		for (var i in table[0])
 			table[0][i] = table[0][i].toLowerCase()
 		return Porting.parseTable(table)
 	}
@@ -164,7 +164,7 @@ class Porting {
 				pokemon.gender = '—'
 		}
 
-		pokemon.amount = Porting.find(entry, headers, ["amount", "count"])
+		pokemon.amount = Porting.find(entry, headers, ["amount", "count", "quantity"])
 		pokemon.shiny = Porting.find(entry, headers, ["shiny"])
 		pokemon.nickname = Porting.find(entry, headers, ["nickname"])
 		pokemon.ot = Porting.find(entry, headers, ["ot"])

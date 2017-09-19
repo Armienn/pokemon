@@ -39,7 +39,14 @@ Charizard,Mega X,Adamant,Lure Ball` },
 			"TSV": {
 				method: (input) => Porting.importTable(input, "\t"), default: `Pokemon	Form	Nature	Ball
 Duosion	Base	Jolly	Great Ball
-Charizard	Mega X	Adamant	Lure Ball` }
+Charizard	Mega X	Adamant	Lure Ball` },
+			"Reddit Markdown": {
+				method: (input) => Porting.importTable(input, "|"), default: `|Pokemon|Ball|Nature|Ability|Egg Moves|Quantity|
+|:---:|-|-|-|-|-|-|
+|Buizel|[](/safariball)|Jolly|Swift Swim|Aqua Ring, Soak, Double Slap, Switcheroo| 1|
+|Larvitar|[](/safariball)|Adamant|Guts|Dragon Dance, Pursuit, Stealth Rock, Ancient Power|6|
+|Psyduck|[](/safariball)|Modest|Swift Swim|Encore, Hypnosis, Clear Smog, Cross Chop|2|`
+			}
 		}
 
 		this.exportMethods = {
