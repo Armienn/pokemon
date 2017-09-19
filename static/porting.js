@@ -78,6 +78,16 @@ class Porting {
 		return table
 	}
 
+	static importTable(input, separator){
+		var rows = input.split("\n")
+		var table = []
+		for(var i in rows)
+			table.push(rows[i].split(separator))
+		for(var i in table[0])
+			table[0][i] = table[0][i].toLowerCase()
+		return Porting.parseTable(table)
+	}
+
 	static parseTable(table) {
 		var pokemons = []
 		for (var i = 1; i < table.length; i++) {

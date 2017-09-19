@@ -31,7 +31,15 @@ Modest Nature
 - Draco Meteor
 - Sludge Wave
 - Focus Blast
-- Toxic Spikes` }
+- Toxic Spikes` },
+			"CSV": {
+				method: (input) => Porting.importTable(input, ","), default: `Pokemon,Form,Nature,Ball
+Duosion,Base,Jolly,Great Ball
+Charizard,Mega X,Adamant,Lure Ball` },
+			"TSV": {
+				method: (input) => Porting.importTable(input, "\t"), default: `Pokemon	Form	Nature	Ball
+Duosion	Base	Jolly	Great Ball
+Charizard	Mega X	Adamant	Lure Ball` }
 		}
 
 		this.exportMethods = {
