@@ -84,7 +84,7 @@ class Porting {
 		for (var i in rows)
 			table.push(rows[i].split(separator))
 		for (var i in table[0])
-			table[0][i] = table[0][i].toLowerCase().trim()
+			table[0][i] = table[0][i].toLowerCase().replace(/\s+/g, "") // strip whitespace
 		return Porting.parseTable(table)
 	}
 
@@ -162,12 +162,25 @@ class Porting {
 		pokemon.evs.spd = Porting.find(entry, headers, ["spdev", "spdefev", "evspdef", "evspd"]) || pokemon.evs.spd || "x"
 		pokemon.evs.spe = Porting.find(entry, headers, ["speev", "speedev", "evspeed", "evspe"]) || pokemon.evs.spe || "x"
 		pokemon.hiddenPower = Porting.find(entry, headers, ["hiddenpower", "hidden"])
-		pokemon.learntMoves = [
-			Porting.find(entry, headers, ["move1", "eggmove1", "moveslot1"]),
-			Porting.find(entry, headers, ["move2", "eggmove2", "moveslot2"]),
-			Porting.find(entry, headers, ["move3", "eggmove3", "moveslot3"]),
-			Porting.find(entry, headers, ["move4", "eggmove4", "moveslot4"])
-		].filter(e => e)
+		pokemon.learntMoves = []
+		var moves = Porting.find(entry, headers, ["moves", "eggmoves"])
+		if (moves) {
+			var split = moves.split(",")
+			if (split.length < 2)
+				split = moves.split("/")
+			moves = split
+			for (var i in moves)
+				moves[i] = moves[i].trim()
+			pokemon.learntMoves = moves.filter(e => e)
+		}
+		if (!pokemon.learntMoves.length) {
+			pokemon.learntMoves = [
+				Porting.find(entry, headers, ["move1", "eggmove1", "moveslot1"]),
+				Porting.find(entry, headers, ["move2", "eggmove2", "moveslot2"]),
+				Porting.find(entry, headers, ["move3", "eggmove3", "moveslot3"]),
+				Porting.find(entry, headers, ["move4", "eggmove4", "moveslot4"])
+			].filter(e => e)
+		}
 		pokemon.gender = Porting.find(entry, headers, ["gender", "sex", "mf", "fm"])
 		switch (pokemon.base.ratio) {
 			case "1:0":
