@@ -97,7 +97,7 @@ class InfoSection {
 					this.simpleEditRow(rows, pokemon, "Nickname |", "nickname")
 					this.selectEditRow(rows, pokemon, "Ability |", "ability", pokemon.abilities.filter((e) => e))
 					this.simpleEditRow(rows, pokemon, "Nature |", "nature", Object.keys(stuff.data.natures))
-					this.genderShinyEditRow(rows, pokemon, "Gender / Shiny |")
+					this.genderShinyEditRow(rows, pokemon, "Sex / Shiny / Count |")
 					this.simpleEditRow(rows, pokemon, "Level |", "level")
 					return rows
 				}),
@@ -214,6 +214,7 @@ class InfoSection {
 		stuff.state.currentPokemon = pokemon
 		this.showPokemonInfo()
 		this.slideIn()
+		this.infoRowElement.scrollIntoView()
 	}
 
 	slideIn() {
@@ -779,7 +780,6 @@ class InfoSection {
 					gender = 1
 				if (pokemon.gender && (pokemon.gender == "♀" || pokemon.gender.toLowerCase() == "f" || pokemon.gender.toLowerCase() == "female"))
 					gender = 2
-				var shiny = pokemon.shiny
 				var genderThing = newTag("span", cell)
 				genderThing.innerHTML = PokeText.gender({ gender: genders[gender] })
 				genderThing.style.marginLeft = "0.5rem"
@@ -789,12 +789,19 @@ class InfoSection {
 						gender = 0
 					genderThing.innerHTML = PokeText.gender({ gender: genders[gender] })
 				}
+				newTag("span", cell, {text: " /"}).style.color = "#888"
+				var shiny = pokemon.shiny
 				var shinyThing = newTag("span", cell)
 				shinyThing.innerHTML = "<span style='color:" + (shiny ? "#f11" : "#888") + "; margin-left:0.5rem;'>★</span>"
 				shinyThing.onclick = () => {
 					shiny = !shiny
 					shinyThing.innerHTML = "<span style='color:" + (shiny ? "#f11" : "#888") + "; margin-left:0.5rem;'>★</span>"
 				}
+				newTag("span", cell, {text: " /"}).style.color = "#888"
+				var amountThing = newTag("input", cell)
+				amountThing.placeholder = "1"
+				amountThing.value = pokemon.amount != undefined ? pokemon.amount : ""
+				amountThing.style.width = "1rem"
 				this.edits.push((pokemon) => {
 					var value = genders[gender]
 					if (pokemon.ratio == "—")
@@ -807,6 +814,10 @@ class InfoSection {
 						pokemon.shiny = true
 					else
 						delete pokemon.shiny
+					if (amountThing.value != "" && amountThing.value != undefined)
+						pokemon.amount = amountThing.value
+					else
+						delete pokemon.amount
 				})
 			})
 		])
