@@ -40,13 +40,26 @@ Worksheets named "db" or whose name contains "template", "item", "config", "reso
 
 1. Have a online text file with Pokémon in it in some format
 2. Make sure it is loadable from other sites
-3. Add the url (without the protocol, i.e. "http://") and the format onto the end of this: `https://armienn.github.io/pokemon/?format:script-url`
+3. Add the url (without the protocol, i.e. "http://") and the format onto the end of this: `https://armienn.github.io/pokemon/?format:url`
 
 Example (json): [`https://armienn.github.io/pokemon/?json:gist.githubusercontent.com/Armienn/dbcc734e78c27eee1c6590f1cd11fd17/raw/e30d8b5a6330d5affbcb3512cd2399ed5603aaee/test-json-pokemons.json`](https://armienn.github.io/pokemon/?script:gist.githubusercontent.com/Armienn/dbcc734e78c27eee1c6590f1cd11fd17/raw/e30d8b5a6330d5affbcb3512cd2399ed5603aaee/test-json-pokemons.json)
 
 Example (javascript): [`https://armienn.github.io/pokemon/?script:gist.githubusercontent.com/Armienn/27b4759d86c33542656f255efd1e50af/raw/3ad081a42ab88216d8d237adb4c91e36ca0b9d6d/test-pokemons.js`](https://armienn.github.io/pokemon/?script:gist.githubusercontent.com/Armienn/27b4759d86c33542656f255efd1e50af/raw/3ad081a42ab88216d8d237adb4c91e36ca0b9d6d/test-pokemons.js)
 
 The latter example will load [this javascript file](https://gist.githubusercontent.com/Armienn/27b4759d86c33542656f255efd1e50af/raw/3ad081a42ab88216d8d237adb4c91e36ca0b9d6d/test-pokemons.js) and run it to get the collection of Pokémon to show. Loading scripts like this opens up a lot of possibilities, so I look forward to seeing what people do with it.
+
+## Import and Export
+
+Currently the following formats can be imported from or exported to:
+
+* Script: import, and kinda export
+* JSON: import and export
+* CSV: import and export
+* TSV: import and export
+* Reddit Markdown Table (the kind used on r/pokemontrades): import and export
+* Smogon: import
+
+Import and export can be done through the options menu. In addition, as mentioned in the previous section, you can also import via url.
 
 ## Settings
 
