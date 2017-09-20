@@ -188,8 +188,24 @@ function requestJSON(url, callback) {
 function request(url, callback) {
 	var xmlHttp = new XMLHttpRequest();
 	xmlHttp.onreadystatechange = function () {
-		if (xmlHttp.readyState == 4 && xmlHttp.status == 200)
-			callback(xmlHttp.responseText)
+		if (xmlHttp.readyState == 4) {
+			if (xmlHttp.status == 200)
+				callback(xmlHttp.responseText)
+			else {
+				document.getElementById("loading").innerHTML = "Failed to load external data"
+				document.getElementById("loading").onclick = () => {
+					stuff.state.externalInventory.load = false
+					stuff.tryLoad()
+				}
+			}
+		}
+	}
+	xmlHttp.onerror = function () {
+		document.getElementById("loading").innerHTML = "Failed to load external data"
+		document.getElementById("loading").onclick = () => {
+			stuff.state.externalInventory.load = false
+			stuff.tryLoad()
+		}
 	}
 	xmlHttp.open("GET", url, true)
 	xmlHttp.send()
