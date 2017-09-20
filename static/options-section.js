@@ -239,23 +239,22 @@ Charizard	Mega X	Adamant	Lure Ball`
 			if (last.length < 2)
 				return
 			var count = 0
-			var fit = ""
+			var fit = false
 			for (var i in stuff.data.pokemons) {
 				var pokemon = stuff.data.pokemons[i]
 				var name = pokemon.name + (pokemon.form == "Base" ? "" : " " + pokemon.form)
+				if (name.toLocaleLowerCase() == pokemonInput.value.toLocaleLowerCase())
+					fit = true
+				addButton.style.display = "none"
 				if (name.toLocaleLowerCase().indexOf(pokemonInput.value.toLocaleLowerCase()) > -1) {
 					newTag("option", datalistElement).value = name
-					fit = name
 					count++
 					if (count > 10)
 						break
 				}
 			}
-			if (count == 1) {
+			if (fit)
 				addButton.style.display = ""
-				pokemonInput.value = fit
-				pokemonInput.blur()
-			}
 			else
 				addButton.style.display = "none"
 		}
