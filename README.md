@@ -1,18 +1,22 @@
 # Pokémon Stuff
 
-A site for browsing Pokémon (either all Pokémon, Pokémon stored in Google Sheets, or Pokémon loaded via custom javascript) featuring easy-to-use advanced filtering and searching
+A site for browsing Pokémon (all base Pokémon, as well as Pokémon loaded from Google Sheets collections or other resources) with powerful searching, filtering and sorting features
 
 ## Features
 
 * Browse the list of all Pokémon and find just the Pokémon you want using a plethora of filters
 * Make your own custom filter or sorting function if you know javascript
-* Or even define a collection of Pokémon with your own custom javascript function
+* Import Pokémon from various formats: JSON / CSV / TSV / Smogon / Reddit Markdown Table
+* Or even import using javascript, and make use of all the extra possibilities that entails
+* Export Pokémon to most of those same formats
 * Browse all your Pokémon, or just those in specific tabs
+* Edit Pokémon and Pokémon collections
+* Pokémons not loaded from external sources are stored in your browser, and will be there when you open up the site again
 * Simple display of how complete your collection is
 * Automatically calculates breedables based on your Pokémon (although this feature is in need of some love still)
-* Faster loading than sharing a Google Sheets document
-* Generate a Reddit Markdown table to share your current selection of Pokémon
 * Link to [a](https://armienn.github.io/pokemon/#Magearna) [specific](https://armienn.github.io/pokemon/#123) [Pokémon](https://armienn.github.io/pokemon/#nidoran-m)
+* Link to your collection [in a spreadsheet](https://armienn.github.io/pokemon/?1FOnsr7np65g0RhTETo1gMS298alHhTNwngT_8oYrZvI#2), [a json file](https://armienn.github.io/pokemon/?json:gist.githubusercontent.com/Armienn/dbcc734e78c27eee1c6590f1cd11fd17/raw/e30d8b5a6330d5affbcb3512cd2399ed5603aaee/test-json-pokemons.json), [a script](https://armienn.github.io/pokemon/?script:gist.githubusercontent.com/Armienn/27b4759d86c33542656f255efd1e50af/raw/47e287512645df0a4f75a515d48f9268a7340604/test-pokemons.js) et cetera
+* Faster loading than sharing a Google Sheets document
 
 ## How to Use with Spreadsheets
 
@@ -32,15 +36,17 @@ Most columns can be deleted. Even a sheet as simple as [this](https://docs.googl
 
 Worksheets named "db" or whose name contains "template", "item", "config", "resource" or "database" won't be shown, and sheets whose name start with "lf" or "looking for" will appear on their own in the list of tabs and the Pokémon in them won't be added to the list of all your Pokémon.
 
-## How to Use with a Javascript Script
+## How to Use with a Javascript Script and other text resources
 
-As a new feature it is now possible to load javascript from somewhere else on the web and set up a collection by running that. 
+1. Have a online text file with Pokémon in it in some format
+2. Make sure it is loadable from other sites
+3. Add the url (without the protocol, i.e. "http://") and the format onto the end of this: `https://armienn.github.io/pokemon/?format:script-url`
 
-To do so, just add the url (without the protocol) onto the end of this: `https://armienn.github.io/pokemon/?script:script-url`
+Example (json): [`https://armienn.github.io/pokemon/?json:gist.githubusercontent.com/Armienn/dbcc734e78c27eee1c6590f1cd11fd17/raw/e30d8b5a6330d5affbcb3512cd2399ed5603aaee/test-json-pokemons.json`](https://armienn.github.io/pokemon/?script:gist.githubusercontent.com/Armienn/dbcc734e78c27eee1c6590f1cd11fd17/raw/e30d8b5a6330d5affbcb3512cd2399ed5603aaee/test-json-pokemons.json)
 
-Example: [`https://armienn.github.io/pokemon/?script:gist.githubusercontent.com/Armienn/27b4759d86c33542656f255efd1e50af/raw/3ad081a42ab88216d8d237adb4c91e36ca0b9d6d/test-pokemons.js`](https://armienn.github.io/pokemon/?script:gist.githubusercontent.com/Armienn/27b4759d86c33542656f255efd1e50af/raw/3ad081a42ab88216d8d237adb4c91e36ca0b9d6d/test-pokemons.js)
+Example (javascript): [`https://armienn.github.io/pokemon/?script:gist.githubusercontent.com/Armienn/27b4759d86c33542656f255efd1e50af/raw/3ad081a42ab88216d8d237adb4c91e36ca0b9d6d/test-pokemons.js`](https://armienn.github.io/pokemon/?script:gist.githubusercontent.com/Armienn/27b4759d86c33542656f255efd1e50af/raw/3ad081a42ab88216d8d237adb4c91e36ca0b9d6d/test-pokemons.js)
 
-This will load [this javascript](https://gist.githubusercontent.com/Armienn/27b4759d86c33542656f255efd1e50af/raw/3ad081a42ab88216d8d237adb4c91e36ca0b9d6d/test-pokemons.js) and run it to get the collection of Pokémon to show. This opens up a lot of new possibilities, so I look forward to seeing what people do with it.
+The latter example will load [this javascript file](https://gist.githubusercontent.com/Armienn/27b4759d86c33542656f255efd1e50af/raw/3ad081a42ab88216d8d237adb4c91e36ca0b9d6d/test-pokemons.js) and run it to get the collection of Pokémon to show. Loading scripts like this opens up a lot of possibilities, so I look forward to seeing what people do with it.
 
 ## Settings
 
@@ -48,9 +54,17 @@ By having settings in your spreadsheet as seen in the template spreadsheet, it i
 
 ## Other notes
 
-For developers interested in the code: Be warned, it's somewhat of a mess. I would clean it up, but I've already used a lot more time on this project than I should have, so that won't happen for the next few months. That said, if you venture in there anyway and make improvements or additions, I'm open to reasonable pull requests.
+For developers interested in the code: I cleaned up the code at one point, but then I started spitting out features again. It's so so. However, here are some parts that might be of interest:
 
-This project also provides various Pokémon data in json format, found in static/pokemons.json, static/moves.json, static/abilities.json, static/natures.json and static/types.json. There's no guarantee about correctness or updatedness, and no documentation, but it's there for those who want it.
+* `stuff.data` contains information about pokemons, moves, types, eggGroups etc.
+* `new Pokemon(args)` will create a new Pokémon object. `args` can be the name of a Pokémon, or an object containing at least `name` or `id` and optionally `form`.
+* `stuff.collection` houses `pokemons`, `lookingFor` and `local`. These are all lists of tabs (`{title:string, id:string, pokemons:Pokemon[]}`). The first two are filled when loading from a spreadsheet, and the last one contain the Pokémons which are stored using the Web Storage API. Add tabs with `AddTab()`, `AddLookingForTab()` and `AddLocalTab()`, and save the current state of the local tabs with `SaveLocalTabs()`
+* `stuff.optionsSection` has `importMethods` and `exportMethods`
+* `stuff.headerSection` has `filters` and `sorts`
+* `stuff.listSection` has `basePokemonColumns` and `tabPokemonColumns`, which are used to set up the main list of Pokémon
+* `stuff.settings` has `colorSchemes`
+
+This project also provides various Pokémon data in json format, found in data-sumo/pokemons.json, data-sumo/moves.json, data-sumo/abilities.json, data-sumo/natures.json, data-sumo/types.json and data-sumo/egg-groups.json. There's no guarantee about correctness or updatedness, and no documentation, but it's there for those who want it.
 
 Thanks to [richi3f](https://github.com/richi3f) for the inspiration for this site, and for the initial template spreadsheet.
 
