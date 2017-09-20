@@ -440,6 +440,33 @@ td img{
     opacity: 1;
     color: white;
 }
+.active-toggle{
+    cursor: pointer;
+    font-weight: bold;
+    background-color: rgba(255, 255, 255, 0.3);
+    color: white;
+    padding: 0.3rem;
+    border-left: 1px solid rgba(0,0,0,0.2);
+    border-right: 1px solid rgba(0,0,0,0.2);
+    transition: .3s ease-in-out;
+}
+.active-toggle:hover{
+    background-color: rgba(255, 255, 255, 0.5);
+}
+.inactive-toggle{
+    cursor: pointer;
+    font-weight: bold;
+    background-color: rgba(255, 255, 255, 0.5);
+    color: black;
+    padding: 0.3rem;
+    border-left: 1px solid rgba(0,0,0,0.2);
+    border-right: 1px solid rgba(0,0,0,0.2);
+    opacity: 0.3;
+    transition: .3s ease-in-out;
+}
+.inactive-toggle:hover{
+    opacity: 1;
+}
 .hidden-options{
     max-height: 0rem;
     transition: 0.3s ease;

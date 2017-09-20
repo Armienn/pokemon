@@ -146,32 +146,58 @@ class Porting {
 				header: (s) => s == "Balls - Combined" ?
 					"Balls" :
 					stuff.data.pokeballs,
-				entry: (p, s) => {
-					if (s == "Balls - Combined") {
-						if (!p.balls)
-							return ""
-						return p.balls.join(" / ")
-					}
-					var list = []
-					list[stuff.data.pokeballs.length - 1] = ""
-					if (!p.balls)
-						return list
-					for (var i in stuff.data.pokeballs) {
-						var fit = p.balls.filter((e) => e.toLowerCase().replace("é", "e").indexOf(stuff.data.pokeballs[i].toLowerCase().replace("é", "e")) > -1)
-						if (fit.length)
-							list[i] = "x"
-					}
-					return list
-				}
-			},
+				entry: (p, s) => Porting.ballEntry(p, s)
+			}
 		}
 	}
-	
+
+	static ballEntry(p, s) {
+		if (s == "Balls - Combined") {
+			if (!p.balls)
+				return ""
+			return p.balls.join(" / ")
+		}
+		var list = []
+		list[stuff.data.pokeballs.length - 1] = ""
+		if (!p.balls)
+			return list
+		for (var i in stuff.data.pokeballs) {
+			var fit = p.balls.filter((e) => e.toLowerCase().replace("é", "e").indexOf(stuff.data.pokeballs[i].toLowerCase().replace("é", "e")) > -1)
+			list[i] = ""
+			if (fit.length)
+				list[i] = "x"
+		}
+		return list
+	}
+
 	static exportMarkdownTable(pokemons) {
 		var separator = "|"
-		var table = Porting.createTable(pokemons)
+		var table = Porting.createTable(pokemons, {
+			ability: {
+				header: "Ability", entry: (p) => {
+					if (!p.ability)
+						return
+					var hidden = p.abilities[2] ? p.abilities[2].toLowerCase() == p.ability.split("(")[0].trim().toLowerCase() : false
+					if (hidden)
+						return "*" + p.ability + "*"
+					return p.ability
+				}
+			},
+			balls: {
+				states: ["Balls - Combined", "Balls - Individual"],
+				header: (s) => s == "Balls - Combined" ?
+					"Balls" :
+					stuff.data.pokeballs,
+				entry: (p, s) => {
+					var balls = []
+					for (var i in p.balls)
+						balls[i] = " [](/" + p.balls[i].replace(" ", "").replace("é", "e").toLowerCase() + ") "
+					return Porting.ballEntry({ balls: balls }, s)
+				}
+			}
+		})
 		var sub = []
-		for(var i in table[0])
+		for (var i in table[0])
 			sub[i] = "-".repeat(table[0][i].length)
 		table.splice(1, 0, sub)
 		for (var i in table) {

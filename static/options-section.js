@@ -53,8 +53,9 @@ Charizard	Mega X	Adamant	Lure Ball`
 
 		this.exportMethods = {
 			"JSON": { method: (pokemons) => Porting.exportJSON(pokemons) },
-			//"test": { method: (pokemons) => Porting.exportTable(pokemons, ",") },
-			"Reddit Markdown": { method: (pokemons) => Porting.exportMarkdown(pokemons), table: true }
+			"CSV": { method: (pokemons) => Porting.exportTable(pokemons, ","), table: true },
+			"TSV": { method: (pokemons) => Porting.exportTable(pokemons, "\t"), table: true },
+			"Reddit Markdown": { method: (pokemons) => Porting.exportMarkdownTable(pokemons), table: true }
 		}
 
 		this.optionsElement = document.getElementById("options-section")
@@ -150,14 +151,22 @@ Charizard	Mega X	Adamant	Lure Ball`
 		exportSelect.onchange = () => {
 			var exportMethod = this.exportMethods[exportSelect.value]
 			tableSetup.style.display = "none"
+			updateButton.style.display = "none"
 			if (exportMethod) {
 				bottombar.style.display = ""
-				//if (exportMethod.table)
-				//	tableSetup.style.display = ""
+				updateButton.style.display = ""
+				if (exportMethod.table)
+					tableSetup.style.display = ""
 				textarea.value = exportMethod.method(stuff.state.currentPokemons)
 			} else {
 				bottombar.style.display = "none"
 			}
+		}
+		var updateButton = newTag("li", topbar, { text: "Update" })
+		updateButton.className = "button"
+		updateButton.style.display = "none"
+		updateButton.onclick = () => {
+			textarea.value = this.exportMethods[exportSelect.value].method(stuff.state.currentPokemons)
 		}
 		var bottombar = newTag("div", this.optionsSubElement)
 		bottombar.style.display = "none"
@@ -169,9 +178,49 @@ Charizard	Mega X	Adamant	Lure Ball`
 	}
 
 	showTableSetup(parent) {
-		var div = newTag("div", parent, { text: "asdfasf" })
+		var div = newTag("div", parent)
+		var elements = []
+		var setups = Porting.tableSetup
+		for (let i in stuff.settings.tableSetup) {
+			let setup = stuff.settings.tableSetup[i]
+			elements[i] = newTag("li", div)
+			elements[i].innerHTML = this.getSetupTitle(setup, setups)
+			elements[i].className = setup.state ? "active-toggle" : "inactive-toggle"
+			elements[i].onclick = () => {
+				setup.state = this.advanceState(setup.state, setups[setup.thing].states)
+				elements[i].className = setup.state ? "active-toggle" : "inactive-toggle"
+				elements[i].innerHTML = this.getSetupTitle(setup, setups)
+				stuff.settings.saveTableSetup()
+			}
+		}
 		div.style.display = "none"
 		return div
+	}
+
+	advanceState(state, states) {
+		if (states) {
+			var index = states.indexOf(state)
+			index++
+			if (index > states.length)
+				return false
+			else
+				return states[index]
+		}
+		return !state
+	}
+
+	getSetupTitle(setup, setups){
+		if(setup.state && setups[setup.thing].states){
+			return setup.state
+		}
+		else {
+			if(typeof setups[setup.thing].header == "string"){
+				return setups[setup.thing].header
+			}
+			else {
+				return setups[setup.thing].header(setups[setup.thing].states[0])
+			}
+		}
 	}
 
 	showAddMenu() {

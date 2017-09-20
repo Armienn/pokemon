@@ -30,9 +30,13 @@ class Settings {
 			var scheme = localStorage.colorScheme
 			if (scheme)
 				this.colorScheme = scheme
-			var tableSetup = localStorage.tableSetup
-			if (tableSetup)
-				this.tableSetup = tableSetup
+			var tableSetup
+			try {
+				tableSetup = JSON.parse(localStorage.tableSetup)
+			}
+			catch (e) { }
+			for (var i in tableSetup)
+				this.tableSetup[i] = tableSetup[i]
 		}
 	}
 
@@ -44,7 +48,7 @@ class Settings {
 		return setup
 	}
 
-	saveTableSetup(){
-		localStorage.tableSetup = this.tableSetup
+	saveTableSetup() {
+		localStorage.tableSetup = JSON.stringify(this.tableSetup)
 	}
 }
