@@ -55,7 +55,8 @@ Charizard	Mega X	Adamant	Lure Ball`
 			"JSON": { method: (pokemons) => Porting.exportJSON(pokemons) },
 			"CSV": { method: (pokemons) => Porting.exportTable(pokemons, ","), table: true, title: "This is a common import type for spreadsheets" },
 			"TSV": { method: (pokemons) => Porting.exportTable(pokemons, "\t"), table: true, title: "This can be pasted into a spreadsheet" },
-			"Reddit Markdown": { method: (pokemons) => Porting.exportMarkdownTable(pokemons), table: true }
+			"Reddit Markdown": { method: (pokemons) => Porting.exportMarkdownTable(pokemons), table: true },
+			"Full Backup Script": { method: () => Porting.exportFullScript(), title: "This is a backup of all your local info\nImport this as a script to restore" }
 		}
 
 		this.optionsElement = document.getElementById("options-section")

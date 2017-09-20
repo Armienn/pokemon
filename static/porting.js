@@ -435,4 +435,24 @@ class Porting {
 		}
 		return pokemon
 	}
+
+	static exportFullScript() {
+		var output = "var tabs = {"
+		for (var i in stuff.collection.local) {
+			var tab = stuff.collection.local[i]
+			output += "\n  \"" + tab.title + "\":" + stuff.optionsSection.exportMethods["JSON"].method(tab.pokemons) + ",\n"
+		}
+		output += `}
+for(var i in tabs){
+  var tab = stuff.collection.getLocalTab(i)
+  if(tab)
+    tab.pokemons = []
+  else
+    tab = stuff.collection.addLocalTab(i)
+  for(var j in tabs[i])
+    tab.pokemons.push(new Pokemon(tabs[i][j]))
+}
+stuff.collection.saveLocalTabs()`
+		return output
+	}
 }
