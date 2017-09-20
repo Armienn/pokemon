@@ -298,6 +298,7 @@ Charizard	Mega X	Adamant	Lure Ball`
 		var topbar = newTag("div", this.optionsSubElement)
 		var button = newTag("li", topbar, { text: "Delete current tab" })
 		button.className = "button"
+		var tabToDelete
 		button.onclick = () => {
 			bottombar.style.display = ""
 			if (typeof stuff.state.currentTab == "string") {
@@ -308,6 +309,7 @@ Charizard	Mega X	Adamant	Lure Ball`
 			deleteButton.style.display = ""
 			deleteMessage.innerHTML = "Deletion cannot be undone"
 			deleteButton.innerHTML = "Delete " + stuff.state.currentTab.title
+			tabToDelete = stuff.state.currentTab
 		}
 		var bottombar = newTag("div", this.optionsSubElement)
 		bottombar.style.display = "none"
@@ -317,14 +319,14 @@ Charizard	Mega X	Adamant	Lure Ball`
 		deleteButton.onclick = () => {
 			bottombar.style.display = "none"
 			var list = stuff.collection.local
-			var index = list.indexOf(stuff.state.currentTab)
+			var index = list.indexOf(tabToDelete)
 			if (!(index > -1)) {
 				list = stuff.collection.pokemons
-				index = list.indexOf(stuff.state.currentTab)
+				index = list.indexOf(tabToDelete)
 			}
 			if (!(index > -1)) {
 				list = stuff.collection.lookingFor
-				index = list.indexOf(stuff.state.currentTab)
+				index = list.indexOf(tabToDelete)
 			}
 			list.splice(index, 1)
 			stuff.collection.saveLocalTabs()
