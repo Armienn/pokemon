@@ -82,6 +82,9 @@ class HeaderSection {
 	}
 
 	setup() {
+		var pokeballs = []
+		for (var i in stuff.data.pokeballs)
+			pokeballs.push("<img style='filter:none; margin:-0.8rem;' src='" + PokeText.ballUrl(stuff.data.pokeballs[i]) + "' title='" + stuff.data.pokeballs[i] + " Ball'>")
 		this.filters = {
 			"Type": { type: "basic", filter: this.hasItemInFilter("types"), options: stuff.data.typeNames },
 			"Ability": { type: "basic", filter: this.hasItemInFilter("ability", "abilities"), options: Object.keys(stuff.data.abilities) },
@@ -95,6 +98,7 @@ class HeaderSection {
 			"Gender": { type: "multi", filter: this.hasItemInFilter("gender"), options: ["♂", "♀", "—", "Undefined"] },
 			"Shiny": { type: "select", filter: this.shinyFilter, options: ["Show only", "Don't show"] },
 			"Hidden ability": { type: "select", filter: this.hiddenAbilityFilter, options: ["Show only", "Don't show"] },
+			"Pokéballs": { type: "multi", filter: this.pokeballFilter, options: pokeballs },
 			"Custom filter": { type: "custom" }
 		}
 	}
@@ -558,6 +562,18 @@ class HeaderSection {
 			for (var i in items)
 				if (+items[i] == generation)
 					return true
+			return false
+		}
+	}
+
+	pokeballFilter(...items) {
+		return (pokemon) => {
+			for (var i in items) {
+				var ball = items[i].split("title='")[1].split("'")[0]
+				for (var j in pokemon.balls)
+					if (PokeText.ballUrl(pokemon.balls[j]) == PokeText.ballUrl(ball))
+						return true
+			}
 			return false
 		}
 	}

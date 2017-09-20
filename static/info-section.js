@@ -168,7 +168,7 @@ class InfoSection {
 						pokemon.balls = []
 						for (var i in selected)
 							if (selected[i])
-								pokemon.balls.push(stuff.data.pokeballs[i])
+								pokemon.balls.push(stuff.data.pokeballs[i] + " Ball")
 						if (!pokemon.balls.length)
 							delete pokemon.balls
 					})
