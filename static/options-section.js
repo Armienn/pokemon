@@ -177,8 +177,9 @@ Charizard	Mega X	Adamant	Lure Ball`
 		textarea.style.height = "8rem"
 	}
 
-	showTableSetup(parent) {
-		var div = newTag("div", parent)
+	showTableSetup(parent, div) {
+		var redo = !!div
+		var div = div || newTag("div", parent)
 		var elements = []
 		var setups = Porting.tableSetup
 		for (let i in stuff.settings.tableSetup) {
@@ -186,14 +187,42 @@ Charizard	Mega X	Adamant	Lure Ball`
 			elements[i] = newTag("li", div)
 			elements[i].innerHTML = this.getSetupTitle(setup, setups)
 			elements[i].className = setup.state ? "active-toggle" : "inactive-toggle"
+			elements[i].draggable = true
 			elements[i].onclick = () => {
 				setup.state = this.advanceState(setup.state, setups[setup.thing].states)
 				elements[i].className = setup.state ? "active-toggle" : "inactive-toggle"
 				elements[i].innerHTML = this.getSetupTitle(setup, setups)
 				stuff.settings.saveTableSetup()
 			}
+			elements[i].ondragstart = (event) => {
+				event.dataTransfer.setData("text/plain", i)
+				elements[i].style.backgroundColor = "transparent"
+				elements[i].style.color = "transparent"
+			}
+			elements[i].ondragend = (event) => {
+				elements[i].style.backgroundColor = ""
+				elements[i].style.color = ""
+			}
+			elements[i].ondragover = (event) => {
+				event.preventDefault()
+			}
+			elements[i].ondrop = (event) => {
+				event.preventDefault()
+				var data = event.dataTransfer.getData("text")
+				if (data == i)
+					return
+				var thing = stuff.settings.tableSetup.splice(data, 1)[0]
+				if (i < data)
+					stuff.settings.tableSetup.splice(i, 0, thing)
+				else
+					stuff.settings.tableSetup.splice(i - 1, 0, thing)
+					div.innerHTML = ""
+				this.showTableSetup(parent, div)
+				stuff.settings.saveTableSetup()
+			}
 		}
-		div.style.display = "none"
+		if(!redo)
+			div.style.display = "none"
 		return div
 	}
 
