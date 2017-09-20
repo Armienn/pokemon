@@ -46,15 +46,15 @@ Charizard	Mega X	Adamant	Lure Ball`
 			"Script": { method: (input) => (new Function(input))(), default: defaultScript },
 			"JSON": { method: (input) => Porting.importJSON(input), default: defaultJSON },
 			"Smogon": { method: (input) => Porting.importSmogon(input), default: defaultSmogon },
-			"CSV": { method: (input) => Porting.importTable(input, ","), default: defaultCSV },
-			"TSV": { method: (input) => Porting.importTable(input, "\t"), default: defaultTSV },
+			"CSV": { method: (input) => Porting.importTable(input, ","), default: defaultCSV, title: "This is a common export type from spreadsheets" },
+			"TSV": { method: (input) => Porting.importTable(input, "\t"), default: defaultTSV, title: "Copying from spreadsheets give this sort of data" },
 			"Reddit Markdown": { method: (input) => Porting.importTable(input, "|"), default: defaultMarkdown }
 		}
 
 		this.exportMethods = {
 			"JSON": { method: (pokemons) => Porting.exportJSON(pokemons) },
-			"CSV": { method: (pokemons) => Porting.exportTable(pokemons, ","), table: true },
-			"TSV": { method: (pokemons) => Porting.exportTable(pokemons, "\t"), table: true },
+			"CSV": { method: (pokemons) => Porting.exportTable(pokemons, ","), table: true, title: "This is a common import type for spreadsheets" },
+			"TSV": { method: (pokemons) => Porting.exportTable(pokemons, "\t"), table: true, title: "This can be pasted into a spreadsheet" },
 			"Reddit Markdown": { method: (pokemons) => Porting.exportMarkdownTable(pokemons), table: true }
 		}
 
@@ -98,9 +98,11 @@ Charizard	Mega X	Adamant	Lure Ball`
 				middlebar.style.display = ""
 				bottombar.style.display = ""
 				textarea.value = importMethod.default
+				textarea.title = importMethod.title || ""
 			} else {
 				middlebar.style.display = "none"
 				bottombar.style.display = "none"
+				textarea.title = ""
 			}
 		}
 		newTag("li", topbar, { text: "into current tab" })
@@ -158,8 +160,10 @@ Charizard	Mega X	Adamant	Lure Ball`
 				if (exportMethod.table)
 					tableSetup.style.display = ""
 				textarea.value = exportMethod.method(stuff.state.currentPokemons)
+				textarea.title = exportMethod.title || ""
 			} else {
 				bottombar.style.display = "none"
+				textarea.title = ""
 			}
 		}
 		var updateButton = newTag("li", topbar, { text: "Update" })
@@ -180,6 +184,7 @@ Charizard	Mega X	Adamant	Lure Ball`
 	showTableSetup(parent, div) {
 		var redo = !!div
 		var div = div || newTag("div", parent)
+		div.title = "Drag to rearrange"
 		var elements = []
 		var setups = Porting.tableSetup
 		for (let i in stuff.settings.tableSetup) {
