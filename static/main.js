@@ -105,6 +105,7 @@ class PokemonStuff {
 		if (!this.state.thingsAreLoaded)
 			return
 		if (this.state.externalInventory.load) {
+			this.headerSection.showLocal = false
 			if (this.state.script)
 				switch (this.state.script.type) {
 					case "script": this.loadScript((content) => new Function(content)()); break;

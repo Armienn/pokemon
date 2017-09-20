@@ -209,12 +209,12 @@ Charizard	Mega X	Adamant	Lure Ball`
 		return !state
 	}
 
-	getSetupTitle(setup, setups){
-		if(setup.state && setups[setup.thing].states){
+	getSetupTitle(setup, setups) {
+		if (setup.state && setups[setup.thing].states) {
 			return setup.state
 		}
 		else {
-			if(typeof setups[setup.thing].header == "string"){
+			if (typeof setups[setup.thing].header == "string") {
 				return setups[setup.thing].header
 			}
 			else {
@@ -296,40 +296,40 @@ Charizard	Mega X	Adamant	Lure Ball`
 
 	showDeleteMenu() {
 		var topbar = newTag("div", this.optionsSubElement)
-		if (!stuff.collection.local.length) {
-			newTag("li", topbar, { text: "No local tabs to delete!" })
-			return
-		}
-		newTag("li", topbar, { text: "Delete" })
-		var tabSelect = newTag("select", topbar)
-		newTag("option", tabSelect)
-		for (var i in stuff.collection.local) {
-			var option = newTag("option", tabSelect, { text: stuff.collection.local[i].title })
-			option.value = i
-		}
-		tabSelect.onchange = () => {
-			if (tabSelect.value > -1)
-				bottombar.style.display = ""
-			else
-				bottombar.style.display = "none"
+		var button = newTag("li", topbar, { text: "Delete current tab" })
+		button.className = "button"
+		button.onclick = () => {
+			bottombar.style.display = ""
+			if (typeof stuff.state.currentTab == "string") {
+				deleteMessage.innerHTML = "Cannot delete this tab"
+				deleteButton.style.display = "none"
+				return
+			}
+			deleteButton.style.display = ""
+			deleteMessage.innerHTML = "Deletion cannot be undone"
+			deleteButton.innerHTML = "Delete " + stuff.state.currentTab.title
 		}
 		var bottombar = newTag("div", this.optionsSubElement)
 		bottombar.style.display = "none"
-		newTag("li", bottombar, { text: "Deletion cannot be undone" })
-		var deleteButton = newTag("li", bottombar, { text: "Delete" })
+		var deleteMessage = newTag("li", bottombar)
+		var deleteButton = newTag("li", bottombar)
 		deleteButton.className = "button"
 		deleteButton.onclick = () => {
-			var deleted = stuff.collection.local.splice(tabSelect.value, 1)[0]
-			stuff.collection.saveLocalTabs()
-			tabSelect.innerHTML = ""
-			newTag("option", tabSelect)
-			for (var i in stuff.collection.local) {
-				var option = newTag("option", tabSelect, { text: stuff.collection.local[i].title })
-				option.value = i
+			bottombar.style.display = "none"
+			var list = stuff.collection.local
+			var index = list.indexOf(stuff.state.currentTab)
+			if (!(index > -1)) {
+				list = stuff.collection.pokemons
+				index = list.indexOf(stuff.state.currentTab)
 			}
+			if (!(index > -1)) {
+				list = stuff.collection.lookingFor
+				index = list.indexOf(stuff.state.currentTab)
+			}
+			list.splice(index, 1)
+			stuff.collection.saveLocalTabs()
 			stuff.headerSection.updateNavPokemonTabs()
-			if (deleted == stuff.state.currentTab)
-				stuff.selectTab("all")
+			stuff.selectTab("all")
 			stuff.show()
 		}
 	}

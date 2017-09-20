@@ -5,7 +5,7 @@ class HeaderSection {
 		this.title = "Pokémon Stuff"
 		this.titleLink = "https://github.com/Armienn/pokemon#pok%C3%A9mon-stuff"
 		this.subtitle = ""
-		this.showLocal = false
+		this.showLocal = true
 
 		this.navGroups = {
 			base: {

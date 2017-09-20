@@ -48,36 +48,6 @@ class Porting {
 		return pokemon
 	}
 
-	static exportMarkdown(pokemons) {
-		var table = `Pokemon| Ability| Nature| IVs| Moves| Pokeball
----|---|----|----|----|----
-`
-		for (var n in pokemons) {
-			var pokemon = pokemons[n]
-			table += (pokemon.shiny ? "★ " : "") +
-				PokeText.formName(pokemon) +
-				(pokemon.gender ? " " + pokemon.gender : "") +
-				(pokemon.amount ? " (" + pokemon.amount + ")" : "") + "| "
-			if (pokemon.ability)
-				table += pokemon.ability
-			table += "| "
-			if (pokemon.nature)
-				table += pokemon.nature
-			table += "| "
-			if (pokemon.ivs)
-				table += pokemon.ivs.hp + "/" + pokemon.ivs.atk + "/" + pokemon.ivs.def + "/" +
-					pokemon.ivs.spa + "/" + pokemon.ivs.spd + "/" + pokemon.ivs.spe
-			table += "| "
-			if (pokemon.learntMoves)
-				table += pokemon.learntMoves.join(", ")
-			table += "| "
-			for (var i in pokemon.balls)
-				table += "[](/" + pokemon.balls[i].replace(" ", "").replace("é", "e").toLowerCase() + ") "
-			table += "\n"
-		}
-		return table
-	}
-
 	static get tableSetup() {
 		return {
 			pokemon: {
