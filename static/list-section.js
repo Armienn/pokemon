@@ -20,7 +20,10 @@ class ListSection {
 				{
 					headerOnClick: () => stuff.headerSection.setSortingMethod("ID")
 				}),
-			new PokemonColumn("Pokemon", (pokemon) => PokeText.formName(pokemon) + (pokemon.nickname ? " [" + pokemon.nickname + "]" : "")),
+			new PokemonColumn("Pokemon", (pokemon) => PokeText.formName(pokemon) + (pokemon.nickname ? " [" + pokemon.nickname + "]" : ""),
+			{
+				headerOnClick: () => stuff.headerSection.setSortingMethod("Name")
+			}),
 			new PokemonColumn("Types", (pokemon) => PokeText.types(pokemon)),
 			new PokemonColumn("Abilities", (pokemon) => PokeText.abilities(pokemon)),
 			new PokemonColumn("HP", (pokemon) => PokeText.stat(pokemon.stats.hp),
@@ -65,8 +68,10 @@ class ListSection {
 				PokeText.formName(pokemon) +
 				(pokemon.gender && pokemon.gender != "—" ? " " + PokeText.gender(pokemon) : "") +
 				PokeText.amountShiny(pokemon) +
-				(pokemon.nickname ? " [" + pokemon.nickname + "]" : "")
-			),
+				(pokemon.nickname ? " [" + pokemon.nickname + "]" : ""),
+				{
+					headerOnClick: () => stuff.headerSection.setSortingMethod("Name")
+				}),
 			new PokemonColumn("Types", (pokemon) => PokeText.types(pokemon)),
 			new PokemonColumn("Abilities", (pokemon) => {
 				if (pokemon.ability)

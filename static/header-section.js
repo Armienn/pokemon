@@ -56,6 +56,7 @@ class HeaderSection {
 
 		this.sorts = {
 			"ID": (a, b) => { return a.id - b.id },
+			"Name": (a, b) => { if (a.name == b.name) return 0; return a.name > b.name ? 1 : -1; },
 			"HP": (a, b) => { return a.ivs || b.ivs || a.evs || b.evs ? stuff.data.getStatAtLevel(b, "hp", 50) - stuff.data.getStatAtLevel(a, "hp", 50) : b.stats.hp - a.stats.hp },
 			"Attack": (a, b) => { return a.ivs || b.ivs || a.evs || b.evs ? stuff.data.getStatAtLevel(b, "atk", 50) - stuff.data.getStatAtLevel(a, "atk", 50) : b.stats.atk - a.stats.atk },
 			"Defense": (a, b) => { return a.ivs || b.ivs || a.evs || b.evs ? stuff.data.getStatAtLevel(b, "def", 50) - stuff.data.getStatAtLevel(a, "def", 50) : b.stats.def - a.stats.def },
