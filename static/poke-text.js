@@ -182,7 +182,10 @@ class PokeText {
 
 	static IV(iv, pokemon) {
 		var cssClass = PokeText.natureCssClass(iv, pokemon)
-		return "<span class='" + cssClass + "'>" + (pokemon.ivs ? pokemon.ivs[iv] : "x") + "</span>"
+		var iv = pokemon.ivs ? pokemon.ivs[iv] : undefined
+		if(iv == undefined)
+			iv = "x"
+		return "<span class='" + cssClass + "'>" + iv + "</span>"
 	}
 
 	static EV(ev, pokemon) {
@@ -196,7 +199,10 @@ class PokeText {
 		if (!hasEvs)
 			return ""
 		var cssClass = PokeText.natureCssClass(ev, pokemon)
-		return " <span class='" + cssClass + "' style=\"font-size:0.7rem;display: block;\">" + (pokemon.evs[ev] > 0 ? pokemon.evs[ev] : "—") + "</span>"
+		var ev = pokemon.evs ? pokemon.evs[ev] : undefined
+		if(ev == undefined)
+			ev = "—"
+		return " <span class='" + cssClass + "' style=\"font-size:0.7rem;display: block;\">" + ev + "</span>"
 	}
 
 	static IVEV(stat, pokemon) {

@@ -452,7 +452,11 @@ class InfoSection {
 
 	statNumber(pokemon, stat) {
 		var ivText = pokemon.ivs ? pokemon.ivs[stat] : 0
+		if (!ivText && ivText != 0)
+			ivText = "x"
 		var evBase = pokemon.evs ? pokemon.evs[stat] : 0
+		if (!ivText && ivText != 0)
+			ivText = ""
 		var className = pokemon.nature ? PokeText.natureCssClass(stat, pokemon) : ""
 		var blub = pokemon.stats[stat]
 		if (pokemon.ivs || pokemon.evs)
@@ -463,7 +467,11 @@ class InfoSection {
 	statBar(pokemon, stat) {
 		var statBase = pokemon.stats[stat]
 		var ivText = pokemon.ivs ? pokemon.ivs[stat] : 0
+		if (!ivText && ivText != 0)
+			ivText = "x"
 		var evBase = pokemon.evs ? pokemon.evs[stat] : 0
+		if (!ivText && ivText != 0)
+			ivText = ""
 		var ivBase = ivText.toString().endsWith("*") ? 31 : ivText
 		ivBase = isNaN(+ivBase) ? ivBase.replace(/(^\d+)(.+$)/i, '$1') : +ivBase
 		var content = this.statDivBar("stat-bar base-bar", statBase * 2 + "px", "linear-gradient(to right, red, " + PokeText.statColor(statBase) + ")")
@@ -594,8 +602,16 @@ class InfoSection {
 				}
 				this.edits.push((pokemon) => {
 					var value = input.value
-					if (!value)
+					if (!value) {
+						if (key == "id" || key == "form" || key == "name")
+							return
+						if (!deep) {
+							delete pokemon[key]
+							return
+						}
+						delete pokemon[key[0]][key[1]]
 						return
+					}
 					if (!deep)
 						return pokemon[key] = value
 					if (!pokemon[key[0]])
@@ -624,14 +640,22 @@ class InfoSection {
 					input2.value = pokemon[key2]
 				this.edits.push((pokemon) => {
 					var value = input.value
-					if (!value)
+					if (!value) {
+						if (key == "id" || key == "form" || key == "name")
+							return
+						delete pokemon[key]
 						return
+					}
 					return pokemon[key] = value
 				})
 				this.edits.push((pokemon) => {
 					var value = input2.value
-					if (!value)
+					if (!value) {
+						if (key == "id" || key == "form" || key == "name")
+							return
+						delete pokemon[key]
 						return
+					}
 					return pokemon[key2] = value
 				})
 			})
@@ -651,8 +675,12 @@ class InfoSection {
 					select.value = pokemon[key]
 				this.edits.push((pokemon) => {
 					var value = select.value
-					if (!value)
+					if (!value) {
+						if (key == "id" || key == "form" || key == "name")
+							return
+						delete pokemon[key]
 						return
+					}
 					pokemon[key] = value
 				})
 			})
@@ -690,8 +718,10 @@ class InfoSection {
 					input.value = pokemon[key][stat]
 				this.edits.push((pokemon) => {
 					var value = input.value
-					if (!value)
+					if (!value) {
+						delete pokemon[key][stat]
 						return
+					}
 					if (!pokemon[key])
 						pokemon[key] = {}
 					pokemon[key][stat] = value
@@ -729,11 +759,15 @@ class InfoSection {
 				this.edits.push((pokemon) => {
 					var value = genders[gender]
 					if (pokemon.ratio == "—")
-						pokemon.gender = "-"
+						delete pokemon.gender
 					else if (value != "-")
 						pokemon.gender = value
+					else
+						delete pokemon.gender
 					if (shiny)
 						pokemon.shiny = true
+					else
+						delete pokemon.shiny
 				})
 			})
 		])
