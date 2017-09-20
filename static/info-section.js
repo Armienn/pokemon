@@ -649,7 +649,9 @@ class InfoSection {
 							delete pokemon[key]
 							return
 						}
-						delete pokemon[key[0]][key[1]]
+						if (pokemon[key[0]])
+							delete pokemon[key[0]][key[1]]
+						delete pokemon[key[0]]
 						return
 					}
 					if (!deep)
@@ -789,7 +791,7 @@ class InfoSection {
 						gender = 0
 					genderThing.innerHTML = PokeText.gender({ gender: genders[gender] })
 				}
-				newTag("span", cell, {text: " /"}).style.color = "#888"
+				newTag("span", cell, { text: " /" }).style.color = "#888"
 				var shiny = pokemon.shiny
 				var shinyThing = newTag("span", cell)
 				shinyThing.innerHTML = "<span style='color:" + (shiny ? "#f11" : "#888") + "; margin-left:0.5rem;'>★</span>"
@@ -797,7 +799,7 @@ class InfoSection {
 					shiny = !shiny
 					shinyThing.innerHTML = "<span style='color:" + (shiny ? "#f11" : "#888") + "; margin-left:0.5rem;'>★</span>"
 				}
-				newTag("span", cell, {text: " /"}).style.color = "#888"
+				newTag("span", cell, { text: " /" }).style.color = "#888"
 				var amountThing = newTag("input", cell)
 				amountThing.placeholder = "1"
 				amountThing.value = pokemon.amount != undefined ? pokemon.amount : ""
