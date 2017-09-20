@@ -159,13 +159,15 @@ class PokeText {
 
 	static balls(pokemon) {
 		var text = ""
-		for (var i in pokemon.balls) {
-			var ball = pokemon.balls[i].split(" ")[0].toLowerCase()
-			ball = ball.split("ball")[0].replace("é", "e")
-			var url = "https://raw.githubusercontent.com/msikma/pokesprite/master/icons/pokeball/" + ball + ".png"
-			text += "<img src='" + url + "' title='" + pokemon.balls[i] + "'></img>"
-		}
+		for (var i in pokemon.balls)
+			text += "<img src='" + PokeText.ballUrl(pokemon.balls[i]) + "' title='" + pokemon.balls[i] + "'></img>"
 		return text
+	}
+
+	static ballUrl(ball){
+		ball = ball.split(" ")[0].toLowerCase()
+		ball = ball.split("ball")[0].replace("é", "e")
+		return "https://raw.githubusercontent.com/msikma/pokesprite/master/icons/pokeball/" + ball + ".png"
 	}
 
 	static stat(stat) {

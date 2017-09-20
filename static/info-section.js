@@ -136,6 +136,45 @@ class InfoSection {
 					this.statEditRow(rows, pokemon, "Sp. Def EV |", "evs", "spd")
 					this.statEditRow(rows, pokemon, "Speed EV |", "evs", "spe")
 					return rows
+				}),
+			this.Section(
+				(pokemon) => {
+					var thing = [[this.Title("Balls")]]
+					var selected = {}
+					for (var i in stuff.data.pokeballs) {
+						var exists = false
+						for (var j in pokemon.balls) {
+							exists = PokeText.ballUrl(pokemon.balls[j]) == PokeText.ballUrl(stuff.data.pokeballs[i])
+							if (exists)
+								break
+						}
+						selected[i] = exists
+					}
+					for (let i in stuff.data.pokeballs) {
+						thing[0].push(this.Content((cell) => {
+							var img = newTag("img", cell)
+							cell.style.width = "1rem"
+							cell.style.float = "left"
+							img.style.filter = selected[i] ? "drop-shadow(0px 0px 2px white)" : "grayscale(1)"
+							img.src = PokeText.ballUrl(stuff.data.pokeballs[i])
+							img.title = stuff.data.pokeballs[i]
+							img.onclick = () => {
+								selected[i] = !selected[i]
+								img.style.filter = selected[i] ? "drop-shadow(0px 0px 2px white)" : "grayscale(1)"
+							}
+						}))
+					}
+					this.edits.push((pokemon) => {
+						pokemon.balls = []
+						for (var i in selected)
+							if (selected[i])
+								pokemon.balls.push(stuff.data.pokeballs[i])
+						if (!pokemon.balls.length)
+							delete pokemon.balls
+					})
+					return thing
+				}, {
+					rowStyle: { width: "8rem", display: "block" }
 				})
 		]
 
