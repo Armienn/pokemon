@@ -84,16 +84,18 @@ class PokemonStuff {
 		var argument = window.location.search.substring(1)
 		this.state.externalInventory.load = true
 		var args = argument.split(":")
-		if (args[0] == "script" || args[0] == "json" || args[0] == "smogon")
-			request("https://" + args[1], (response) => {
-				this.state.script = { type: args[0], content: response }
-				this.tryLoad()
-			})
-		else
-			requestJSON(this.spreadsheetParser.getSpreadsheetUrl(argument), (response) => {
-				this.state.spreadsheet = { id: argument, spreadsheet: response }
-				this.tryLoad()
-			})
+		for (var i in this.optionsSection.importMethods)
+			if (i.toLowerCase() == args[0].toLowerCase()) {
+				request("https://" + args[1], (response) => {
+					this.state.script = { type: args[0].toLowerCase(), content: response }
+					this.tryLoad()
+				})
+				return
+			}
+		requestJSON(this.spreadsheetParser.getSpreadsheetUrl(argument), (response) => {
+			this.state.spreadsheet = { id: argument, spreadsheet: response }
+			this.tryLoad()
+		})
 	}
 
 	loadDestination() {
@@ -107,10 +109,11 @@ class PokemonStuff {
 		if (this.state.externalInventory.load) {
 			this.headerSection.showLocal = false
 			if (this.state.script)
-				switch (this.state.script.type) {
-					case "script": this.loadScript((content) => new Function(content)()); break;
-					case "json": this.loadScript((content) => Porting.importJSON(content)); break;
-					case "smogon": this.loadScript((content) => Porting.importSmogon(content)); break;
+				for (var i in this.optionsSection.importMethods) {
+					if (i.toLowerCase() == this.state.script.type){
+						this.loadScript((content) => this.optionsSection.importMethods[i].method(content))
+						break
+					}
 				}
 			else if (this.state.spreadsheet)
 				this.loadSpreadsheet()
