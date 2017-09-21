@@ -43,7 +43,7 @@ Charizard	Mega X	Adamant	Lure Ball`
 		}
 
 		this.importMethods = {
-			"Script": { method: (input) => (new Function(input))(), default: defaultScript },
+			"Script": { method: (input) => (new Function(input))(), default: defaultScript, title: "Return an array of Pokémon to add\nSee the readme on github for more info" },
 			"JSON": { method: (input) => Porting.importJSON(input), default: defaultJSON },
 			"Smogon": { method: (input) => Porting.importSmogon(input), default: defaultSmogon },
 			"CSV": { method: (input) => Porting.importTable(input, ","), default: defaultCSV, title: "This is a common export type from spreadsheets" },

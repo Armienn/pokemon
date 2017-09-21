@@ -158,6 +158,7 @@ class InfoSection {
 							img.style.filter = selected[i] ? "drop-shadow(0px 0px 2px white)" : "grayscale(1)"
 							img.src = PokeText.ballUrl(stuff.data.pokeballs[i])
 							img.title = stuff.data.pokeballs[i]
+							img.style.cursor = "pointer"
 							img.onclick = () => {
 								selected[i] = !selected[i]
 								img.style.filter = selected[i] ? "drop-shadow(0px 0px 2px white)" : "grayscale(1)"
