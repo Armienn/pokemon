@@ -123,6 +123,7 @@ class PokemonStuff {
 		this.state.loaded = true
 		this.headerSection.setup()
 		this.collection.loadLocalTabs()
+		this.settings.loadLocalScript()
 		this.update()
 		if (!this.collection.pokemons.length && this.state.destination)
 			this.selectPokemonBasedOn(this.state.destination)

@@ -40,6 +40,15 @@ class Settings {
 		}
 	}
 
+	loadLocalScript(){
+		if (localStorage) {
+			var script = localStorage.script
+			if (!script)
+				return
+			(new Function(script))()
+		}
+	}
+
 	defaultTableSetup() {
 		var info = Porting.tableSetup
 		var setup = []
