@@ -467,7 +467,11 @@ var tabs = {`
 		}
 		output += `}
 for(var i in tabs){
-	var tab = stuff.collection.addTab(i)
+	var tab
+	if(i.toLowerCase().startsWith("lf") || i.toLowerCase().startsWith("looking for"))
+		tab = stuff.collection.addLookingForTab(i)
+	else
+		tab = stuff.collection.addTab(i)
 	for(var j in tabs[i])
 		tab.pokemons.push(new Pokemon(tabs[i][j]))
 }`
