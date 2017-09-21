@@ -118,7 +118,7 @@ class HeaderSection {
 
 	showTitle() {
 		var element = this.titleElement
-		if (stuff.collection.spreadsheetId) {
+		if (stuff.collection.collectorName || stuff.collection.spreadsheetId) {
 			var title = stuff.collection.collectorUrl ? "<a href=\"" + stuff.collection.collectorUrl + "\">" + stuff.collection.collectorName + "</a>'s " : stuff.collection.collectorName + "'s "
 			title += stuff.collection.spreadsheetId ? "<a href=\"https://docs.google.com/spreadsheets/d/" + stuff.collection.spreadsheetId + "\">Pokémon</a> " : "Pokémon "
 			title += "<a href=\"https://armienn.github.io/pokemon/\">Stuff</a>"

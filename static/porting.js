@@ -457,9 +457,9 @@ stuff.collection.saveLocalTabs()`
 	}
 
 	static fullExportScript() {
-		var output = `stuff.headerSection.title = "Unknown's Pokémon Stuff"
-stuff.headerSection.titleLink = "https://armienn.github.io/pokemon"
-stuff.headerSection.subtitle = "FC: ?"
+		var output = `stuff.collection.collectorName = "Unknown"
+stuff.headerSection.collectorUrl = "https://armienn.github.io/pokemon"
+stuff.headerSection.collectorFriendCode = "?"
 var tabs = {`
 		for (var i in stuff.collection.local) {
 			var tab = stuff.collection.local[i]
