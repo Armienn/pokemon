@@ -60,8 +60,6 @@ class SpreadsheetParser {
 		return (response) => {
 			var table = this.tablify(response.feed.entry)
 			tab.pokemons = Porting.parseTable(table)
-			if (tab.id == stuff.state.destination)
-				stuff.selectTab(tab)
 			stuff.state.externalInventory.tabsLoaded[tab.id] = true
 			this.updateExternalInventoryLoadedness()
 			stuff.tryLoad()
