@@ -436,7 +436,7 @@ class Porting {
 		return pokemon
 	}
 
-	static exportFullScript() {
+	static fullBackupScript() {
 		var output = "var tabs = {"
 		for (var i in stuff.collection.local) {
 			var tab = stuff.collection.local[i]
@@ -453,6 +453,24 @@ for(var i in tabs){
     tab.pokemons.push(new Pokemon(tabs[i][j]))
 }
 stuff.collection.saveLocalTabs()`
+		return output
+	}
+
+	static fullExportScript() {
+		var output = `stuff.headerSection.title = "Unknown's Pokémon"
+stuff.headerSection.titleLink = ""
+stuff.headerSection.subtitle = ""
+var tabs = {`
+		for (var i in stuff.collection.local) {
+			var tab = stuff.collection.local[i]
+			output += "\n  \"" + tab.title + "\":" + stuff.optionsSection.exportMethods["JSON"].method(tab.pokemons) + ",\n"
+		}
+		output += `}
+for(var i in tabs){
+	var tab = stuff.collection.addTab(i)
+	for(var j in tabs[i])
+		tab.pokemons.push(new Pokemon(tabs[i][j]))
+}`
 		return output
 	}
 }
