@@ -155,11 +155,11 @@ class PokemonStuff {
 			return
 		}
 		this.state.script = undefined
+		this.state.externalInventory.isLoaded = true
 		if (!pokemons)
 			return
 		var tab = this.collection.addTab("Pokémon list", pokemons)
 		this.selectTab(tab)
-		this.state.externalInventory.isLoaded = true
 	}
 
 	loadSpreadsheet() {
