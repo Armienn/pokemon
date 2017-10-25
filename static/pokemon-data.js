@@ -161,7 +161,9 @@ class PokemonData {
 	}
 
 	getFilteredPokemons() {
-		var pokes = this.pokemons
+		var pokes = []
+		for (var i in this.pokemons)
+			pokes[i] = this.pokemons[i]
 		if (stuff.state.currentTab == "mine") {
 			pokes = []
 			for (var i in stuff.collection.pokemons)
