@@ -761,7 +761,7 @@ class InfoSection {
 					input.value = pokemon[key][stat]
 				this.edits.push((pokemon) => {
 					var value = input.value
-					if (!value) {
+					if (!value && pokemon[key]) {
 						delete pokemon[key][stat]
 						return
 					}
