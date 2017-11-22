@@ -50,6 +50,8 @@ class PokeText {
 	}
 
 	static imageName(pokemon) {
+		if(pokemon.id > 801)
+			return "https://img.pokemondb.net/artwork/" + pokemon.name.toLowerCase() + ".jpg"
 		var form = ""
 		if (pokemon.form && pokemon.form != "Base" &&
 			pokemon.name != "Vivillon" &&
