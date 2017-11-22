@@ -60,7 +60,7 @@ class PokemonStuff {
 		this.loadJSONData("abilities")
 		this.loadJSONData("natures")
 		this.loadJSONData("eggGroups", "egg-groups")
-		requestJSON("https://armienn.github.io/pokemon/data-sumo/types.json", (types) => {
+		requestJSON("https://armienn.github.io/pokemon/data-usum/types.json", (types) => {
 			this.data.types = types
 			this.data.typeNames = Object.keys(types)
 			this.state.thingsLoaded.types = true
@@ -71,7 +71,7 @@ class PokemonStuff {
 	loadJSONData(thing, file) {
 		if (!file)
 			file = thing
-		requestJSON("https://armienn.github.io/pokemon/data-sumo/" + file + ".json", (data) => {
+		requestJSON("https://armienn.github.io/pokemon/data-usum/" + file + ".json", (data) => {
 			this.data[thing] = data
 			this.state.thingsLoaded[thing] = true
 			this.tryLoad()
