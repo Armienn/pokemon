@@ -652,7 +652,8 @@ class InfoSection {
 						}
 						if (pokemon[key[0]])
 							delete pokemon[key[0]][key[1]]
-						delete pokemon[key[0]]
+						if(pokemon[key[0]] && !Object.keys(pokemon[key[0]]).length)
+							delete pokemon[key[0]]
 						return
 					}
 					if (!deep)
