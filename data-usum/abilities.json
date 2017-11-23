@@ -118,6 +118,7 @@
 "Multitype":{"name":"Multitype","summary":"Changes type to match the held Plate."},
 "Mummy":{"name":"Mummy","summary":"Contact with this Pokémon spreads this Ability."},
 "Natural Cure":{"name":"Natural Cure","summary":"All status problems heal when it switches out."},
+"Neuroforce":{"name":"Neuroforce","summary":"Increases the power of supereffective attacks."},
 "No Guard":{"name":"No Guard","summary":"Ensures attacks by or against the Pokémon land."},
 "Normalize":{"name":"Normalize","summary":"All the Pokémon's moves become the Normal type."},
 "Oblivious":{"name":"Oblivious","summary":"Prevents it from becoming infatuated."},
