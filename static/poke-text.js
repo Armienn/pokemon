@@ -31,6 +31,8 @@ class PokeText {
 				formname = false
 			else if (textContains(pokemon.form, "mega"))
 				formname = pokemon.form.replace(" ", "-")
+			else if (textContains(pokemon.name, "necrozma"))
+				formname = pokemon.form.replace(" ", "-")
 			else if (textContains(pokemon.form, "core"))
 				formname = pokemon.form.replace(" ", "-")
 			else if (pokemon.form == "Ash-Greninja")
@@ -42,7 +44,7 @@ class PokeText {
 			if (formname)
 				name += "-" + formname.toLowerCase().replace(" ", "-").replace("'", "-").replace("é", "e-").replace("!", "exclamation").replace("?", "question")
 		}
-		if (!formname && pokemon.forms && pokemon.forms[0] == "Male" && (pokemon.form.toLowerCase() == "female" || pokemon.gender == "♀"))
+		if (!formname && pokemon.forms && pokemon.forms[0] == "Male" && (pokemon.form.toLowerCase() == "female" || pokemon.gender == "♀" || pokemon.gender == "f"))
 			name = "female/" + name
 		return "https://raw.githubusercontent.com/msikma/pokesprite/master/icons/pokemon/" +
 			(pokemon.shiny ? "shiny" : "regular") +
@@ -50,28 +52,26 @@ class PokeText {
 	}
 
 	static imageName(pokemon) {
-		if(pokemon.id > 801)
-			return "https://img.pokemondb.net/artwork/" + pokemon.name.toLowerCase() + ".jpg"
 		var form = ""
-		if (pokemon.form && pokemon.form != "Base" &&
-			pokemon.name != "Vivillon" &&
-			pokemon.name != "Flabébé" &&
-			pokemon.name != "Floette" &&
-			pokemon.name != "Florges" &&
-			pokemon.name != "Minior" &&
-			pokemon.name != "Unown" &&
-			pokemon.forms && !textContains(pokemon.form, pokemon.forms[0])) {
-			for (var i in pokemon.forms) {
-				var temp = pokemon.forms[i]
-				if (textContains(pokemon.form, temp)) {
-					form = "_f" + (+i + (pokemon.name == "Zygarde" ? 2 : 1))
-					break
-				}
-			}
+		if (pokemon.form && pokemon.form != "Base") {
+			form = pokemon.form.toLowerCase().replace("'", "").split(" ")//.join("-")
+			if (form.length > 1 && form[0] !== "mega")
+				form = form.splice(0, form.length - 1).join("-")
+			else
+				form = form.join("-")
+			form = "-" + form
 		}
-		if (pokemon.form.indexOf("Core") > -1)
-			form = "_f2"
-		return "http://assets.pokemon.com/assets/cms2/img/pokedex/full/" + prependZeroes(pokemon.id, 3) + form + ".png"
+		var gender = ""
+		if (pokemon.gender == "♀" || pokemon.gender == "f")
+			switch (pokemon.id) {
+				case 521:
+				case 592:
+				case 593:
+				case 668:
+				case 678:
+					gender = "female/"
+			}
+		return "./static/sugimori/" + gender + pokemon.id + form + ".png"
 	}
 
 	static defense(defense) {
@@ -166,7 +166,7 @@ class PokeText {
 		return text
 	}
 
-	static ballUrl(ball){
+	static ballUrl(ball) {
 		ball = ball.split(" ")[0].toLowerCase()
 		ball = ball.split("ball")[0].replace("é", "e")
 		return "https://raw.githubusercontent.com/msikma/pokesprite/master/icons/pokeball/" + ball + ".png"
@@ -187,7 +187,7 @@ class PokeText {
 	static IV(iv, pokemon) {
 		var cssClass = PokeText.natureCssClass(iv, pokemon)
 		var iv = pokemon.ivs ? pokemon.ivs[iv] : undefined
-		if(iv == undefined)
+		if (iv == undefined)
 			iv = "x"
 		return "<span class='" + cssClass + "'>" + iv + "</span>"
 	}
@@ -204,7 +204,7 @@ class PokeText {
 			return ""
 		var cssClass = PokeText.natureCssClass(ev, pokemon)
 		var ev = pokemon.evs ? pokemon.evs[ev] : undefined
-		if(ev == undefined)
+		if (ev == undefined)
 			ev = "—"
 		return " <span class='" + cssClass + "' style=\"font-size:0.7rem;display: block;\">" + ev + "</span>"
 	}
