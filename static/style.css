@@ -99,6 +99,10 @@ th, li{
     vertical-align: middle;
 }
 
+thead{
+    background-color: #929292d6
+}
+
 #filter-list, #filter-individual-list {
     display: inline-block;
 }

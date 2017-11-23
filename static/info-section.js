@@ -370,7 +370,7 @@ class InfoSection {
 		for (var i in pokemon.moves) {
 			var method = pokemon.moves[i].method
 			var level = +method
-			if (level)
+			if (level > -1)
 				method = "level"
 			if (!moveGroups[method])
 				moveGroups[method] = []
@@ -424,7 +424,7 @@ class InfoSection {
 		}
 		var titleRow = newTag("td", row)
 		titleRow.innerHTML = title
-		titleRow.colSpan = "8"
+		titleRow.colSpan = method == "level" || method == "tm" ? "9" : "8"
 		titleRow.style.fontWeight = "bold"
 		row = newTag("tr", table)
 		newTag("td", row).innerHTML = "Move"
