@@ -551,7 +551,11 @@ class HeaderSection {
 				pokemon.name == "Cosmog" ||
 				pokemon.name == "Cosmoem" ||
 				pokemon.name == "Solgaleo" ||
-				pokemon.name == "Lunala")
+				pokemon.name == "Lunala" ||
+				pokemon.name == "Type: Null" ||
+				pokemon.name == "Silvally" ||
+				pokemon.name == "Poipole" ||
+				pokemon.name == "Naganadel")
 				return show
 			return !show
 		}
