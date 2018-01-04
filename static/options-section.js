@@ -278,7 +278,7 @@ Charizard	Mega X	Adamant	Lure Ball`
 			var fit = false
 			for (var i in stuff.data.pokemons) {
 				var pokemon = stuff.data.pokemons[i]
-				var name = pokemon.name + (pokemon.form == "Base" ? "" : " " + pokemon.form)
+				var name = pokemon.name
 				if (name.toLocaleLowerCase() == pokemonInput.value.toLocaleLowerCase())
 					fit = true
 				addButton.style.display = "none"
@@ -298,7 +298,6 @@ Charizard	Mega X	Adamant	Lure Ball`
 		addButton.className = "button"
 		addButton.style.display = "none"
 		addButton.onclick = () => {
-			var things = pokemonInput.value.replace(" ", "|").split("|")
 			var tab = stuff.state.currentTab
 			if (typeof stuff.state.currentTab == "string") {
 				tab = stuff.collection.getLocalTab("My tab")
@@ -307,7 +306,7 @@ Charizard	Mega X	Adamant	Lure Ball`
 				stuff.state.currentTab = tab
 				stuff.headerSection.showLocal = true
 			}
-			var pokemon = new Pokemon({ name: things[0], form: things[1] })
+			var pokemon = new Pokemon({ name: pokemonInput.value })
 			tab.pokemons.push(pokemon)
 			stuff.collection.saveLocalTabs()
 			stuff.selectPokemon(pokemon)
