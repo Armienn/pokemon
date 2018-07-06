@@ -53,7 +53,7 @@ class PokeText {
 
 	static imageName(pokemon) {
 		var form = ""
-		if (pokemon.form && pokemon.form != "Base") {
+		if (pokemon.form && pokemon.form != "Base" && pokemon.name != "Pumpkaboo" && pokemon.name != "Gourgeist" ) {
 			form = pokemon.form.toLowerCase().replace("'", "").split(" ")//.join("-")
 			if (form.length > 1 && form[0] !== "mega")
 				form = form.splice(0, form.length - 1).join("-")
