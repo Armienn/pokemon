@@ -23,20 +23,20 @@ window.onload = function () {
 function pokemonCollectionSetup() {
 	const setup = new CollectionSetup()
 	var key = ""
-	setupFor(setup, "sprite", "Sprite", p => l("img", { src: spriteName(p) }), false, false)
-	setupFor(setup, "id", "ID", p => "" + p.id)
-	setupFor(setup, "name", "Name", p => p.name)
-	setupFor(setup, "form", "Form", p => p.form, { options: ["Base", "Alola", "Mega"] })
-	setupFor(setup, "name+form", "Name & Form", formName, false, false)
-	setupFor(setup, "types", "Types", typesText, { options: stuff.data.typeNames, restricted: true })
-	setupFor(setup, "abilities", "Abilities", abilitiesText, { options: Object.keys(stuff.data.abilities) })
-	setupFor(setup, "hp", "HP", p => statText(p.stats.hp))
-	setupFor(setup, "atk", "Atk", p => statText(p.stats.atk))
-	setupFor(setup, "def", "Def", p => statText(p.stats.def))
-	setupFor(setup, "spa", "SpA", p => statText(p.stats.spa))
-	setupFor(setup, "spd", "SpD", p => statText(p.stats.spd))
-	setupFor(setup, "spe", "Spe", p => statText(p.stats.spe))
-	setupFor(setup, "eggGroups", "Egg Groups", eggGroupsText, { options: stuff.data.eggGroups, restricted: true })
+	setupFor(setup, "sprite", "Sprite", { value: p => l("img", { src: spriteName(p) }) }, false, "id")
+	setupFor(setup, "id", "ID")
+	setupFor(setup, "name", "Name")
+	setupFor(setup, "form", "Form", {}, { options: ["Base", "Alola", "Mega"] })
+	setupFor(setup, "name+form", "Name & Form", { value: formName }, false, "name")
+	setupFor(setup, "types", "Types", { value: typesText }, { options: stuff.data.typeNames, restricted: true })
+	setupFor(setup, "abilities", "Abilities", { value: abilitiesText }, { options: Object.keys(stuff.data.abilities) })
+	setupFor(setup, "hp", "HP", { value: p => statText(p.stats.hp), data: p => p.stats.hp })
+	setupFor(setup, "atk", "Atk", { value: p => statText(p.stats.atk), data: p => p.stats.atk })
+	setupFor(setup, "def", "Def", { value: p => statText(p.stats.def), data: p => p.stats.def })
+	setupFor(setup, "spa", "SpA", { value: p => statText(p.stats.spa), data: p => p.stats.spa })
+	setupFor(setup, "spd", "SpD", { value: p => statText(p.stats.spd), data: p => p.stats.spd })
+	setupFor(setup, "spe", "Spe", { value: p => statText(p.stats.spe), data: p => p.stats.spe })
+	setupFor(setup, "eggGroups", "Egg Groups", { value: eggGroupsText }, { options: stuff.data.eggGroups, restricted: true })
 	setup.tableSetup.entries = Object.keys(setup.entryModel).map(k => { return { key: k, shown: true } })
 	setup.gridSetup.entries = Object.keys(setup.entryModel).map(k => { return { key: k, shown: false } })
 	setup.gridSetup.entries.find(e => e.key == "sprite").shown = true
@@ -52,13 +52,21 @@ function pokemonCollectionSetup() {
 	return setup
 }
 
-function setupFor(setup, key, title, entryModel, filterModel = {}, sortingModel = null) {
+function setupFor(setup, key, title, entryModel = {}, filterModel = {}, sortingModel = null) {
 	setup.titles[key] = title
 	setup.entryModel[key] = entryModel
 	if (filterModel)
 		setup.filterModel[key] = filterModel
 	if (sortingModel !== false)
 		setup.sortingModel[key] = sortingModel
+}
+
+function compareStatsFunction(stat) {
+	return (a, b) => b.stats[stat] - a.stats[stat]
+}
+
+function statFilter(stat) {
+	return { filter: (m, q) => 1 }
 }
 
 class PokemonStuff {
@@ -85,7 +93,7 @@ class PokemonStuff {
 	save() {
 		if (!localStorage)
 			return
-		localStorage.generalCollections = JSON.stringify(this.collections)
+		//localStorage.generalCollections = JSON.stringify(this.collections)
 	}
 
 	showView(component) {
@@ -204,7 +212,7 @@ class PokemonStuff {
 		//dfs
 		site.addCollectionSetup("pokemon", pokemonCollectionSetup())
 		this.collections.push({
-			collection: this.data.pokemons.slice(0,151),
+			collection: this.data.pokemons.slice(0, 151),
 			setup: this.site.collectionSetups["pokemon"],
 			title: "Pokémon"
 		})
