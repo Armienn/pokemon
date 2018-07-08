@@ -6,7 +6,7 @@ import { ExportView } from "../../archive/search/export-view.js"
 import { ImportView } from "../../archive/search/import-view.js"
 import { PokemonData } from "./pokemon-data.js"
 import { State } from "./state.js"
-import { formName, spriteName } from "./pokemon-display.js"
+import { formName, spriteName, typesText, abilitiesText, statText, eggGroupsText } from "./pokemon-display.js"
 
 window.onload = function () {
 	var site = new SearchSite()
@@ -15,7 +15,6 @@ window.onload = function () {
 	window.manager = manager
 	site.header = "Stuff"
 	site.saveFunction = () => { manager.save() }
-	site.addCollectionSetup("pokemon", pokemonCollectionSetup())
 	site.sections.navigation.navigationEntries = () => manager.navThing()
 	setRenderFunction(() => site.render())
 	update()
@@ -29,10 +28,19 @@ function pokemonCollectionSetup() {
 	setupFor(setup, "name", "Name", p => p.name)
 	setupFor(setup, "form", "Form", p => p.form, { options: ["Base", "Alola", "Mega"] })
 	setupFor(setup, "name+form", "Name & Form", formName, false, false)
+	setupFor(setup, "types", "Types", typesText, { options: manager.data.typeNames, restricted: true})
+	setupFor(setup, "abilities", "Abilities", abilitiesText, { options: Object.keys(manager.data.abilities)})
+	setupFor(setup, "hp", "HP", p => statText(p.stats.hp))
+	setupFor(setup, "atk", "Atk", p => statText(p.stats.atk))
+	setupFor(setup, "def", "Def", p => statText(p.stats.def))
+	setupFor(setup, "spa", "SpA", p => statText(p.stats.spa))
+	setupFor(setup, "spd", "SpD", p => statText(p.stats.spd))
+	setupFor(setup, "spe", "Spe", p => statText(p.stats.spe))
+	setupFor(setup, "eggGroups", "Egg Groups", eggGroupsText, { options: manager.data.eggGroups, restricted: true})
 	setup.tableSetup.entries = Object.keys(setup.entryModel).map(k => { return { key: k, shown: true } })
 	setup.gridSetup.entries = Object.keys(setup.entryModel).map(k => { return { key: k, shown: false } })
 	setup.gridSetup.entries.find(e => e.key == "sprite").shown = true
-	setup.gridSetup.compact = false
+	setup.gridSetup.compact = true
 	/*for (let key in source) {
 		setup.titles[key] = autoCapitalise ? capitalise(key) : key
 		setup.entryModel[key] = null
@@ -161,14 +169,6 @@ class PokemonStuff {
 		requestJSON("./data-usum/" + file + ".json", (data) => {
 			this.data[thing] = data
 			this.state.thingsLoaded[thing] = true
-			if (thing == "pokemons") {
-				this.collections.push({
-					collection: data,
-					setup: this.site.collectionSetups["pokemon"],
-					title: "Pokémon"
-				})
-				this.site.setCollection(this.collections[0].collection, this.collections[0].setup)
-			}
 			this.tryLoad()
 		})
 	}
@@ -201,6 +201,14 @@ class PokemonStuff {
 	tryLoad() {
 		if (!this.state.thingsAreLoaded)
 			return
+		//dfs
+		site.addCollectionSetup("pokemon", pokemonCollectionSetup())
+		this.collections.push({
+			collection: this.data.pokemons,
+			setup: this.site.collectionSetups["pokemon"],
+			title: "Pokémon"
+		})
+		this.site.setCollection(this.collections[0].collection, this.collections[0].setup)
 		/*if (this.state.externalInventory.load) {
 			this.headerSection.showLocal = false
 			if (this.state.script)

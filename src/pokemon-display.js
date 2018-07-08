@@ -1,3 +1,5 @@
+import { l } from "../../archive/arf/arf.js"
+
 export function formName(pokemon) {
 	switch (pokemon.form) {
 		case "Base":
@@ -51,7 +53,7 @@ export function spriteName(pokemon) {
 
 export function imageName(pokemon) {
 	var form = ""
-	if (pokemon.form && pokemon.form != "Base" && pokemon.name != "Pumpkaboo" && pokemon.name != "Gourgeist" ) {
+	if (pokemon.form && pokemon.form != "Base" && pokemon.name != "Pumpkaboo" && pokemon.name != "Gourgeist") {
 		form = pokemon.form.toLowerCase().replace("'", "").replace("%", "p").split(" ")//.join("-")
 		if (form.length > 1 && form[0] !== "mega")
 			form = form.splice(0, form.length - 1).join("-")
@@ -87,29 +89,37 @@ export function defense(defense) {
 		return "<span style='color:#888888;'>0</span>"
 }
 
-export function type(type) {
-	return "<span style='color:" + stuff.data.typeColors[type] + ";'>" + type + "</span>"
+export function typeText(type) {
+	return l("span", { style: { color: manager.data.typeColors[type] } }, type)
 }
 
-export function types(pokemon) {
-	return PokeText.type(pokemon.types[0]) + (pokemon.types[1] ? " · " + PokeText.type(pokemon.types[1]) : "")
+export function typesText(pokemon) {
+	return l("span",
+		typeText(pokemon.types[0]),
+		...(pokemon.types[1] ? [" · ", typeText(pokemon.types[1])] : [])
+	)
 }
 
-export function move(move, eggMove) {
+export function moveText(move, eggMove) {
 	return "<span" + (eggMove ? " style='font-style: italic;'" : "") + ">" + move + "</span>"
 }
 
-export function ability(ability, hidden, link) {
-	return "<span" + (hidden ? " style='font-style: italic;'" : "") + (stuff.data.abilities[ability.split("(")[0].trim()] ? " title='" + stuff.data.abilities[ability.split("(")[0].trim()].summary.replace("'", "&#39;").replace("\"", "&#34;") + "'" : "") + ">" + (link ? PokeText.abilityLink(ability) : ability) + "</span>"
+export function abilityText(ability, hidden, link) {
+	const abilityEntry = manager.data.abilities[ability.split("(")[0].trim()]
+	return l("span", {
+		style: hidden ? { fontStyle: "italic" } : {},
+		title: abilityEntry ? abilityEntry.summary : ""
+	},
+		(link ? abilityLink(ability) : ability)
+	)
 }
 
-export function abilities(pokemon, link) {
-	var text = PokeText.ability(pokemon.abilities[0], false, link)
-	if (pokemon.abilities[1])
-		text += " · " + PokeText.ability(pokemon.abilities[1], false, link)
-	if (pokemon.abilities[2])
-		text += " · " + PokeText.ability(pokemon.abilities[2], true, link)
-	return text
+export function abilitiesText(pokemon, link) {
+	return l("span",
+		abilityText(pokemon.abilities[0], false, link),
+		...(pokemon.abilities[1] ? [" · ", abilityText(pokemon.abilities[1], false, link)] : []),
+		...(pokemon.abilities[2] ? [" · ", abilityText(pokemon.abilities[2], true, link)] : [])
+	)
 }
 
 export function abilityLink(ability) {
@@ -119,19 +129,15 @@ export function abilityLink(ability) {
 	return "<a href='" + url + "'>" + ability + "</a>"
 }
 
-export function eggGroup(eggGroup) {
-	return "<span>" + eggGroup + "</span>"
-}
-
-export function eggGroups(pokemon) {
+export function eggGroupsText(pokemon) {
 	if (!pokemon.eggGroups) return "—"
-	var text = PokeText.eggGroup(pokemon.eggGroups[0])
+	var text = pokemon.eggGroups[0]
 	if (pokemon.eggGroups[1])
-		text += " · " + PokeText.eggGroup(pokemon.eggGroups[1])
+		text += " · " + pokemon.eggGroups[1]
 	return text
 }
 
-export function gender(pokemon) {
+export function genderText(pokemon) {
 	if (pokemon.gender) {
 		if (pokemon.gender == "♂" || pokemon.gender.toLowerCase() == "m" || pokemon.gender.toLowerCase() == "male")
 			return "<span style='color: #34d1ba;'>♂</span>"
@@ -145,7 +151,7 @@ export function gender(pokemon) {
 	return "<span style='color: #34d1ba;'>" + things[0] + "♂</span>:<span style='color: #f97272;'>" + things[1] + "♀</span>"
 }
 
-export function weightHeight(pokemon) {
+export function weightHeightText(pokemon) {
 	var text = "-"
 	if (pokemon.weight)
 		text = pokemon.weight
@@ -170,8 +176,8 @@ export function ballUrl(ball) {
 	return "https://raw.githubusercontent.com/msikma/pokesprite/master/icons/pokeball/" + ball + ".png"
 }
 
-export function stat(stat) {
-	return "<span style='color:" + PokeText.statColor(stat) + "; text-shadow: 1px 1px #333;'>" + stat + "</span>"
+export function statText(stat) {
+	return l("span", { style: { color: statColor(stat), textShadow: "1px 1px #333" } }, stat)
 }
 
 export function statColor(stat) {
@@ -223,3 +229,20 @@ export function natureCssClass(stat, pokemon) {
 		return "negative-nature"
 }
 
+function HSVtoRGB(h, s, v) {
+	var r, g, b, i, f, p, q, t
+	i = Math.floor(h * 6)
+	f = h * 6 - i
+	p = v * (1 - s)
+	q = v * (1 - f * s)
+	t = v * (1 - (1 - f) * s)
+	switch (i % 6) {
+		case 0: r = v, g = t, b = p; break;
+		case 1: r = q, g = v, b = p; break;
+		case 2: r = p, g = v, b = t; break;
+		case 3: r = p, g = q, b = v; break;
+		case 4: r = t, g = p, b = v; break;
+		case 5: r = v, g = p, b = q; break;
+	}
+	return Math.round(r * 255) + "," + Math.round(g * 255) + "," + Math.round(b * 255)
+}
