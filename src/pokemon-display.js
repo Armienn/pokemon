@@ -1,4 +1,5 @@
 import { l } from "../../archive/arf/arf.js"
+//import { PkSpr } from "../static/pokesprite.min.js"
 
 export function formName(pokemon) {
 	switch (pokemon.form) {
@@ -12,7 +13,6 @@ export function formName(pokemon) {
 			return pokemon.form + " " + pokemon.name
 	}
 }
-
 
 export function spriteName(pokemon) {
 	var name = pokemon.name.toLowerCase().replace(" ", "-").replace("♀", "-f").replace("♂", "-m").replace("'", "").replace(".", "").replace("ébé", "ebe").replace(":", "")
@@ -28,10 +28,10 @@ export function spriteName(pokemon) {
 		else if (form == "female")
 			formname = false
 		else if (form.includes("size"))
-			formname = false
+			formname = pokemon.form.split("-")[0]
 		else if (form.includes("mega"))
 			formname = pokemon.form.replace(" ", "-")
-		else if (form.includes("necrozma"))
+		else if (name.includes("necrozma"))
 			formname = pokemon.form.replace(" ", "-")
 		else if (form.includes("core"))
 			formname = pokemon.form.replace(" ", "-")
@@ -42,13 +42,24 @@ export function spriteName(pokemon) {
 		if (formname && pokemon.name != "Vivillon")
 			formname = formname.split(" ")[0]
 		if (formname)
-			name += "-" + formname.toLowerCase().replace(" ", "-").replace("'", "-").replace("é", "e-").replace("!", "exclamation").replace("?", "question")
+			formname = formname.toLowerCase().replace(" ", "-").replace("'", "-").replace("é", "e-").replace("!", "exclamation").replace("?", "question")
 	}
-	if (!formname && pokemon.forms && pokemon.forms[0] == "Male" && (pokemon.form.toLowerCase() == "female" || pokemon.gender == "♀" || pokemon.gender == "f"))
-		name = "female/" + name
-	return "https://raw.githubusercontent.com/msikma/pokesprite/master/icons/pokemon/" +
-		(pokemon.shiny ? "shiny" : "regular") +
-		"/" + name + ".png"
+
+	var icon = PkSpr.decorate({
+		slug: name,
+		form: formname,
+		color: pokemon.shiny ? "shiny" : "regular",
+		gender: (!formname && pokemon.forms && pokemon.forms[0] == "Male" && (pokemon.form.toLowerCase() == "female" || pokemon.gender == "♀" || pokemon.gender == "f")) ? "female" : "male"
+	})
+	return l("span", {
+		style: {
+			background: "url('static/pokesprite.png')",
+			backgroundPosition: "-" + icon.data.coords.x + "px -" + icon.data.coords.y + "px",
+			width: "40px",
+			height: "30px",
+			display: "inline-block"
+		}
+	})
 }
 
 export function imageName(pokemon) {

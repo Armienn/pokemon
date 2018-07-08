@@ -23,7 +23,7 @@ window.onload = function () {
 function pokemonCollectionSetup() {
 	const setup = new CollectionSetup()
 	var key = ""
-	setup.add("sprite", "Sprite", { value: p => l("img", { src: spriteName(p) }) }, false, "id")
+	setup.add("sprite", "Sprite", { value: p => spriteName(p) }, false, "id")
 	setup.add("id", "ID")
 	setup.add("name", "Name")
 	setup.add("form", "Form", {}, { options: ["Base", "Alola", "Mega"] })
@@ -123,7 +123,6 @@ class PokemonStuff {
 	load() {
 		this.loadBaseData()
 		this.loadCollectionData()
-		this.loadDestination()
 		//this.settings.load()
 	}
 
@@ -171,11 +170,6 @@ class PokemonStuff {
 		})*/
 	}
 
-	loadDestination() {
-		if (window.location.hash)
-			this.state.destination = window.location.hash.substring(1)
-	}
-
 	tryLoad() {
 		if (!this.state.thingsAreLoaded)
 			return
@@ -183,6 +177,8 @@ class PokemonStuff {
 		site.addCollectionSetup("pokemon", pokemonCollectionSetup())
 		this.site.setCollection(this.data.pokemons, "pokemon")
 		this.localCollectionGroup.loadFromLocalStorage()
+		if (window.location.hash)
+			this.site.setFiltersFromLocation()
 		/*if (this.state.externalInventory.load) {
 			this.headerSection.showLocal = false
 			if (this.state.script)
