@@ -11,11 +11,11 @@ import { formName, spriteName, typesText, abilitiesText, statText, eggGroupsText
 window.onload = function () {
 	var site = new SearchSite()
 	window.site = site
-	var manager = new PokemonStuff(site)
-	window.manager = manager
+	var stuff = new PokemonStuff(site)
+	window.stuff = stuff
 	site.header = "Stuff"
-	site.saveFunction = () => { manager.save() }
-	site.sections.navigation.navigationEntries = () => manager.navThing()
+	site.saveFunction = () => { stuff.save() }
+	site.sections.navigation.navigationEntries = () => stuff.navThing()
 	setRenderFunction(() => site.render())
 	update()
 }
@@ -28,15 +28,15 @@ function pokemonCollectionSetup() {
 	setupFor(setup, "name", "Name", p => p.name)
 	setupFor(setup, "form", "Form", p => p.form, { options: ["Base", "Alola", "Mega"] })
 	setupFor(setup, "name+form", "Name & Form", formName, false, false)
-	setupFor(setup, "types", "Types", typesText, { options: manager.data.typeNames, restricted: true})
-	setupFor(setup, "abilities", "Abilities", abilitiesText, { options: Object.keys(manager.data.abilities)})
+	setupFor(setup, "types", "Types", typesText, { options: stuff.data.typeNames, restricted: true })
+	setupFor(setup, "abilities", "Abilities", abilitiesText, { options: Object.keys(stuff.data.abilities) })
 	setupFor(setup, "hp", "HP", p => statText(p.stats.hp))
 	setupFor(setup, "atk", "Atk", p => statText(p.stats.atk))
 	setupFor(setup, "def", "Def", p => statText(p.stats.def))
 	setupFor(setup, "spa", "SpA", p => statText(p.stats.spa))
 	setupFor(setup, "spd", "SpD", p => statText(p.stats.spd))
 	setupFor(setup, "spe", "Spe", p => statText(p.stats.spe))
-	setupFor(setup, "eggGroups", "Egg Groups", eggGroupsText, { options: manager.data.eggGroups, restricted: true})
+	setupFor(setup, "eggGroups", "Egg Groups", eggGroupsText, { options: stuff.data.eggGroups, restricted: true })
 	setup.tableSetup.entries = Object.keys(setup.entryModel).map(k => { return { key: k, shown: true } })
 	setup.gridSetup.entries = Object.keys(setup.entryModel).map(k => { return { key: k, shown: false } })
 	setup.gridSetup.entries.find(e => e.key == "sprite").shown = true
@@ -52,12 +52,12 @@ function pokemonCollectionSetup() {
 	return setup
 }
 
-function setupFor(setup, key, title, entryModel, filterModel = {}, sortingModel = {}) {
+function setupFor(setup, key, title, entryModel, filterModel = {}, sortingModel = null) {
 	setup.titles[key] = title
 	setup.entryModel[key] = entryModel
 	if (filterModel)
 		setup.filterModel[key] = filterModel
-	if (sortingModel)
+	if (sortingModel !== false)
 		setup.sortingModel[key] = sortingModel
 }
 
@@ -204,7 +204,7 @@ class PokemonStuff {
 		//dfs
 		site.addCollectionSetup("pokemon", pokemonCollectionSetup())
 		this.collections.push({
-			collection: this.data.pokemons,
+			collection: this.data.pokemons.slice(0,151),
 			setup: this.site.collectionSetups["pokemon"],
 			title: "Pokémon"
 		})

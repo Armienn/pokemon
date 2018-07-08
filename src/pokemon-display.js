@@ -90,7 +90,7 @@ export function defense(defense) {
 }
 
 export function typeText(type) {
-	return l("span", { style: { color: manager.data.typeColors[type] } }, type)
+	return l("span", { style: { color: stuff.data.typeColors[type] } }, type)
 }
 
 export function typesText(pokemon) {
@@ -105,7 +105,7 @@ export function moveText(move, eggMove) {
 }
 
 export function abilityText(ability, hidden, link) {
-	const abilityEntry = manager.data.abilities[ability.split("(")[0].trim()]
+	const abilityEntry = stuff.data.abilities[ability.split("(")[0].trim()]
 	return l("span", {
 		style: hidden ? { fontStyle: "italic" } : {},
 		title: abilityEntry ? abilityEntry.summary : ""
