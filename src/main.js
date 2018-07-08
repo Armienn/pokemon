@@ -1,12 +1,13 @@
 import { SearchSite } from "../../archive/search/search-site.js"
 import { update, setRenderFunction, l } from "../../archive/arf/arf.js"
-import { NavGroup, NavEntry } from "../../archive/search/section-navigation.js"
+import { NavGroup, NavEntry, SingleLineNavGroup } from "../../archive/search/section-navigation.js"
 import { CollectionSetup } from "../../archive/search/collection-setup.js"
 import { ExportView } from "../../archive/search/export-view.js"
 import { ImportView } from "../../archive/search/import-view.js"
 import { PokemonData } from "./pokemon-data.js"
 import { State } from "./state.js"
 import { formName, spriteName, typesText, abilitiesText, statText, eggGroupsText } from "./pokemon-display.js"
+import { CollectionGroup } from "./local-collection.js"
 
 window.onload = function () {
 	var site = new SearchSite()
@@ -14,7 +15,6 @@ window.onload = function () {
 	var stuff = new PokemonStuff(site)
 	window.stuff = stuff
 	site.header = "Stuff"
-	site.saveFunction = () => { stuff.save() }
 	site.sections.navigation.navigationEntries = () => stuff.navThing()
 	setRenderFunction(() => site.render())
 	update()
@@ -23,50 +23,32 @@ window.onload = function () {
 function pokemonCollectionSetup() {
 	const setup = new CollectionSetup()
 	var key = ""
-	setupFor(setup, "sprite", "Sprite", { value: p => l("img", { src: spriteName(p) }) }, false, "id")
-	setupFor(setup, "id", "ID")
-	setupFor(setup, "name", "Name")
-	setupFor(setup, "form", "Form", {}, { options: ["Base", "Alola", "Mega"] })
-	setupFor(setup, "name+form", "Name & Form", { value: formName }, false, "name")
-	setupFor(setup, "types", "Types", { value: typesText }, { options: stuff.data.typeNames, restricted: true })
-	setupFor(setup, "abilities", "Abilities", { value: abilitiesText }, { options: Object.keys(stuff.data.abilities) })
-	setupFor(setup, "hp", "HP", { value: p => statText(p.stats.hp), data: p => p.stats.hp })
-	setupFor(setup, "atk", "Atk", { value: p => statText(p.stats.atk), data: p => p.stats.atk })
-	setupFor(setup, "def", "Def", { value: p => statText(p.stats.def), data: p => p.stats.def })
-	setupFor(setup, "spa", "SpA", { value: p => statText(p.stats.spa), data: p => p.stats.spa })
-	setupFor(setup, "spd", "SpD", { value: p => statText(p.stats.spd), data: p => p.stats.spd })
-	setupFor(setup, "spe", "Spe", { value: p => statText(p.stats.spe), data: p => p.stats.spe })
-	setupFor(setup, "eggGroups", "Egg Groups", { value: eggGroupsText }, { options: stuff.data.eggGroups, restricted: true })
-	setup.tableSetup.entries = Object.keys(setup.entryModel).map(k => { return { key: k, shown: true } })
-	setup.gridSetup.entries = Object.keys(setup.entryModel).map(k => { return { key: k, shown: false } })
-	setup.gridSetup.entries.find(e => e.key == "sprite").shown = true
+	setup.add("sprite", "Sprite", { value: p => l("img", { src: spriteName(p) }) }, false, "id")
+	setup.add("id", "ID")
+	setup.add("name", "Name")
+	setup.add("form", "Form", {}, { options: ["Base", "Alola", "Mega"] })
+	setup.add("name+form", "Name & Form", { value: formName }, false, "name")
+	setup.add("types", "Types", { value: typesText }, { options: stuff.data.typeNames, restricted: true })
+	setup.add("abilities", "Abilities", { value: abilitiesText }, { options: Object.keys(stuff.data.abilities) })
+	setup.add("hp", "HP", { value: p => statText(p.stats.hp), data: p => p.stats.hp })
+	setup.add("atk", "Atk", { value: p => statText(p.stats.atk), data: p => p.stats.atk })
+	setup.add("def", "Def", { value: p => statText(p.stats.def), data: p => p.stats.def })
+	setup.add("spa", "SpA", { value: p => statText(p.stats.spa), data: p => p.stats.spa })
+	setup.add("spd", "SpD", { value: p => statText(p.stats.spd), data: p => p.stats.spd })
+	setup.add("spe", "Spe", { value: p => statText(p.stats.spe), data: p => p.stats.spe })
+	setup.add("total", "Total", { value: p => sumStats(p) + "" })
+	setup.add("eggGroups", "Egg Groups", { value: eggGroupsText }, { options: stuff.data.eggGroups, restricted: true })
+	setup.showTableEntries(["sprite", "name+form", "types", "abilities", "hp", "atk", "def", "spa", "spd", "spe", "total", "eggGroups"])
+	setup.showGridEntries(["sprite"])
 	setup.gridSetup.compact = true
-	/*for (let key in source) {
-		setup.titles[key] = autoCapitalise ? capitalise(key) : key
-		setup.entryModel[key] = null
-		setup.filterModel[key] = {}
-		setup.sortingModel[key] = {}
-		setup.tableSetup.entries.push({ key: key, shown: true })
-		setup.gridSetup.entries.push({ key: key, shown: true })
-	}*/
 	return setup
 }
 
-function setupFor(setup, key, title, entryModel = {}, filterModel = {}, sortingModel = null) {
-	setup.titles[key] = title
-	setup.entryModel[key] = entryModel
-	if (filterModel)
-		setup.filterModel[key] = filterModel
-	if (sortingModel !== false)
-		setup.sortingModel[key] = sortingModel
-}
-
-function compareStatsFunction(stat) {
-	return (a, b) => b.stats[stat] - a.stats[stat]
-}
-
-function statFilter(stat) {
-	return { filter: (m, q) => 1 }
+function sumStats(p) {
+	var sum = 0
+	for (var i in p.stats)
+		sum += p.stats[i]
+	return sum
 }
 
 class PokemonStuff {
@@ -74,45 +56,33 @@ class PokemonStuff {
 		this.site = site
 		this.data = new PokemonData()
 		this.state = new State()
-		this.collections = []
+		this.localCollectionGroup = new CollectionGroup("Local")
+		this.collectionGroups = []
 		this.load()
-	}
-
-	/*load() {
-		if (!(localStorage && localStorage.generalCollections))
-			return this.collections = []
-		this.collections = JSON.parse(localStorage.generalCollections)
-		for (var col of this.collections)
-			col.setup = new CollectionSetup(col.setup)
-		if (this.collections.length) {
-			this.currentSetup = this.collections[0]
-			this.site.setCollection(this.currentSetup.collection, this.currentSetup.setup)
-		}
-	}*/
-
-	save() {
-		if (!localStorage)
-			return
-		//localStorage.generalCollections = JSON.stringify(this.collections)
-	}
-
-	showView(component) {
-		this.view = component
-		this.site.show(() => {
-			return this.view
-		})
-		update()
 	}
 
 	navThing() {
 		return [
-			new NavGroup("Collections",
-				...this.collections.map(e => {
-					return new NavEntry(e.title, () => {
-						this.site.setCollection(e.collection, e.setup)
-						this.currentSetup = e
+			new NavGroup("Game data",
+				new NavEntry("Pokémon", () => {
+					this.site.setCollection(this.data.pokemons, "pokemon")
+					update()
+				}, () => this.site.sections.collection.collection == this.data.pokemons)
+			),
+			...this.collectionGroups.map(group => new NavGroup(group.title,
+				...Object.keys(group.tabs).map(title => {
+					return new NavEntry(title, () => {
+						this.site.setCollection(group.tabs[title], "pokemon")
 						update()
-					}, () => this.site.sections.collection.engine.collection == e.collection)
+					}, () => this.site.sections.collection.collection == group.tabs[title])
+				})
+			)),
+			new NavGroup(this.localCollectionGroup.title,
+				...Object.keys(this.localCollectionGroup.tabs).map(title => {
+					return new NavEntry(title, () => {
+						this.site.setCollection(this.localCollectionGroup.tabs[title], "pokemon")
+						update()
+					}, () => this.site.sections.collection.collection == this.localCollectionGroup.tabs[title])
 				})
 			),
 			new NavGroup("Actions",
@@ -211,12 +181,8 @@ class PokemonStuff {
 			return
 		//dfs
 		site.addCollectionSetup("pokemon", pokemonCollectionSetup())
-		this.collections.push({
-			collection: this.data.pokemons.slice(0, 151),
-			setup: this.site.collectionSetups["pokemon"],
-			title: "Pokémon"
-		})
-		this.site.setCollection(this.collections[0].collection, this.collections[0].setup)
+		this.site.setCollection(this.data.pokemons, "pokemon")
+		this.localCollectionGroup.loadFromLocalStorage()
 		/*if (this.state.externalInventory.load) {
 			this.headerSection.showLocal = false
 			if (this.state.script)
