@@ -6,7 +6,7 @@ import { ExportView } from "../../archive/search/export-view.js"
 import { ImportView } from "../../archive/search/import-view.js"
 import { PokemonData } from "./pokemon-data.js"
 import { State } from "./state.js"
-import { formName, spriteName, typesText, abilitiesText, statText, eggGroupsText } from "./pokemon-display.js"
+import { formName, spriteName, typesText, abilitiesText, statText, eggGroupsText, typeText } from "./pokemon-display.js"
 import { CollectionGroup } from "./local-collection.js"
 
 window.onload = function () {
@@ -22,7 +22,6 @@ window.onload = function () {
 
 function pokemonCollectionSetup() {
 	const setup = new CollectionSetup()
-	var key = ""
 	setup.add("sprite", "Sprite", { value: p => spriteName(p) }, false, "id")
 	setup.add("id", "ID")
 	setup.add("name", "Name")
@@ -41,6 +40,23 @@ function pokemonCollectionSetup() {
 	setup.showTableEntries(["sprite", "name+form", "types", "abilities", "hp", "atk", "def", "spa", "spd", "spe", "total", "eggGroups"])
 	setup.showGridEntries(["sprite"])
 	setup.gridSetup.compact = true
+	return setup
+}
+
+function movesCollectionSetup() {
+	const setup = new CollectionSetup()
+	setup.add("name", "Name")
+	setup.add("type", "Type", { value: m => typeText(m.type) }, { options: stuff.data.typeNames, restricted: true })
+	setup.add("category", "Category", {}, { options: ["Physical", "Special", "Status"], restricted: true })
+	setup.add("power", "Power")
+	setup.add("accuracy", "Accuracy")
+	setup.add("pp", "PP")
+	setup.add("priority", "Priority")
+	setup.add("target", "Target")
+	//setup.add("effects", "Effects")
+	setup.add("gameDescription", "Game Description")
+	setup.showTableEntries(["name", "type", "category", "power", "accuracy", "pp", "priority", "target", "gameDescription"])
+	setup.showGridEntries(["name", "type", "category", "power", "accuracy", "pp", "priority", "target", "gameDescription"])
 	return setup
 }
 
@@ -67,7 +83,11 @@ class PokemonStuff {
 				new NavEntry("Pokémon", () => {
 					this.site.setCollection(this.data.pokemons, "pokemon")
 					update()
-				}, () => this.site.sections.collection.collection == this.data.pokemons)
+				}, () => this.site.sections.collection.collection == this.data.pokemons),
+				new NavEntry("Moves", () => {
+					this.site.setCollection(this.data.movesList, "moves")
+					update()
+				}, () => this.site.sections.collection.collection == this.data.movesList)
 			),
 			...this.collectionGroups.map(group => new NavGroup(group.title,
 				...Object.keys(group.tabs).map(title => {
@@ -174,7 +194,9 @@ class PokemonStuff {
 		if (!this.state.thingsAreLoaded)
 			return
 		//dfs
+		this.data.movesList = Object.keys(this.data.moves).map(key => this.data.moves[key])
 		site.addCollectionSetup("pokemon", pokemonCollectionSetup())
+		site.addCollectionSetup("moves", movesCollectionSetup())
 		this.site.setCollection(this.data.pokemons, "pokemon")
 		this.localCollectionGroup.loadFromLocalStorage()
 		if (window.location.hash)
