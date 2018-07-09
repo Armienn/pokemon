@@ -6,7 +6,7 @@ import { ExportView } from "../../archive/search/export-view.js"
 import { ImportView } from "../../archive/search/import-view.js"
 import { PokemonData } from "./pokemon-data.js"
 import { State } from "./state.js"
-import { formName, spriteName, typesText, abilitiesText, statText, eggGroupsText, typeText } from "./pokemon-display.js"
+import { formName, sprite, typesText, abilitiesText, statText, eggGroupsText, typeText } from "./pokemon-display.js"
 import { CollectionGroup } from "./local-collection.js"
 
 window.onload = function () {
@@ -22,7 +22,7 @@ window.onload = function () {
 
 function pokemonCollectionSetup() {
 	const setup = new CollectionSetup()
-	setup.add("sprite", "Sprite", { value: p => spriteName(p) }, false, "id")
+	setup.add("sprite", "Sprite", { value: p => sprite(p) }, false, "id")
 	setup.add("id", "ID")
 	setup.add("name", "Name")
 	setup.add("form", "Form", {}, { options: ["Base", "Alola", "Mega"] })

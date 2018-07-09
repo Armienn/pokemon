@@ -14,7 +14,7 @@ export function formName(pokemon) {
 	}
 }
 
-export function spriteName(pokemon) {
+export function sprite(pokemon) {
 	var name = pokemon.name.toLowerCase().replace(" ", "-").replace("♀", "-f").replace("♂", "-m").replace("'", "").replace(".", "").replace("ébé", "ebe").replace(":", "")
 	const form = (pokemon.form || "").toLowerCase()
 	if (pokemon.forms && pokemon.form && !form.includes(pokemon.forms[0].toLowerCase())) {
@@ -57,6 +57,7 @@ export function spriteName(pokemon) {
 			backgroundPosition: "-" + icon.data.coords.x + "px -" + icon.data.coords.y + "px",
 			width: "40px",
 			height: "30px",
+			imageRendering: "pixelated",
 			display: "inline-block"
 		}
 	})
