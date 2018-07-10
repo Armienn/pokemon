@@ -1,3 +1,5 @@
+import { Pokemon } from "./pokemon-data.js"
+
 export class CollectionGroup {
 	constructor(title) {
 		this.title = title

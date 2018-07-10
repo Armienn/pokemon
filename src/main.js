@@ -2,14 +2,13 @@ import { SearchSite } from "../../archive/search/search-site.js"
 import { update, setRenderFunction, l } from "../../archive/arf/arf.js"
 import { NavGroup, NavEntry } from "../../archive/search/section-navigation.js"
 import { CollectionSetup } from "../../archive/search/collection-setup.js"
-import { SelectionView } from "../../archive/search/selection-view.js"
 import { ExportView } from "../../archive/search/export-view.js"
 import { ImportView } from "../../archive/search/import-view.js"
 import { PokemonData } from "./pokemon-data.js"
 import { State } from "./state.js"
-import { formName, sprite, typesText, abilitiesText, statText, eggGroupsText, typeText } from "./pokemon-display.js"
+import { formName, sprite, typesText, abilitiesText, statText, eggGroupsText, typeText, learnMethodText } from "./pokemon-display.js"
 import { CollectionGroup } from "./local-collection.js"
-import { pokemonViewSetup } from "./pokemon-view-setup.js"
+import { PokemonView } from "./pokemon-view-setup.js"
 
 window.onload = function () {
 	var site = new SearchSite()
@@ -42,8 +41,8 @@ function pokemonCollectionSetup() {
 	setup.showTableEntries(["sprite", "name+form", "types", "abilities", "hp", "atk", "def", "spa", "spd", "spe", "total", "eggGroups"])
 	setup.showGridEntries(["sprite"])
 	setup.gridSetup.compact = true
-	let options = pokemonViewSetup()
-	setup.view = (pokemon) => new SelectionView(pokemon, options)
+	const view = new PokemonView()
+	setup.view = (pokemon) => view.withPokemon(pokemon)
 	return setup
 }
 
@@ -59,9 +58,16 @@ function movesCollectionSetup() {
 	setup.add("target", "Target")
 	//setup.add("effects", "Effects")
 	setup.add("gameDescription", "Game Description")
-	setup.showTableEntries(["name", "type", "category", "power", "accuracy", "pp", "priority", "target", "gameDescription"])
-	setup.showGridEntries(["name", "type", "category", "power", "accuracy", "pp", "priority", "target", "gameDescription"])
-	return setup
+	setup.showTableEntries(["name", "type", "category", "power", "accuracy", "gameDescription"])
+	setup.showGridEntries(["name", "type", "category", "power", "accuracy"])
+	var setupPokemonMoves = new CollectionSetup(setup)
+	setup.add("method", "Learned By", { value: learnMethodText },
+		{ options: ["Level", "TM", "Egg", "Tutor"], specialQueries: { "level": (m) => m > 0 }, restricted: true })
+	setupPokemonMoves.tableSetup = { compact: false, entries: [] }
+	setupPokemonMoves.gridSetup = { compact: false, entries: [] }
+	setupPokemonMoves.showTableEntries(["method", "name", "type", "category", "power", "accuracy", "gameDescription"])
+	setupPokemonMoves.showGridEntries(["method", "name", "type", "category", "power", "accuracy"])
+	return [setup, setupPokemonMoves]
 }
 
 function sumStats(p) {
@@ -199,8 +205,10 @@ class PokemonStuff {
 			return
 		//dfs
 		this.data.movesList = Object.keys(this.data.moves).map(key => this.data.moves[key])
+		var moveSetups = movesCollectionSetup()
+		site.addCollectionSetup("moves", moveSetups[0])
+		site.addCollectionSetup("pokemonMoves", moveSetups[1])
 		site.addCollectionSetup("pokemon", pokemonCollectionSetup())
-		site.addCollectionSetup("moves", movesCollectionSetup())
 		this.site.setCollection(this.data.pokemons, "pokemon")
 		this.localCollectionGroup.loadFromLocalStorage()
 		/*if (this.state.externalInventory.load) {

@@ -248,6 +248,18 @@ export function natureCssClass(stat, pokemon) {
 		return "negative-nature"
 }
 
+export function learnMethodText(move){
+	if(move.method>0)
+		return "Lvl " + move.method
+	if(move.method == "tm")
+		return "TM"
+	if(move.method == "tutor")
+		return "Tutor"
+	if(move.method == "egg")
+		return "Egg"
+	return move.method
+}
+
 function HSVtoRGB(h, s, v) {
 	var r, g, b, i, f, p, q, t
 	i = Math.floor(h * 6)

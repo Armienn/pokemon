@@ -1,36 +1,60 @@
 import { l } from "../../archive/arf/arf.js"
 import { SelectionView } from "../../archive/search/selection-view.js"
 import { shinyText, amountText, imageName, typesText, abilitiesText, eggGroupsText, genderText, weightHeightText } from "./pokemon-display.js"
+import { CollectionView } from "../../archive/search/collection-view.js"
+import { Styling } from "../../archive/search/styling.js"
 
-export function pokemonViewSetup(){
-	return {
-		header: {
-			content: (pokemon) => [
-				"#" + pokemon.id + " " + pokemon.name,
-				shinyText(pokemon),
-				amountText(pokemon),
-				pokemon.form && pokemon.form != "Base" ? " (" + pokemon.form + ") " : "",
-				pokemon.level ? l("span", { style: { fontSize: "1rem" } }, "- Lv." + pokemon.level) : "",
-				pokemon.language ? l("span", { style: { fontSize: "1rem" } }, "- " + pokemon.language) : ""
+export class PokemonView {
+	constructor() {
+		this.collectionView = new CollectionView()
+		this.collectionView.setCollectionSetup(site.collectionSetups["pokemonMoves"])
+		this.collectionView.engine.sorting = "method"
+		this.view = new SelectionView({}, {
+			header: {
+				content: (pokemon) => [
+					"#" + pokemon.id + " " + pokemon.name,
+					shinyText(pokemon),
+					amountText(pokemon),
+					pokemon.form && pokemon.form != "Base" ? " (" + pokemon.form + ") " : "",
+					pokemon.level ? l("span", { style: { fontSize: "1rem" } }, "- Lv." + pokemon.level) : "",
+					pokemon.language ? l("span", { style: { fontSize: "1rem" } }, "- " + pokemon.language) : ""
+				],
+				colors: (pokemon) => pokemon.types.map(e => stuff.data.typeColors[e])
+			},
+			upperContent: (pokemon) => [l("div", { style: { padding: "0.5rem" } }, pokemon.description)],
+			gridContent: (pokemon) => [
+				l("img", {
+					style: { gridArea: "span 6", height: "11rem", margin: "0.5rem", justifySelf: "center" },
+					src: imageName(pokemon)
+				}),
+				...SelectionView.entries(6,
+					"Types", typesText(pokemon),
+					"Classification", pokemon.classification,
+					"Abilities", abilitiesText(pokemon),
+					"Egg groups", eggGroupsText(pokemon),
+					"Gender ratio", genderText(pokemon),
+					"Weight/height", weightHeightText(pokemon)
+				)
 			],
-			colors: (pokemon) => pokemon.types.map(e => stuff.data.typeColors[e])
-		},
-		upperContent: p => [l("div", { style: { padding: "0.5rem" } }, p.description)],
-		gridContent: (pokemon) => [
-			l("img", {
-				style: { gridArea: "span 6", height: "11rem", margin: "0.5rem", justifySelf: "center" },
-				src: imageName(pokemon)
-			}),
-			...SelectionView.entries(6,
-				"Types", typesText(pokemon),
-				"Classification", pokemon.classification,
-				"Abilities", abilitiesText(pokemon),
-				"Egg groups", eggGroupsText(pokemon),
-				"Gender ratio", genderText(pokemon),
-				"Weight/height", weightHeightText(pokemon)
-			)
-		]
+			lowerContent: (pokemon) => [l("header", { style: { background: "rgba(" + Styling.styling.tableColor + ",0.3)" } }, "Moves"), this.collectionView]
+		})
 	}
+
+	withPokemon(pokemon) {
+		if (this.view.model != pokemon) {
+			this.view.model = pokemon
+			this.collectionView.collection = pokemon.moves.map(m => copyMove(stuff.data.moves[m.name], m.method))
+		}
+		return this.view
+	}
+}
+
+function copyMove(move, method) {
+	const newMove = {}
+	for (var key in move)
+		newMove[key] = move[key]
+	newMove.method = method
+	return newMove
 }
 
 class InfoSection {
