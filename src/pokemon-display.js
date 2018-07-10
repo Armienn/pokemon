@@ -115,10 +115,10 @@ export function moveText(move, eggMove) {
 	return "<span" + (eggMove ? " style='font-style: italic;'" : "") + ">" + move + "</span>"
 }
 
-export function abilityText(ability, hidden, link) {
+export function abilityText(ability, abilities, link) {
 	const abilityEntry = stuff.data.abilities[ability.split("(")[0].trim()]
 	return l("span", {
-		style: hidden ? { fontStyle: "italic" } : {},
+		style: abilities[2] == ability ? { fontStyle: "italic" } : {},
 		title: abilityEntry ? abilityEntry.summary : ""
 	},
 		(link ? abilityLink(ability) : ability)
@@ -127,9 +127,9 @@ export function abilityText(ability, hidden, link) {
 
 export function abilitiesText(pokemon, link) {
 	return l("span",
-		abilityText(pokemon.abilities[0], false, link),
-		...(pokemon.abilities[1] ? [" · ", abilityText(pokemon.abilities[1], false, link)] : []),
-		...(pokemon.abilities[2] ? [" · ", abilityText(pokemon.abilities[2], true, link)] : [])
+		abilityText(pokemon.abilities[0], pokemon.abilities, link),
+		...(pokemon.abilities[1] ? [" · ", abilityText(pokemon.abilities[1], pokemon.abilities, link)] : []),
+		...(pokemon.abilities[2] ? [" · ", abilityText(pokemon.abilities[2], pokemon.abilities, link)] : [])
 	)
 }
 
@@ -248,15 +248,15 @@ export function natureCssClass(stat, pokemon) {
 		return "negative-nature"
 }
 
-export function learnMethodText(move){
-	if(move.method>0)
+export function learnMethodText(move) {
+	if (move.method > 0)
 		return "Lvl " + move.method
-	if(move.method == "tm")
-		return "TM"
-	if(move.method == "tutor")
-		return "Tutor"
-	if(move.method == "egg")
-		return "Egg"
+	switch (move.method) {
+		case "tm": return "TM"
+		case "tutor": return "Tutor"
+		case "egg": return "Egg"
+		case "evolution": return "Evolution"
+	}
 	return move.method
 }
 

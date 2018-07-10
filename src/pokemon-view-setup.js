@@ -1,6 +1,6 @@
 import { l } from "../../archive/arf/arf.js"
 import { SelectionView } from "../../archive/search/selection-view.js"
-import { shinyText, amountText, imageName, typesText, abilitiesText, eggGroupsText, genderText, weightHeightText } from "./pokemon-display.js"
+import { shinyText, amountText, imageName, typesText, abilitiesText, eggGroupsText, genderText, weightHeightText, abilityText, typeText } from "./pokemon-display.js"
 import { CollectionView } from "../../archive/search/collection-view.js"
 import { Styling } from "../../archive/search/styling.js"
 
@@ -29,11 +29,11 @@ export class PokemonView {
 				}),
 				...SelectionView.entries(6,
 					"Types", typesText(pokemon),
-					"Classification", pokemon.classification,
-					"Abilities", abilitiesText(pokemon),
-					"Egg groups", eggGroupsText(pokemon),
-					"Gender ratio", genderText(pokemon),
-					"Weight/height", weightHeightText(pokemon)
+					pokemon.nickname ? "Nickname" : "Classification", pokemon.nickname ? pokemon.nickname : pokemon.classification,
+					pokemon.ability ? "Ability" : "Abilities", pokemon.ability ? abilityText(pokemon.ability, pokemon.abilities) : abilitiesText(pokemon),
+					pokemon.nature ? "Nature" : "Egg groups", pokemon.nature ? pokemon.nature : eggGroupsText(pokemon),
+					pokemon.gender ? "Gender" : "Gender ratio", genderText(pokemon),
+					pokemon.hiddenPower ? "Hidden power" : "Weight/height", pokemon.hiddenPower ? typeText(pokemon.hiddenPower) : weightHeightText(pokemon)
 				)
 			],
 			lowerContent: (pokemon) => [l("header", { style: { background: "rgba(" + Styling.styling.tableColor + ",0.3)" } }, "Moves"), this.collectionView]
