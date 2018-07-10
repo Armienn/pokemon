@@ -1,14 +1,15 @@
 import { SearchSite } from "../../archive/search/search-site.js"
 import { update, setRenderFunction, l } from "../../archive/arf/arf.js"
-import { NavGroup, NavEntry, SingleLineNavGroup } from "../../archive/search/section-navigation.js"
+import { NavGroup, NavEntry } from "../../archive/search/section-navigation.js"
 import { CollectionSetup } from "../../archive/search/collection-setup.js"
+import { SelectionView } from "../../archive/search/selection-view.js"
 import { ExportView } from "../../archive/search/export-view.js"
 import { ImportView } from "../../archive/search/import-view.js"
 import { PokemonData } from "./pokemon-data.js"
 import { State } from "./state.js"
 import { formName, sprite, typesText, abilitiesText, statText, eggGroupsText, typeText } from "./pokemon-display.js"
 import { CollectionGroup } from "./local-collection.js"
-import { PokemonInfoView } from "./pokemon-info-view.js"
+import { pokemonViewSetup } from "./pokemon-view-setup.js"
 
 window.onload = function () {
 	var site = new SearchSite()
@@ -41,7 +42,8 @@ function pokemonCollectionSetup() {
 	setup.showTableEntries(["sprite", "name+form", "types", "abilities", "hp", "atk", "def", "spa", "spd", "spe", "total", "eggGroups"])
 	setup.showGridEntries(["sprite"])
 	setup.gridSetup.compact = true
-	setup.view = (pokemon) => new PokemonInfoView(pokemon)
+	let options = pokemonViewSetup()
+	setup.view = (pokemon) => new SelectionView(pokemon, options)
 	return setup
 }
 

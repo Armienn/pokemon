@@ -1,105 +1,39 @@
-import { Component, l } from "../../archive/arf/arf.js"
+import { l } from "../../archive/arf/arf.js"
+import { SelectionView } from "../../archive/search/selection-view.js"
 import { shinyText, amountText, imageName, typesText, abilitiesText, eggGroupsText } from "./pokemon-display.js"
 
-export class PokemonInfoView extends Component {
-	constructor(pokemon) {
-		super()
-		this.pokemon = pokemon
-	}
-
-	renderThis() {
-		return l("div",
-			this.header(),
-			l("div.description", this.pokemon.description),
-			l("div.grid",
-				l("img", { src: imageName(this.pokemon) }),
-				...this.entries(
-					"Types", typesText(this.pokemon),
-					"Abilities", abilitiesText(this.pokemon),
-					"Egg groups", eggGroupsText(this.pokemon),
-					"Classification", this.pokemon.classification,
-					"Abilities", abilitiesText(this.pokemon),
-					"Egg groups", eggGroupsText(this.pokemon),
-					"Abilities", abilitiesText(this.pokemon),
-					"Egg groups", eggGroupsText(this.pokemon)
-				)
+export function pokemonViewSetup(){
+	return {
+		header: {
+			content: (pokemon) => [
+				"#" + pokemon.id + " " + pokemon.name,
+				shinyText(pokemon),
+				amountText(pokemon),
+				pokemon.form && pokemon.form != "Base" ? " (" + pokemon.form + ") " : "",
+				pokemon.level ? l("span", { style: { fontSize: "1rem" } }, "- Lv." + pokemon.level) : "",
+				pokemon.language ? l("span", { style: { fontSize: "1rem" } }, "- " + pokemon.language) : ""
+			],
+			colors: (pokemon) => pokemon.types.map(e => stuff.data.typeColors[e])
+		},
+		upperContent: p => [l("div", { style: { padding: "0.5rem" } }, p.description)],
+		gridContent: (pokemon) => [
+			l("img", {
+				style: { gridArea: "span 6", height: "11rem", margin: "0.5rem", justifySelf: "center" },
+				src: imageName(pokemon)
+			}),
+			...SelectionView.entries(6,
+				"Types", typesText(pokemon),
+				"Abilities", abilitiesText(pokemon),
+				"Egg groups", eggGroupsText(pokemon),
+				"Classification", pokemon.classification,
+				"Abilities", abilitiesText(pokemon),
+				"Egg groups", eggGroupsText(pokemon),
+				"Abilities", abilitiesText(pokemon),
+				"Egg groups", eggGroupsText(pokemon)
 			)
-		)
-	}
-
-	static styleThis() {
-		return {
-			header: {
-				fontSize: "1.5rem",
-				fontWeight: "bold",
-				height: "3rem",
-				lineHeight: "3rem"
-			},
-			".description": {
-				padding: "0.5rem"
-			},
-			".grid": {
-				display: "grid",
-				gridTemplateColumns: "repeat(auto-fit, minmax(18rem, 1fr))",
-				gridAutoRows: "2rem",
-				justifyContent: "center"
-			},
-			"img": {
-				gridArea: "span 7",
-				height: "13rem",
-				margin: "0.5rem",
-				justifySelf: "center"
-			},
-			".title": {
-				color: "#888",
-				textAlign: "right",
-				marginRight: "0.5rem",
-				lineHeight: "2rem"
-			},
-			".content": {
-				textAlign: "left",
-				lineHeight: "2rem"
-			},
-			".section": {
-				display: "grid",
-				gridTemplateColumns: "auto auto",
-				gridAutoRows: "2rem",
-				gridArea: "span 7",
-			}
-		}
-	}
-
-	header() {
-		return l("header", { style: { background: this.headerBackground() } },
-			"#" + this.pokemon.id + " " + this.pokemon.name,
-			shinyText(this.pokemon),
-			amountText(this.pokemon),
-			this.pokemon.form && this.pokemon.form != "Base" ? " (" + this.pokemon.form + ") " : "",
-			this.pokemon.level ? l("span", { style: { fontSize: "1rem" } }, "- Lv." + this.pokemon.level) : "",
-			this.pokemon.language ? l("span", { style: { fontSize: "1rem" } }, "- " + this.pokemon.language) : ""
-			//TODO: put edit icon here sometimes
-		)
-	}
-
-	headerBackground() {
-		var colors = this.pokemon.types.map(e => stuff.data.typeColors[e])
-		return "linear-gradient(to right, " + colors[0] + ", " + (colors[1] || colors[0]) + ")"
-	}
-
-	entries(...entries) {
-		var sections = []
-		for (let i = 0; i < entries.length; i += 14)
-			sections.push(entries.slice(i, i + 14))
-		return sections.map(section => {
-			var count = 0
-			return l("div.section", ...section.map(e => {
-				count++
-				return count % 2 ? l("span.title", e + " | ") : l("span.content", e)
-			}))
-		})
+		]
 	}
 }
-
 
 class InfoSection {
 	constructor() {
