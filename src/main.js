@@ -8,6 +8,7 @@ import { PokemonData } from "./pokemon-data.js"
 import { State } from "./state.js"
 import { formName, sprite, typesText, abilitiesText, statText, eggGroupsText, typeText } from "./pokemon-display.js"
 import { CollectionGroup } from "./local-collection.js"
+import { PokemonInfoView } from "./pokemon-info-view.js"
 
 window.onload = function () {
 	var site = new SearchSite()
@@ -40,6 +41,7 @@ function pokemonCollectionSetup() {
 	setup.showTableEntries(["sprite", "name+form", "types", "abilities", "hp", "atk", "def", "spa", "spd", "spe", "total", "eggGroups"])
 	setup.showGridEntries(["sprite"])
 	setup.gridSetup.compact = true
+	setup.view = (pokemon) => new PokemonInfoView(pokemon)
 	return setup
 }
 
@@ -199,8 +201,6 @@ class PokemonStuff {
 		site.addCollectionSetup("moves", movesCollectionSetup())
 		this.site.setCollection(this.data.pokemons, "pokemon")
 		this.localCollectionGroup.loadFromLocalStorage()
-		if (window.location.hash)
-			this.site.setFiltersFromLocation()
 		/*if (this.state.externalInventory.load) {
 			this.headerSection.showLocal = false
 			if (this.state.script)

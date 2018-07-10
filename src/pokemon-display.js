@@ -1,5 +1,4 @@
 import { l } from "../../archive/arf/arf.js"
-//import { PkSpr } from "../static/pokesprite.min.js"
 
 export function formName(pokemon) {
 	switch (pokemon.form) {
@@ -196,8 +195,12 @@ export function statColor(stat) {
 	return "rgb(" + HSVtoRGB(0.6 * stat / 255, 1, 1) + ")"
 }
 
-export function amountShiny(pokemon) {
-	return " " + (pokemon.shiny ? "<span style='color:#f11;'>★</span>" : "") + (pokemon.amount ? " (" + pokemon.amount + ")" : "")
+export function amountText(pokemon) {
+	return pokemon.amount ? " (" + pokemon.amount + ") " : ""
+}
+
+export function shinyText(pokemon) {
+	return l("span", { style: { color: "#f11" } }, pokemon.shiny ? " ★ " : "")
 }
 
 export function IV(iv, pokemon) {
