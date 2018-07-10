@@ -1,6 +1,6 @@
 import { l } from "../../archive/arf/arf.js"
 import { SelectionView } from "../../archive/search/selection-view.js"
-import { shinyText, amountText, imageName, typesText, abilitiesText, eggGroupsText } from "./pokemon-display.js"
+import { shinyText, amountText, imageName, typesText, abilitiesText, eggGroupsText, genderText, weightHeightText } from "./pokemon-display.js"
 
 export function pokemonViewSetup(){
 	return {
@@ -23,13 +23,11 @@ export function pokemonViewSetup(){
 			}),
 			...SelectionView.entries(6,
 				"Types", typesText(pokemon),
-				"Abilities", abilitiesText(pokemon),
-				"Egg groups", eggGroupsText(pokemon),
 				"Classification", pokemon.classification,
 				"Abilities", abilitiesText(pokemon),
 				"Egg groups", eggGroupsText(pokemon),
-				"Abilities", abilitiesText(pokemon),
-				"Egg groups", eggGroupsText(pokemon)
+				"Gender ratio", genderText(pokemon),
+				"Weight/height", weightHeightText(pokemon)
 			)
 		]
 	}

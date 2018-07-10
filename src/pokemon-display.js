@@ -151,15 +151,19 @@ export function eggGroupsText(pokemon) {
 export function genderText(pokemon) {
 	if (pokemon.gender) {
 		if (pokemon.gender == "♂" || pokemon.gender.toLowerCase() == "m" || pokemon.gender.toLowerCase() == "male")
-			return "<span style='color: #34d1ba;'>♂</span>"
+			return l("span", { style: { color: "#34d1ba" } }, "♂")
 		if (pokemon.gender == "♀" || pokemon.gender.toLowerCase() == "f" || pokemon.gender.toLowerCase() == "female")
-			return "<span style='color: #f97272;'>♀</span>"
+			return l("span", { style: { color: "#f97272" } }, "♀")
 		if ((pokemon.ratio || pokemon.ratio == "—") && pokemon.gender == "—" || pokemon.gender.toLowerCase() == "-" || pokemon.gender.toLowerCase() == "none")
 			return "—"
 	}
 	if (!pokemon.ratio || pokemon.ratio == "—") return "—"
 	var things = pokemon.ratio.split(":")
-	return "<span style='color: #34d1ba;'>" + things[0] + "♂</span>:<span style='color: #f97272;'>" + things[1] + "♀</span>"
+	return l("span",
+		l("span", { style: { color: "#34d1ba" } }, things[0] + "♂"),
+		":",
+		l("span", { style: { color: "#f97272" } }, things[1] + "♀")
+	)
 }
 
 export function weightHeightText(pokemon) {
