@@ -172,7 +172,7 @@ export function weightHeightText(pokemon) {
 }
 
 export function ballSprites(pokemon) {
-	return l("span", pokemon.balls.map(e => ballSprite(e)))
+	return l("span", ...pokemon.balls.map(e => ballSprite(e)))
 }
 
 export function ballSprite(ball) {
