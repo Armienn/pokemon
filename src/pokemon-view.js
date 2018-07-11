@@ -1,6 +1,6 @@
-import { l } from "../../archive/arf/arf.js"
+import { l, Component } from "../../archive/arf/arf.js"
 import { SelectionView } from "../../archive/search/selection-view.js"
-import { shinyText, amountText, imageName, typesText, abilitiesText, eggGroupsText, genderText, weightHeightText, abilityText, typeText, moveText, ballSprites, sprite, formName } from "./pokemon-display.js"
+import { shinyText, amountText, imageName, typesText, abilitiesText, eggGroupsText, genderText, weightHeightText, abilityText, typeText, moveText, ballSprites, sprite, formName, natureCssClass, statColor } from "./pokemon-display.js"
 import { CollectionView } from "../../archive/search/collection-view.js"
 import { Styling } from "../../archive/search/styling.js"
 
@@ -27,6 +27,14 @@ export class PokemonView {
 					style: { gridArea: "span 6", height: "11rem", margin: "0.5rem", justifySelf: "center" },
 					src: imageName(pokemon)
 				}),
+				...SelectionView.entries([6, 3],
+					"HP", new StatNumber(pokemon, "hp"), new StatBar(pokemon, "hp"),
+					"Attack", new StatNumber(pokemon, "atk"), new StatBar(pokemon, "atk"),
+					"Defense", new StatNumber(pokemon, "def"), new StatBar(pokemon, "def"),
+					"Sp. Atk", new StatNumber(pokemon, "spa"), new StatBar(pokemon, "spa"),
+					"Sp. Def", new StatNumber(pokemon, "spd"), new StatBar(pokemon, "spd"),
+					"Speed", new StatNumber(pokemon, "spe"), new StatBar(pokemon, "spe")
+				),
 				...SelectionView.entries(6, ...pokemonEntries(pokemon))
 			],
 			lowerContent: (pokemon) => [l("header", { style: { background: "rgba(" + Styling.styling.tableColor + ",0.3)" } }, "Moves"), this.collectionView]
@@ -39,6 +47,101 @@ export class PokemonView {
 			this.collectionView.collection = pokemon.moves.map(m => copyMove(stuff.data.moves[m.name], m.method))
 		}
 		return this.view
+	}
+}
+
+class StatNumber extends Component {
+	constructor(pokemon, stat) {
+		super()
+		this.pokemon = pokemon
+		this.stat = stat
+	}
+
+	renderHasChanged() {
+		return false
+	}
+
+	renderThis() {
+		const pokemon = this.pokemon
+		var ivText = pokemon.ivs ? pokemon.ivs[this.stat] : 0
+		if (!ivText && ivText != 0)
+			ivText = "x"
+		var evBase = pokemon.evs ? pokemon.evs[this.stat] : 0
+		if (!ivText && ivText != 0)
+			ivText = ""
+		var blub = pokemon.stats[this.stat]
+		if (pokemon.ivs || pokemon.evs)
+			blub += " · " + ivText + " · " + evBase
+		return l("span" + (pokemon.nature ? natureCssClass(this.stat, pokemon) : ""), "" + blub)
+	}
+
+	static styleThis() {
+		return {
+			".negative-nature": {
+				color: "#2ab9b9"
+			},
+			".positive-nature": {
+				color: "#d66"
+			}
+		}
+	}
+}
+
+class StatBar extends Component {
+	constructor(pokemon, stat) {
+		super()
+		this.pokemon = pokemon
+		this.stat = stat
+	}
+
+	renderHasChanged() {
+		return false
+	}
+
+	renderThis() {
+		const pokemon = this.pokemon
+		var statBase = pokemon.stats[this.stat]
+		var ivText = pokemon.ivs ? pokemon.ivs[this.stat] : 0
+		if (!ivText && ivText != 0)
+			ivText = "x"
+		var evBase = pokemon.evs ? pokemon.evs[this.stat] : 0
+		if (!ivText && ivText != 0)
+			ivText = ""
+		var ivBase = ivText.toString().endsWith("*") ? 31 : ivText
+		ivBase = isNaN(+ivBase) ? ivBase.replace(/(^\d+)(.+$)/i, '$1') : +ivBase
+		var content = [l("div.stat-bar.base-bar", {
+			style: { width: statBase + "px", background: "linear-gradient(to right, red, " + statColor(statBase) + ")" }
+		})]
+		if (pokemon.ivs || pokemon.evs) {
+			content.push(l("div.stat-bar.iv-bar", { style: { width: ivBase / 2 + "px" } }))
+			content.push(l("div.stat-bar.ev-bar", { style: { width: evBase / 8 + "px" } }))
+		}
+		return l("div.container", ...content)
+	}
+
+	static styleThis() {
+		return {
+			".container": {
+				display: "flex"
+			},
+			".stat-bar": {
+				float: "left",
+				height: "1rem",
+				marginTop: "0.5rem"
+			},
+			".base-bar": {
+				backgroundColor: "#00ae00",
+				marginLeft: "0.5rem"
+			},
+			".iv-bar": {
+				backgroundColor: "yellow",
+				borderLeft: "1px solid black"
+			},
+			".ev-bar": {
+				backgroundColor: "orange",
+				borderLeft: "1px solid black"
+			}
+		}
 	}
 }
 

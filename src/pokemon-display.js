@@ -210,7 +210,7 @@ export function shinyText(pokemon) {
 }
 
 export function IV(iv, pokemon) {
-	var cssClass = PokeText.natureCssClass(iv, pokemon)
+	var cssClass = natureCssClass(iv, pokemon)
 	var iv = pokemon.ivs ? pokemon.ivs[iv] : undefined
 	if (iv == undefined)
 		iv = "x"
@@ -227,7 +227,7 @@ export function EV(ev, pokemon) {
 	}
 	if (!hasEvs)
 		return ""
-	var cssClass = PokeText.natureCssClass(ev, pokemon)
+	var cssClass = natureCssClass(ev, pokemon)
 	var ev = pokemon.evs ? pokemon.evs[ev] : undefined
 	if (ev == undefined)
 		ev = "—"
@@ -245,9 +245,24 @@ export function natureCssClass(stat, pokemon) {
 	if (nature.positive == nature.negative)
 		return ""
 	else if (stat == parseStatType(nature.positive))
-		return "positive-nature"
+		return ".positive-nature"
 	else if (stat == parseStatType(nature.negative))
-		return "negative-nature"
+		return ".negative-nature"
+}
+
+function parseStatType(text) {
+	if (["hp", "health"].indexOf(text.trim().toLowerCase()) > -1)
+		return "hp"
+	if (["atk", "attack"].indexOf(text.trim().toLowerCase()) > -1)
+		return "atk"
+	if (["def", "defense"].indexOf(text.trim().toLowerCase()) > -1)
+		return "def"
+	if (["spa", "sp. atk", "sp. attack", "special attack"].indexOf(text.trim().toLowerCase()) > -1)
+		return "spa"
+	if (["spd", "sp. def", "sp. defense", "special defense"].indexOf(text.trim().toLowerCase()) > -1)
+		return "spd"
+	if (["spe", "speed"].indexOf(text.trim().toLowerCase()))
+		return "spe"
 }
 
 export function learnMethodText(move) {
