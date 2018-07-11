@@ -21,24 +21,26 @@ export class PokemonView {
 				],
 				colors: (pokemon) => pokemon.types.map(e => stuff.data.typeColors[e])
 			},
-			upperContent: (pokemon) => [l("div", { style: { padding: "0.5rem" } }, pokemon.description)],
+			upperContent: (pokemon) => [l("div", { style: { padding: "0.5rem" } }, pokemon.notes || pokemon.description)],
 			gridContent: (pokemon) => [
 				l("img", {
 					style: { gridArea: "span 7", height: "13rem", margin: "0.5rem", justifySelf: "center" },
 					src: imageName(pokemon)
-				}),
-				...SelectionView.entries({ span: 7, columns: "auto min-content auto"},
+				}),,
+				...SelectionView.entries({ span: 7 }, ...mainInfoEntries(pokemon)),
+				...SelectionView.entries({ span: 7, columns: "auto min-content auto" },
 					"HP", new StatNumber(pokemon, "hp"), new StatBar(pokemon, "hp"),
 					"Attack", new StatNumber(pokemon, "atk"), new StatBar(pokemon, "atk"),
 					"Defense", new StatNumber(pokemon, "def"), new StatBar(pokemon, "def"),
 					"Sp. Atk", new StatNumber(pokemon, "spa"), new StatBar(pokemon, "spa"),
 					"Sp. Def", new StatNumber(pokemon, "spd"), new StatBar(pokemon, "spd"),
-					"Speed", new StatNumber(pokemon, "spe"), new StatBar(pokemon, "spe")
+					"Speed", new StatNumber(pokemon, "spe"), new StatBar(pokemon, "spe"),
+					"Total", totalStats(pokemon)
 				),
 				...SelectionView.entries(
-					{span: 7, columns: "auto min-content min-content auto", rowHeight: "1.5rem", rows: 9 },
+					{ span: 7, columns: "auto min-content min-content auto", rowHeight: "1.5rem", rows: 9 },
 					...typeEntries(pokemon)),
-				...SelectionView.entries({span: 7}, ...pokemonEntries(pokemon))
+				...SelectionView.entries({ span: 7 }, ...extraInfoEntries(pokemon))
 			],
 			lowerContent: (pokemon) => [l("header", { style: { background: "rgba(" + Styling.styling.tableColor + ",0.3)" } }, "Moves"), this.collectionView]
 		})
@@ -51,6 +53,13 @@ export class PokemonView {
 		}
 		return this.view
 	}
+}
+
+function totalStats(pokemon) {
+	var sum = 0
+	for (var stat in pokemon.stats)
+		sum += pokemon.stats[stat]
+	return "" + sum
 }
 
 function typeEntries(pokemon) {
@@ -66,7 +75,7 @@ function typeEntries(pokemon) {
 	return entries
 }
 
-function pokemonEntries(pokemon) {
+function mainInfoEntries(pokemon) {
 	const entries = []
 	entries.push("Types", typesText(pokemon))
 	if (pokemon.nickname)
@@ -89,6 +98,15 @@ function pokemonEntries(pokemon) {
 		entries.push("Hidden power", typeText(pokemon.hiddenPower))
 	else
 		entries.push("Weight/height", weightHeightText(pokemon))
+	if (pokemon.item)
+		entries.push("Held item", pokemon.item)
+	else
+		entries.push("Catch rate", "" + (pokemon.catchRate || "—"))
+	return entries
+}
+
+function extraInfoEntries(pokemon) {
+	const entries = []
 	if (pokemon.base) {
 		if (pokemon.ot || pokemon.tid)
 			entries.push("OT", pokemon.ot + (pokemon.tid ? " (" + prependZeroes(pokemon.tid, 6) + ")" : ""))
