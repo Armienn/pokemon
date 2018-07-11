@@ -8,7 +8,7 @@ import { PokemonData } from "./pokemon-data.js"
 import { State } from "./state.js"
 import { formName, sprite, typesText, abilitiesText, statText, eggGroupsText, typeText, learnMethodText } from "./pokemon-display.js"
 import { CollectionGroup } from "./local-collection.js"
-import { PokemonView } from "./pokemon-view-setup.js"
+import { PokemonView } from "./pokemon-view.js"
 
 window.onload = function () {
 	var site = new SearchSite()

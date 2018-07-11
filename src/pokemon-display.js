@@ -112,7 +112,7 @@ export function typesText(pokemon) {
 }
 
 export function moveText(move, eggMove) {
-	return "<span" + (eggMove ? " style='font-style: italic;'" : "") + ">" + move + "</span>"
+	return l("span", eggMove ? { style: { fontStyle: "italic" } } : {}, move)
 }
 
 export function abilityText(ability, abilities, link) {
@@ -131,13 +131,6 @@ export function abilitiesText(pokemon, link) {
 		...(pokemon.abilities[1] ? [" · ", abilityText(pokemon.abilities[1], pokemon.abilities, link)] : []),
 		...(pokemon.abilities[2] ? [" · ", abilityText(pokemon.abilities[2], pokemon.abilities, link)] : [])
 	)
-}
-
-export function abilityLink(ability) {
-	ability = ability.split("(")[0].trim()
-	var name = ability.toLowerCase().replace(" ", "")
-	var url = "http://www.serebii.net/abilitydex/" + name + ".shtml"
-	return "<a href='" + url + "'>" + ability + "</a>"
 }
 
 export function eggGroupsText(pokemon) {
@@ -178,17 +171,26 @@ export function weightHeightText(pokemon) {
 	return text
 }
 
-export function balls(pokemon) {
-	var text = ""
-	for (var i in pokemon.balls)
-		text += "<img src='" + PokeText.ballUrl(pokemon.balls[i]) + "' title='" + pokemon.balls[i] + "'></img>"
-	return text
+export function ballSprites(pokemon) {
+	return l("span", pokemon.balls.map(e => ballSprite(e)))
 }
 
-export function ballUrl(ball) {
+export function ballSprite(ball) {
 	ball = ball.split(" ")[0].toLowerCase()
 	ball = ball.split("ball")[0].replace("é", "e")
-	return "https://raw.githubusercontent.com/msikma/pokesprite/master/icons/pokeball/" + ball + ".png"
+
+	var icon = PkSpr.decorate({ slug: ball, type: "pokeball" })
+	return l("span", {
+		style: {
+			background: "url('static/pokesprite.png')",
+			backgroundPosition: "-" + icon.data.coords.x + "px -" + icon.data.coords.y + "px",
+			width: "32px",
+			height: "32px",
+			imageRendering: "pixelated",
+			display: "inline-block"
+		},
+		title: ball + " ball"
+	})
 }
 
 export function statText(stat) {

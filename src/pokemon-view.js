@@ -1,6 +1,6 @@
 import { l } from "../../archive/arf/arf.js"
 import { SelectionView } from "../../archive/search/selection-view.js"
-import { shinyText, amountText, imageName, typesText, abilitiesText, eggGroupsText, genderText, weightHeightText, abilityText, typeText } from "./pokemon-display.js"
+import { shinyText, amountText, imageName, typesText, abilitiesText, eggGroupsText, genderText, weightHeightText, abilityText, typeText, moveText, ballSprites } from "./pokemon-display.js"
 import { CollectionView } from "../../archive/search/collection-view.js"
 import { Styling } from "../../archive/search/styling.js"
 
@@ -27,14 +27,7 @@ export class PokemonView {
 					style: { gridArea: "span 6", height: "11rem", margin: "0.5rem", justifySelf: "center" },
 					src: imageName(pokemon)
 				}),
-				...SelectionView.entries(6,
-					"Types", typesText(pokemon),
-					pokemon.nickname ? "Nickname" : "Classification", pokemon.nickname ? pokemon.nickname : pokemon.classification,
-					pokemon.ability ? "Ability" : "Abilities", pokemon.ability ? abilityText(pokemon.ability, pokemon.abilities) : abilitiesText(pokemon),
-					pokemon.nature ? "Nature" : "Egg groups", pokemon.nature ? pokemon.nature : eggGroupsText(pokemon),
-					pokemon.gender ? "Gender" : "Gender ratio", genderText(pokemon),
-					pokemon.hiddenPower ? "Hidden power" : "Weight/height", pokemon.hiddenPower ? typeText(pokemon.hiddenPower) : weightHeightText(pokemon)
-				)
+				...SelectionView.entries(6, ...pokemonEntries(pokemon))
 			],
 			lowerContent: (pokemon) => [l("header", { style: { background: "rgba(" + Styling.styling.tableColor + ",0.3)" } }, "Moves"), this.collectionView]
 		})
@@ -49,12 +42,54 @@ export class PokemonView {
 	}
 }
 
+function pokemonEntries(pokemon) {
+	const entries = []
+	entries.push("Types", typesText(pokemon))
+	if (pokemon.nickname)
+		entries.push("Nickname", pokemon.nickname)
+	else
+		entries.push("Classification", pokemon.classification)
+	if (pokemon.ability)
+		entries.push("Ability", abilityText(pokemon.ability, pokemon.abilities))
+	else
+		entries.push("Abilities", abilitiesText(pokemon))
+	if (pokemon.nature)
+		entries.push("Nature", pokemon.nature)
+	else
+		entries.push("Egg groups", eggGroupsText(pokemon))
+	if (pokemon.gender)
+		entries.push("Gender", genderText(pokemon))
+	else
+		entries.push("Gender ratio", genderText(pokemon))
+	if (pokemon.hiddenPower)
+		entries.push("Hidden power", typeText(pokemon.hiddenPower))
+	else
+		entries.push("Weight/height", weightHeightText(pokemon))
+	if (pokemon.base) {
+		if (pokemon.ot || pokemon.tid)
+			entries.push("OT", pokemon.ot + (pokemon.tid ? " (" + prependZeroes(pokemon.tid, 6) + ")" : ""))
+		for (var i in pokemon.learntMoves)
+			entries.push("Move", moveText(pokemon.learntMoves[i]))
+		if (pokemon.balls && pokemon.balls.length)
+			entries.push("Ball", ballSprites(pokemon))
+	}
+	return entries
+}
+
 function copyMove(move, method) {
 	const newMove = {}
 	for (var key in move)
 		newMove[key] = move[key]
 	newMove.method = method
 	return newMove
+}
+
+function prependZeroes(number, characters) {
+	number = number.toString()
+	while (number.length < characters) {
+		number = "0" + number
+	}
+	return number
 }
 
 class InfoSection {
