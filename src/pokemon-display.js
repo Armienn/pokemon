@@ -85,19 +85,29 @@ export function imageName(pokemon) {
 	return "./static/sugimori/" + gender + pokemon.id + form + ".png"
 }
 
-export function defense(defense) {
+export function defenseText(defense) {
+	const span = (factor, color) => l("div", {
+		style: {
+			height: "1.5rem",
+			width: "1.5rem",
+			background: color,
+			color: "white",
+			fontWeight: "bold",
+			textAlign: "center"
+		}
+	}, factor)
 	if (defense == 4)
-		return "<span style='color:#10c210;'>4</span>"
+		return span("4", "#10c210")
 	if (defense == 2)
-		return "<span style='color:green;'>2</span>"
+		return span("2", "green")
 	if (defense == 1)
-		return "1"
+		return span("1", "rgba(120,120,120,0.5)")
 	if (defense == 0.5)
-		return "<span style='color:#ba2323;'>½</span>"
+		return span("½", "#b22")
 	if (defense == 0.25)
-		return "<span style='color:#8c0101;'>¼</span>"
+		return span("¼", "#800")
 	if (defense == 0)
-		return "<span style='color:#888888;'>0</span>"
+		return span("0", "#333")
 }
 
 export function typeText(type) {

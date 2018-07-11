@@ -1,6 +1,6 @@
 import { l, Component } from "../../archive/arf/arf.js"
 import { SelectionView } from "../../archive/search/selection-view.js"
-import { shinyText, amountText, imageName, typesText, abilitiesText, eggGroupsText, genderText, weightHeightText, abilityText, typeText, moveText, ballSprites, sprite, formName, natureCssClass, statColor } from "./pokemon-display.js"
+import { shinyText, amountText, imageName, typesText, abilitiesText, eggGroupsText, genderText, weightHeightText, abilityText, typeText, moveText, ballSprites, sprite, formName, natureCssClass, statColor, defenseText } from "./pokemon-display.js"
 import { CollectionView } from "../../archive/search/collection-view.js"
 import { Styling } from "../../archive/search/styling.js"
 
@@ -24,10 +24,10 @@ export class PokemonView {
 			upperContent: (pokemon) => [l("div", { style: { padding: "0.5rem" } }, pokemon.description)],
 			gridContent: (pokemon) => [
 				l("img", {
-					style: { gridArea: "span 6", height: "11rem", margin: "0.5rem", justifySelf: "center" },
+					style: { gridArea: "span 7", height: "13rem", margin: "0.5rem", justifySelf: "center" },
 					src: imageName(pokemon)
 				}),
-				...SelectionView.entries([6, 3],
+				...SelectionView.entries({ span: 7, columns: "auto min-content auto"},
 					"HP", new StatNumber(pokemon, "hp"), new StatBar(pokemon, "hp"),
 					"Attack", new StatNumber(pokemon, "atk"), new StatBar(pokemon, "atk"),
 					"Defense", new StatNumber(pokemon, "def"), new StatBar(pokemon, "def"),
@@ -35,7 +35,10 @@ export class PokemonView {
 					"Sp. Def", new StatNumber(pokemon, "spd"), new StatBar(pokemon, "spd"),
 					"Speed", new StatNumber(pokemon, "spe"), new StatBar(pokemon, "spe")
 				),
-				...SelectionView.entries(6, ...pokemonEntries(pokemon))
+				...SelectionView.entries(
+					{span: 7, columns: "auto min-content min-content auto", rowHeight: "1.5rem", rows: 9 },
+					...typeEntries(pokemon)),
+				...SelectionView.entries({span: 7}, ...pokemonEntries(pokemon))
 			],
 			lowerContent: (pokemon) => [l("header", { style: { background: "rgba(" + Styling.styling.tableColor + ",0.3)" } }, "Moves"), this.collectionView]
 		})
@@ -48,6 +51,88 @@ export class PokemonView {
 		}
 		return this.view
 	}
+}
+
+function typeEntries(pokemon) {
+	const entries = []
+	var typeNames = Object.keys(stuff.data.types)
+	for (var i = 0; i < typeNames.length / 2; i++)
+		entries.push(
+			typeText(typeNames[i]),
+			defenseText(stuff.data.tallyDefense(typeNames[i], pokemon)),
+			defenseText(stuff.data.tallyDefense(typeNames[i + 9], pokemon)),
+			l("span", { style: { color: "#888", marginLeft: "0.5rem" } }, "| ", typeText(typeNames[i + 9]))
+		)
+	return entries
+}
+
+function pokemonEntries(pokemon) {
+	const entries = []
+	entries.push("Types", typesText(pokemon))
+	if (pokemon.nickname)
+		entries.push("Nickname", pokemon.nickname)
+	else
+		entries.push("Classification", pokemon.classification)
+	if (pokemon.ability)
+		entries.push("Ability", abilityText(pokemon.ability, pokemon.abilities))
+	else
+		entries.push("Abilities", abilitiesText(pokemon))
+	if (pokemon.nature)
+		entries.push("Nature", pokemon.nature)
+	else
+		entries.push("Egg groups", eggGroupsText(pokemon))
+	if (pokemon.gender)
+		entries.push("Gender", genderText(pokemon))
+	else
+		entries.push("Gender ratio", genderText(pokemon))
+	if (pokemon.hiddenPower)
+		entries.push("Hidden power", typeText(pokemon.hiddenPower))
+	else
+		entries.push("Weight/height", weightHeightText(pokemon))
+	if (pokemon.base) {
+		if (pokemon.ot || pokemon.tid)
+			entries.push("OT", pokemon.ot + (pokemon.tid ? " (" + prependZeroes(pokemon.tid, 6) + ")" : ""))
+		for (var i in pokemon.learntMoves)
+			entries.push("Move", moveText(pokemon.learntMoves[i]))
+		if (pokemon.balls && pokemon.balls.length)
+			entries.push("Ball", ballSprites(pokemon))
+	}
+	else {
+		for (var i in pokemon.eggs)
+			entries.push("Egg", evolutionText(pokemon, pokemon.eggs[i]))
+		if (pokemon.evolvesFrom)
+			entries.push("Evolves from", evolutionText(pokemon, pokemon.evolvesFrom))
+		for (var i in pokemon.evolvesTo)
+			entries.push("Evolves to", evolutionText(pokemon, pokemon.evolvesTo[i]))
+	}
+	return entries
+}
+
+function evolutionText(basePoke, evoInfo) {
+	var info = JSON.parse(JSON.stringify(evoInfo))
+	if (info.form == "same")
+		info.form = basePoke.form
+	var pokemon = stuff.data.getPokemonFrom(info)
+	return l("div", { style: { display: "flex", height: "2rem" } },
+		sprite(pokemon),
+		l("div", { style: { height: "2rem", lineHeight: "2rem" } }, formName(pokemon) + (info.method == "Normal" ? "" : " (" + info.method + ")"))
+	)
+}
+
+function copyMove(move, method) {
+	const newMove = {}
+	for (var key in move)
+		newMove[key] = move[key]
+	newMove.method = method
+	return newMove
+}
+
+function prependZeroes(number, characters) {
+	number = number.toString()
+	while (number.length < characters) {
+		number = "0" + number
+	}
+	return number
 }
 
 class StatNumber extends Component {
@@ -145,71 +230,60 @@ class StatBar extends Component {
 	}
 }
 
-function pokemonEntries(pokemon) {
-	const entries = []
-	entries.push("Types", typesText(pokemon))
-	if (pokemon.nickname)
-		entries.push("Nickname", pokemon.nickname)
-	else
-		entries.push("Classification", pokemon.classification)
-	if (pokemon.ability)
-		entries.push("Ability", abilityText(pokemon.ability, pokemon.abilities))
-	else
-		entries.push("Abilities", abilitiesText(pokemon))
-	if (pokemon.nature)
-		entries.push("Nature", pokemon.nature)
-	else
-		entries.push("Egg groups", eggGroupsText(pokemon))
-	if (pokemon.gender)
-		entries.push("Gender", genderText(pokemon))
-	else
-		entries.push("Gender ratio", genderText(pokemon))
-	if (pokemon.hiddenPower)
-		entries.push("Hidden power", typeText(pokemon.hiddenPower))
-	else
-		entries.push("Weight/height", weightHeightText(pokemon))
-	if (pokemon.base) {
-		if (pokemon.ot || pokemon.tid)
-			entries.push("OT", pokemon.ot + (pokemon.tid ? " (" + prependZeroes(pokemon.tid, 6) + ")" : ""))
-		for (var i in pokemon.learntMoves)
-			entries.push("Move", moveText(pokemon.learntMoves[i]))
-		if (pokemon.balls && pokemon.balls.length)
-			entries.push("Ball", ballSprites(pokemon))
+class TypeEntry extends Component {
+	constructor(pokemon, type) {
+		super()
+		this.pokemon = pokemon
+		this.type = type
 	}
-	else {
-		for (var i in pokemon.eggs)
-			entries.push("Egg", evolutionText(pokemon, pokemon.eggs[i]))
-		if (pokemon.evolvesFrom)
-			entries.push("Evolves from", evolutionText(pokemon, pokemon.evolvesFrom))
-		for (var i in pokemon.evolvesTo)
-			entries.push("Evolves to", evolutionText(pokemon, pokemon.evolvesTo[i]))
+
+	renderHasChanged() {
+		return false
 	}
-	return entries
-}
 
-function evolutionText(basePoke, evoInfo) {
-	var info = JSON.parse(JSON.stringify(evoInfo))
-	if (info.form == "same")
-		info.form = basePoke.form
-	var pokemon = stuff.data.getPokemonFrom(info)
-	return l("div", { style: { display: "flex", height: "2rem" } },
-		sprite(pokemon),
-		l("div", { style: { height: "2rem", lineHeight: "2rem" } }, formName(pokemon) + (info.method == "Normal" ? "" : " (" + info.method + ")"))
-	)
-}
-
-function copyMove(move, method) {
-	const newMove = {}
-	for (var key in move)
-		newMove[key] = move[key]
-	newMove.method = method
-	return newMove
-}
-
-function prependZeroes(number, characters) {
-	number = number.toString()
-	while (number.length < characters) {
-		number = "0" + number
+	renderThis() {
+		const pokemon = this.pokemon
+		var statBase = pokemon.stats[this.stat]
+		var ivText = pokemon.ivs ? pokemon.ivs[this.stat] : 0
+		if (!ivText && ivText != 0)
+			ivText = "x"
+		var evBase = pokemon.evs ? pokemon.evs[this.stat] : 0
+		if (!ivText && ivText != 0)
+			ivText = ""
+		var ivBase = ivText.toString().endsWith("*") ? 31 : ivText
+		ivBase = isNaN(+ivBase) ? ivBase.replace(/(^\d+)(.+$)/i, '$1') : +ivBase
+		var content = [l("div.stat-bar.base-bar", {
+			style: { width: statBase + "px", background: "linear-gradient(to right, red, " + statColor(statBase) + ")" }
+		})]
+		if (pokemon.ivs || pokemon.evs) {
+			content.push(l("div.stat-bar.iv-bar", { style: { width: ivBase / 2 + "px" } }))
+			content.push(l("div.stat-bar.ev-bar", { style: { width: evBase / 8 + "px" } }))
+		}
+		return l("div.container", ...content)
 	}
-	return number
+
+	static styleThis() {
+		return {
+			".container": {
+				display: "flex"
+			},
+			".stat-bar": {
+				float: "left",
+				height: "1rem",
+				marginTop: "0.5rem"
+			},
+			".base-bar": {
+				backgroundColor: "#00ae00",
+				marginLeft: "0.5rem"
+			},
+			".iv-bar": {
+				backgroundColor: "yellow",
+				borderLeft: "1px solid black"
+			},
+			".ev-bar": {
+				backgroundColor: "orange",
+				borderLeft: "1px solid black"
+			}
+		}
+	}
 }
