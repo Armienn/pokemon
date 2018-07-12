@@ -4,7 +4,7 @@ import { NavGroup, NavEntry } from "../../archive/search/section-navigation.js"
 import { CollectionSetup } from "../../archive/search/collection-setup.js"
 import { ExportView } from "../../archive/search/export-view.js"
 import { ImportView } from "../../archive/search/import-view.js"
-import { PokemonData } from "./pokemon-data.js"
+import { PokemonData, Pokemon } from "./pokemon-data.js"
 import { State } from "./state.js"
 import { formName, sprite, typesText, abilitiesText, statText, eggGroupsText, typeText, learnMethodText, IVEVText, ballSprites, movesText } from "./pokemon-display.js"
 import { CollectionGroup } from "./local-collection.js"
@@ -131,9 +131,9 @@ class PokemonStuff {
 			new NavGroup(this.localCollectionGroup.title,
 				...Object.keys(this.localCollectionGroup.tabs).map(title => {
 					return new NavEntry(title, () => {
-						this.site.setCollection(this.localCollectionGroup.tabs[title], "pokemonIndividuals")
+						this.site.setCollection(this.localCollectionGroup.tabs[title].pokemons, "pokemonIndividuals")
 						update()
-					}, () => this.site.sections.collection.collection == this.localCollectionGroup.tabs[title])
+					}, () => this.site.sections.collection.collection == this.localCollectionGroup.tabs[title].pokemons)
 				})
 			),
 			new NavGroup("Actions",
@@ -142,19 +142,10 @@ class PokemonStuff {
 				}),
 				new NavEntry("Import", () => {
 					this.site.show(new ImportView(this.site, (collection) => {
-						var setup = {
-							collection: collection,
-							setup: CollectionSetup.fromExample(collection[0]),
-							title: "Imported"
-						}
-						var index = this.collections.findIndex(e => e.title == "Imported")
-						if (index >= 0)
-							this.collections.splice(index, 1)
-						this.collections.push(setup)
-						this.site.setCollection(setup.collection, setup.setup)
-						this.currentSetup = setup
+						this.localCollectionGroup.addTab("Imported", collection.map(e=>new Pokemon(e)))
+						this.site.setCollection(this.localCollectionGroup.tabs["Imported"].pokemons, "pokemonIndividuals")
 						this.site.clearSelection()
-						this.save()
+						this.localCollectionGroup.saveToLocalStorage()
 						update()
 					}))
 				})

@@ -7,11 +7,11 @@ export class CollectionGroup {
 	}
 
 	addTab(title, pokemons) {
-		this.tabs[title] = pokemons || []
+		this.tabs[title] = { pokemons: pokemons || [] }
 	}
 
 	saveToLocalStorage() {
-		var tabs = []
+		var tabs = {}
 		for (var i in this.tabs) {
 			tabs[i] = { title: i, pokemons: [] }
 			var pokemons = this.tabs[i].pokemons

@@ -52,6 +52,8 @@ export class PokemonView {
 							pokemon[key] = newPokemon[key]
 					pokemon.learntMoves = Object.keys(pokemon.learntMoves).map(k => pokemon.learntMoves[k]).filter(e => e)
 					pokemon.base = new Pokemon(newPokemon).base
+					if (this.onSave)
+						this.onSave()
 					site.sections.collection.collectionComponent.hasChanged = true
 					site.sections.collection.collectionComponent.cachedEntries.delete(pokemon)
 					site.engine.updateFilteredCollection()
