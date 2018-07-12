@@ -46,6 +46,21 @@ export class PokemonView {
 			lowerContent: (pokemon) => [l("header", { style: { background: "rgba(" + Styling.styling.tableColor + ",0.3)" } }, "Moves"), this.collectionView]
 		}, {
 				editable: (pokemon) => !!pokemon.base,
+				onAccept: (pokemon, newPokemon) => {
+					for (var key in newPokemon)
+						if (key !== "base")
+							pokemon[key] = newPokemon[key]
+					pokemon.learntMoves = Object.keys(pokemon.learntMoves).map(k => pokemon.learntMoves[k]).filter(e => e)
+					pokemon.base = new Pokemon(newPokemon).base
+					site.sections.collection.collectionComponent.hasChanged = true
+					site.sections.collection.collectionComponent.cachedEntries.delete(pokemon)
+					site.engine.updateFilteredCollection()
+				},
+				onDelete: (pokemon) => {
+					site.clearSelection()
+					this.collection.splice(this.collection.indexOf(pokemon), 1)
+					site.engine.changed(true)
+				},
 				upperContent: (pokemon) => [l("input", {
 					style: { padding: "0.5rem", width: "40rem", maxWidth: "calc(100% - 1rem)" },
 					placeholder: "notes",
@@ -98,9 +113,10 @@ export class PokemonView {
 		)
 	}
 
-	withPokemon(pokemon) {
+	withPokemon(pokemon, collection) {
 		if (this.view.model != pokemon) {
 			this.view.model = pokemon
+			this.collection = collection
 			this.collectionView.collection = pokemon.moves.map(m => copyMove(stuff.data.moves[m.name], m.method))
 		}
 		return this.view
@@ -231,7 +247,7 @@ function ballElement(ball, pokemon) {
 				pokemon.balls.splice(index, 1)
 			else
 				pokemon.balls.push(ball)
-				update()
+			update()
 		},
 		title: ball + " ball"
 	})

@@ -42,7 +42,7 @@ function pokemonCollectionSetup() {
 	setup.showGridEntries(["sprite"])
 	setup.gridSetup.compact = true
 	const view = new PokemonView()
-	setup.view = (pokemon) => view.withPokemon(pokemon)
+	setup.view = (pokemon, collection) => view.withPokemon(pokemon, collection)
 	return setup
 }
 
