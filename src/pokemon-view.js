@@ -1,6 +1,6 @@
-import { l, Component } from "../../archive/arf/arf.js"
+import { l, Component, update } from "../../archive/arf/arf.js"
 import { SelectionView } from "../../archive/search/selection-view.js"
-import { shinyText, amountText, imageName, typesText, abilitiesText, eggGroupsText, genderText, weightHeightText, abilityText, typeText, moveText, ballSprites, sprite, formName, natureCssClass, statColor, defenseText } from "./pokemon-display.js"
+import { shinyText, amountText, imageName, typesText, abilitiesText, eggGroupsText, genderText, weightHeightText, abilityText, typeText, moveText, ballSprites, sprite, formName, natureCssClass, statColor, defenseText, standardBallName } from "./pokemon-display.js"
 import { CollectionView } from "../../archive/search/collection-view.js"
 import { Styling } from "../../archive/search/styling.js"
 import { Pokemon } from "./pokemon-data.js";
@@ -46,13 +46,21 @@ export class PokemonView {
 			lowerContent: (pokemon) => [l("header", { style: { background: "rgba(" + Styling.styling.tableColor + ",0.3)" } }, "Moves"), this.collectionView]
 		}, {
 				editable: (pokemon) => !!pokemon.base,
+				upperContent: (pokemon) => [l("input", {
+					style: { padding: "0.5rem", width: "40rem", maxWidth: "calc(100% - 1rem)" },
+					placeholder: "notes",
+					onChange: (event) => {
+						pokemon.notes = event.target.value
+					},
+					value: pokemon.notes
+				})],
 				gridContent: (pokemon) => {
 					var poke = new Pokemon(pokemon)
 					return [
 						l("img", {
 							style: { gridArea: "span 7", height: "13rem", margin: "0.5rem", justifySelf: "center" },
 							src: imageName(pokemon)
-						}), ,
+						}),
 						...SelectionView.editEntries(pokemon, { span: 7 },
 							"Form", { key: "form", options: poke.forms, restricted: true },
 							"Nickname", { key: "nickname" },
@@ -82,7 +90,8 @@ export class PokemonView {
 							"Sp. Atk EV", { value: nested(pokemon, "evs", "spa"), set: setNested(pokemon, "evs", "spa"), short: true },
 							"Sp. Def EV", { value: nested(pokemon, "evs", "spd"), set: setNested(pokemon, "evs", "spd"), short: true },
 							"Speed EV", { value: nested(pokemon, "evs", "spe"), set: setNested(pokemon, "evs", "spe"), short: true }
-						)
+						),
+						pokeballEditSection(pokemon)
 					]
 				}
 			}
@@ -190,6 +199,42 @@ function evolutionText(basePoke, evoInfo) {
 		sprite(pokemon),
 		l("div", { style: { height: "2rem", lineHeight: "2rem" } }, formName(pokemon) + (info.method == "Normal" ? "" : " (" + info.method + ")"))
 	)
+}
+
+function pokeballEditSection(pokemon) {
+	var elements = stuff.data.pokeballs.map(b => ballElement(b, pokemon))
+	return l("div", {
+		style: { gridArea: "span 7", height: "13rem", margin: "0.5rem", justifySelf: "center" }
+	},
+		l("div", { style: { color: "#888", textAlign: "center" } }, "Balls"),
+		elements
+	)
+}
+
+function ballElement(ball, pokemon) {
+	ball = standardBallName(ball)
+	const index = pokemon.balls.findIndex(b => standardBallName(b) === ball)
+	const exists = index > -1
+	const icon = PkSpr.decorate({ slug: ball, type: "pokeball" })
+	return l("span", {
+		style: {
+			background: "url('static/pokesprite.png')",
+			backgroundPosition: "-" + icon.data.coords.x + "px -" + icon.data.coords.y + "px",
+			width: "32px",
+			height: "32px",
+			imageRendering: "pixelated",
+			display: "inline-block",
+			filter: exists ? "drop-shadow(0px 0px 2px white)" : "grayscale(1)"
+		},
+		onclick: () => {
+			if (exists)
+				pokemon.balls.splice(index, 1)
+			else
+				pokemon.balls.push(ball)
+				update()
+		},
+		title: ball + " ball"
+	})
 }
 
 function copyMove(move, method) {

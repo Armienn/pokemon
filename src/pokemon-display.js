@@ -181,13 +181,18 @@ export function weightHeightText(pokemon) {
 	return text
 }
 
+export function standardBallName(ball){
+	ball = ball.split(" ")[0].toLowerCase()
+	ball = ball.split("ball")[0].replace("é", "e")
+	return ball
+}
+
 export function ballSprites(pokemon) {
 	return l("span", ...pokemon.balls.map(e => ballSprite(e)))
 }
 
 export function ballSprite(ball) {
-	ball = ball.split(" ")[0].toLowerCase()
-	ball = ball.split("ball")[0].replace("é", "e")
+	ball = standardBallName(ball)
 
 	var icon = PkSpr.decorate({ slug: ball, type: "pokeball" })
 	return l("span", {
