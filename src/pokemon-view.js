@@ -3,6 +3,7 @@ import { SelectionView } from "../../archive/search/selection-view.js"
 import { shinyText, amountText, imageName, typesText, abilitiesText, eggGroupsText, genderText, weightHeightText, abilityText, typeText, moveText, ballSprites, sprite, formName, natureCssClass, statColor, defenseText } from "./pokemon-display.js"
 import { CollectionView } from "../../archive/search/collection-view.js"
 import { Styling } from "../../archive/search/styling.js"
+import { Pokemon } from "./pokemon-data.js";
 
 export class PokemonView {
 	constructor() {
@@ -16,8 +17,8 @@ export class PokemonView {
 					shinyText(pokemon),
 					amountText(pokemon),
 					pokemon.form && pokemon.form != "Base" ? " (" + pokemon.form + ") " : "",
-					pokemon.level ? l("span", { style: { fontSize: "1rem" } }, "- Lv." + pokemon.level) : "",
-					pokemon.language ? l("span", { style: { fontSize: "1rem" } }, "- " + pokemon.language) : ""
+					pokemon.level ? l("span", { style: { fontSize: "1rem" } }, " - Lv." + pokemon.level) : "",
+					pokemon.language ? l("span", { style: { fontSize: "1rem" } }, " - " + pokemon.language) : ""
 				],
 				colors: (pokemon) => pokemon.types.map(e => stuff.data.typeColors[e])
 			},
@@ -26,7 +27,7 @@ export class PokemonView {
 				l("img", {
 					style: { gridArea: "span 7", height: "13rem", margin: "0.5rem", justifySelf: "center" },
 					src: imageName(pokemon)
-				}),,
+				}), ,
 				...SelectionView.entries({ span: 7 }, ...mainInfoEntries(pokemon)),
 				...SelectionView.entries({ span: 7, columns: "auto min-content auto" },
 					"HP", new StatNumber(pokemon, "hp"), new StatBar(pokemon, "hp"),
@@ -43,7 +44,49 @@ export class PokemonView {
 				...SelectionView.entries({ span: 7 }, ...extraInfoEntries(pokemon))
 			],
 			lowerContent: (pokemon) => [l("header", { style: { background: "rgba(" + Styling.styling.tableColor + ",0.3)" } }, "Moves"), this.collectionView]
-		})
+		}, {
+				editable: (pokemon) => !!pokemon.base,
+				gridContent: (pokemon) => {
+					var poke = new Pokemon(pokemon)
+					return [
+						l("img", {
+							style: { gridArea: "span 7", height: "13rem", margin: "0.5rem", justifySelf: "center" },
+							src: imageName(pokemon)
+						}), ,
+						...SelectionView.editEntries(pokemon, { span: 7 },
+							"Form", { key: "form", options: poke.forms, restricted: true },
+							"Nickname", { key: "nickname" },
+							"Ability", { key: "ability", options: ["", ...poke.abilities.filter(e => e)], restricted: true },
+							"Nature", { key: "nature", options: Object.keys(stuff.data.natures) },
+							"Gender", { key: "gender", options: ["", "♂", "♀", "—"], restricted: true },
+							"Shiny", { key: "shiny", options: ["", "yes", "no"], restricted: true },
+							"Language", { key: "language" },
+							"Level", { key: "level", type: "number" },
+							"Move", { value: nested(pokemon, "learntMoves", "0"), set: setNested(pokemon, "learntMoves", "0") },
+							"Move", { value: nested(pokemon, "learntMoves", "1"), set: setNested(pokemon, "learntMoves", "1") },
+							"Move", { value: nested(pokemon, "learntMoves", "2"), set: setNested(pokemon, "learntMoves", "2") },
+							"Move", { value: nested(pokemon, "learntMoves", "3"), set: setNested(pokemon, "learntMoves", "3") },
+							"Item", { key: "item" },
+							"Count", { key: "count" },
+							"OT", { key: "ot", short: true },
+							"HP IV", { value: nested(pokemon, "ivs", "hp"), set: setNested(pokemon, "ivs", "hp"), short: true },
+							"Attack IV", { value: nested(pokemon, "ivs", "atk"), set: setNested(pokemon, "ivs", "atk"), short: true },
+							"Defense IV", { value: nested(pokemon, "ivs", "def"), set: setNested(pokemon, "ivs", "def"), short: true },
+							"Sp. Atk IV", { value: nested(pokemon, "ivs", "spa"), set: setNested(pokemon, "ivs", "spa"), short: true },
+							"Sp. Def IV", { value: nested(pokemon, "ivs", "spd"), set: setNested(pokemon, "ivs", "spd"), short: true },
+							"Speed IV", { value: nested(pokemon, "ivs", "spe"), set: setNested(pokemon, "ivs", "spe"), short: true },
+							"TID", { key: "tid", short: true },
+							"HP EV", { value: nested(pokemon, "evs", "hp"), set: setNested(pokemon, "evs", "hp"), short: true },
+							"Attack EV", { value: nested(pokemon, "evs", "atk"), set: setNested(pokemon, "evs", "atk"), short: true },
+							"Defense EV", { value: nested(pokemon, "evs", "def"), set: setNested(pokemon, "evs", "def"), short: true },
+							"Sp. Atk EV", { value: nested(pokemon, "evs", "spa"), set: setNested(pokemon, "evs", "spa"), short: true },
+							"Sp. Def EV", { value: nested(pokemon, "evs", "spd"), set: setNested(pokemon, "evs", "spd"), short: true },
+							"Speed EV", { value: nested(pokemon, "evs", "spe"), set: setNested(pokemon, "evs", "spe"), short: true }
+						)
+					]
+				}
+			}
+		)
 	}
 
 	withPokemon(pokemon) {
@@ -55,11 +98,23 @@ export class PokemonView {
 	}
 }
 
+function nested(model, field, innerField) {
+	return model[field] ? model[field][innerField] : ""
+}
+
+function setNested(model, field, innerField) {
+	return value => {
+		if (!model[field])
+			model[field] = {}
+		model[field][innerField] = value
+	}
+}
+
 function totalStats(pokemon) {
 	var sum = 0
 	for (var stat in pokemon.stats)
 		sum += pokemon.stats[stat]
-	return "" + sum
+	return sum
 }
 
 function typeEntries(pokemon) {
@@ -175,7 +230,7 @@ class StatNumber extends Component {
 		var blub = pokemon.stats[this.stat]
 		if (pokemon.ivs || pokemon.evs)
 			blub += " · " + ivText + " · " + evBase
-		return l("span" + (pokemon.nature ? natureCssClass(this.stat, pokemon) : ""), "" + blub)
+		return l("span" + (pokemon.nature ? natureCssClass(this.stat, pokemon) : ""), blub)
 	}
 
 	static styleThis() {
@@ -195,64 +250,6 @@ class StatBar extends Component {
 		super()
 		this.pokemon = pokemon
 		this.stat = stat
-	}
-
-	renderHasChanged() {
-		return false
-	}
-
-	renderThis() {
-		const pokemon = this.pokemon
-		var statBase = pokemon.stats[this.stat]
-		var ivText = pokemon.ivs ? pokemon.ivs[this.stat] : 0
-		if (!ivText && ivText != 0)
-			ivText = "x"
-		var evBase = pokemon.evs ? pokemon.evs[this.stat] : 0
-		if (!ivText && ivText != 0)
-			ivText = ""
-		var ivBase = ivText.toString().endsWith("*") ? 31 : ivText
-		ivBase = isNaN(+ivBase) ? ivBase.replace(/(^\d+)(.+$)/i, '$1') : +ivBase
-		var content = [l("div.stat-bar.base-bar", {
-			style: { width: statBase + "px", background: "linear-gradient(to right, red, " + statColor(statBase) + ")" }
-		})]
-		if (pokemon.ivs || pokemon.evs) {
-			content.push(l("div.stat-bar.iv-bar", { style: { width: ivBase / 2 + "px" } }))
-			content.push(l("div.stat-bar.ev-bar", { style: { width: evBase / 8 + "px" } }))
-		}
-		return l("div.container", ...content)
-	}
-
-	static styleThis() {
-		return {
-			".container": {
-				display: "flex"
-			},
-			".stat-bar": {
-				float: "left",
-				height: "1rem",
-				marginTop: "0.5rem"
-			},
-			".base-bar": {
-				backgroundColor: "#00ae00",
-				marginLeft: "0.5rem"
-			},
-			".iv-bar": {
-				backgroundColor: "yellow",
-				borderLeft: "1px solid black"
-			},
-			".ev-bar": {
-				backgroundColor: "orange",
-				borderLeft: "1px solid black"
-			}
-		}
-	}
-}
-
-class TypeEntry extends Component {
-	constructor(pokemon, type) {
-		super()
-		this.pokemon = pokemon
-		this.type = type
 	}
 
 	renderHasChanged() {
