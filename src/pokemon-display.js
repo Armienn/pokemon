@@ -1,4 +1,4 @@
-import { l } from "../../archive/arf/arf.js"
+import { l, Component } from "../../archive/arf/arf.js"
 
 export function formName(pokemon) {
 	switch (pokemon.form) {
@@ -125,21 +125,29 @@ export function moveText(move, eggMove) {
 	return l("span", eggMove ? { style: { fontStyle: "italic" } } : {}, move)
 }
 
-export function abilityText(ability, abilities, link) {
+export function movesText(pokemon) {
+	const elements = []
+	for (var move of pokemon.learntMoves)
+		elements.push(moveText(move, !!pokemon.moves.filter(m => m.method == "egg").find(m => m == move)), " · ")
+	elements.splice(elements.length - 1, 1)
+	return l("span", elements)
+}
+
+export function abilityText(ability, abilities) {
 	const abilityEntry = stuff.data.abilities[ability.split("(")[0].trim()]
 	return l("span", {
 		style: abilities[2] == ability ? { fontStyle: "italic" } : {},
 		title: abilityEntry ? abilityEntry.summary : ""
-	},
-		(link ? abilityLink(ability) : ability)
-	)
+	}, ability)
 }
 
-export function abilitiesText(pokemon, link) {
+export function abilitiesText(pokemon, showAbilityIfExists) {
+	if (showAbilityIfExists && pokemon.ability)
+		return l("span", abilityText(pokemon.ability, pokemon.abilities))
 	return l("span",
-		abilityText(pokemon.abilities[0], pokemon.abilities, link),
-		...(pokemon.abilities[1] ? [" · ", abilityText(pokemon.abilities[1], pokemon.abilities, link)] : []),
-		...(pokemon.abilities[2] ? [" · ", abilityText(pokemon.abilities[2], pokemon.abilities, link)] : [])
+		abilityText(pokemon.abilities[0], pokemon.abilities),
+		...(pokemon.abilities[1] ? [" · ", abilityText(pokemon.abilities[1], pokemon.abilities)] : []),
+		...(pokemon.abilities[2] ? [" · ", abilityText(pokemon.abilities[2], pokemon.abilities)] : [])
 	)
 }
 
@@ -181,7 +189,7 @@ export function weightHeightText(pokemon) {
 	return text
 }
 
-export function standardBallName(ball){
+export function standardBallName(ball) {
 	ball = ball.split(" ")[0].toLowerCase()
 	ball = ball.split("ball")[0].replace("é", "e")
 	return ball
@@ -224,15 +232,37 @@ export function shinyText(pokemon) {
 	return l("span", { style: { color: "#f11" } }, pokemon.shiny ? " ★ " : "")
 }
 
-export function IV(iv, pokemon) {
-	var cssClass = natureCssClass(iv, pokemon)
-	var iv = pokemon.ivs ? pokemon.ivs[iv] : undefined
-	if (iv == undefined)
-		iv = "x"
-	return "<span class='" + cssClass + "'>" + iv + "</span>"
+export class IVEVText extends Component {
+	constructor(stat, pokemon) {
+		super()
+		this.stat = stat
+		this.pokemon = pokemon
+	}
+
+	renderThis() {
+		return IVEV(this.stat, this.pokemon)
+	}
+
+	static styleThis(){
+		return {
+			".negative-nature": {
+				color: "#2ab9b9"
+			},
+			".positive-nature": {
+				color: "#d66"
+			}
+		}
+	}
 }
 
-export function EV(ev, pokemon) {
+export function IV(stat, pokemon) {
+	var iv = pokemon.ivs ? pokemon.ivs[stat] : undefined
+	if (iv == undefined)
+		iv = "x"
+	return l("span" + natureCssClass(stat, pokemon), iv)
+}
+
+export function EV(stat, pokemon) {
 	var hasEvs = false
 	for (var i in pokemon.evs) {
 		if (pokemon.evs[i] > 0) {
@@ -242,15 +272,15 @@ export function EV(ev, pokemon) {
 	}
 	if (!hasEvs)
 		return ""
-	var cssClass = natureCssClass(ev, pokemon)
-	var ev = pokemon.evs ? pokemon.evs[ev] : undefined
+	var ev = pokemon.evs ? pokemon.evs[stat] : undefined
 	if (ev == undefined)
 		ev = "—"
-	return " <span class='" + cssClass + "' style=\"font-size:0.7rem;display: block;\">" + ev + "</span>"
+	return l("span" + natureCssClass(stat, pokemon), { style: { fontSize: "0.7rem", display: "block" } }, ev)
 }
 
 export function IVEV(stat, pokemon) {
-	return " <span style=\"max-width: 2rem;display: inline-block;\">" + PokeText.IV(stat, pokemon) + PokeText.EV(stat, pokemon) + "</span>"
+	return l("span", { style: { maxWidth: "2rem", display: "inline-block" } },
+		IV(stat, pokemon), EV(stat, pokemon))
 }
 
 export function natureCssClass(stat, pokemon) {

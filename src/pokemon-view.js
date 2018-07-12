@@ -3,7 +3,7 @@ import { SelectionView } from "../../archive/search/selection-view.js"
 import { shinyText, amountText, imageName, typesText, abilitiesText, eggGroupsText, genderText, weightHeightText, abilityText, typeText, moveText, ballSprites, sprite, formName, natureCssClass, statColor, defenseText, standardBallName } from "./pokemon-display.js"
 import { CollectionView } from "../../archive/search/collection-view.js"
 import { Styling } from "../../archive/search/styling.js"
-import { Pokemon } from "./pokemon-data.js";
+import { Pokemon } from "./pokemon-data.js"
 
 export class PokemonView {
 	constructor() {

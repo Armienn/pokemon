@@ -6,7 +6,7 @@ import { ExportView } from "../../archive/search/export-view.js"
 import { ImportView } from "../../archive/search/import-view.js"
 import { PokemonData } from "./pokemon-data.js"
 import { State } from "./state.js"
-import { formName, sprite, typesText, abilitiesText, statText, eggGroupsText, typeText, learnMethodText } from "./pokemon-display.js"
+import { formName, sprite, typesText, abilitiesText, statText, eggGroupsText, typeText, learnMethodText, IVEVText, ballSprites, movesText } from "./pokemon-display.js"
 import { CollectionGroup } from "./local-collection.js"
 import { PokemonView } from "./pokemon-view.js"
 
@@ -23,6 +23,8 @@ window.onload = function () {
 
 function pokemonCollectionSetup() {
 	const setup = new CollectionSetup()
+	setup.allowAnythingFilter = false
+	setup.defaultFilter = "name"
 	setup.add("sprite", "Sprite", { value: p => sprite(p) }, false, "id")
 	setup.add("id", "ID")
 	setup.add("name", "Name")
@@ -43,11 +45,32 @@ function pokemonCollectionSetup() {
 	setup.gridSetup.compact = true
 	const view = new PokemonView()
 	setup.view = (pokemon, collection) => view.withPokemon(pokemon, collection)
-	return setup
+	var setupIndividual = new CollectionSetup()
+	setupIndividual.add("nickname", "Nickname")
+	setupIndividual.add("ability", "Ability", { value: p => abilitiesText(p, true) }, { options: Object.keys(stuff.data.abilities) })
+	setupIndividual.add("nature", "Nature", { options: Object.keys(stuff.data.natures) })
+	setupIndividual.copyFrom(setup)
+	setupIndividual.add("hpivev", "HP IV/EV", { value: p => new IVEVText("hp", p), data: p => p.ivs.hp })
+	setupIndividual.add("atkivev", "Atk IV/EV", { value: p => new IVEVText("atk", p), data: p => p.ivs.atk })
+	setupIndividual.add("defivev", "Def IV/EV", { value: p => new IVEVText("def", p), data: p => p.ivs.def })
+	setupIndividual.add("spaivev", "SpA IV/EV", { value: p => new IVEVText("spa", p), data: p => p.ivs.spa })
+	setupIndividual.add("spdivev", "SpD IV/EV", { value: p => new IVEVText("spd", p), data: p => p.ivs.spd })
+	setupIndividual.add("speivev", "Spe IV/EV", { value: p => new IVEVText("spe", p), data: p => p.ivs.spe })
+	setupIndividual.add("learntMoves", "Moves", { value: movesText })
+	setupIndividual.add("balls", "Balls", { value: ballSprites })
+	setupIndividual.add("count", "Count")
+	setupIndividual.showTableEntries(["sprite", "name+form", "types", "ability", "nature", "hpivev", "atkivev", "defivev", "spaivev", "spdivev", "speivev", "learntMoves", "balls"])
+	setupIndividual.showGridEntries(["sprite"])
+	const viewIndividual = new PokemonView()
+	viewIndividual.onSave = ()=>stuff.localCollectionGroup.saveToLocalStorage()
+	setupIndividual.view = (pokemon, collection) => viewIndividual.withPokemon(pokemon, collection)
+	return [setup, setupIndividual]
 }
 
 function movesCollectionSetup() {
 	const setup = new CollectionSetup()
+	setup.allowAnythingFilter = false
+	setup.defaultFilter = "name"
 	setup.add("name", "Name")
 	setup.add("type", "Type", { value: m => typeText(m.type) }, { options: stuff.data.typeNames, restricted: true })
 	setup.add("category", "Category", {}, { options: ["Physical", "Special", "Status"], restricted: true })
@@ -56,15 +79,13 @@ function movesCollectionSetup() {
 	setup.add("pp", "PP")
 	setup.add("priority", "Priority")
 	setup.add("target", "Target")
-	//setup.add("effects", "Effects")
 	setup.add("gameDescription", "Game Description")
 	setup.showTableEntries(["name", "type", "category", "power", "accuracy", "gameDescription"])
 	setup.showGridEntries(["name", "type", "category", "power", "accuracy"])
-	var setupPokemonMoves = new CollectionSetup(setup)
-	setup.add("method", "Learned By", { value: learnMethodText },
+	var setupPokemonMoves = new CollectionSetup()
+	setupPokemonMoves.add("method", "Learned By", { value: learnMethodText },
 		{ options: ["Level", "TM", "Egg", "Tutor"], specialQueries: { "level": (m) => m > 0 }, restricted: true })
-	setupPokemonMoves.tableSetup = { compact: false, entries: [] }
-	setupPokemonMoves.gridSetup = { compact: false, entries: [] }
+	setupPokemonMoves.copyFrom(setup)
 	setupPokemonMoves.showTableEntries(["method", "name", "type", "category", "power", "accuracy", "gameDescription"])
 	setupPokemonMoves.showGridEntries(["method", "name", "type", "category", "power", "accuracy"])
 	return [setup, setupPokemonMoves]
@@ -102,7 +123,7 @@ class PokemonStuff {
 			...this.collectionGroups.map(group => new NavGroup(group.title,
 				...Object.keys(group.tabs).map(title => {
 					return new NavEntry(title, () => {
-						this.site.setCollection(group.tabs[title], "pokemon")
+						this.site.setCollection(group.tabs[title], "pokemonIndividuals")
 						update()
 					}, () => this.site.sections.collection.collection == group.tabs[title])
 				})
@@ -110,7 +131,7 @@ class PokemonStuff {
 			new NavGroup(this.localCollectionGroup.title,
 				...Object.keys(this.localCollectionGroup.tabs).map(title => {
 					return new NavEntry(title, () => {
-						this.site.setCollection(this.localCollectionGroup.tabs[title], "pokemon")
+						this.site.setCollection(this.localCollectionGroup.tabs[title], "pokemonIndividuals")
 						update()
 					}, () => this.site.sections.collection.collection == this.localCollectionGroup.tabs[title])
 				})
@@ -208,7 +229,9 @@ class PokemonStuff {
 		var moveSetups = movesCollectionSetup()
 		site.addCollectionSetup("moves", moveSetups[0])
 		site.addCollectionSetup("pokemonMoves", moveSetups[1])
-		site.addCollectionSetup("pokemon", pokemonCollectionSetup())
+		var pokemonSetups = pokemonCollectionSetup()
+		site.addCollectionSetup("pokemon", pokemonSetups[0])
+		site.addCollectionSetup("pokemonIndividuals", pokemonSetups[1])
 		this.site.setCollection(this.data.pokemons, "pokemon")
 		this.localCollectionGroup.loadFromLocalStorage()
 		/*if (this.state.externalInventory.load) {
