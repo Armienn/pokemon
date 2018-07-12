@@ -9,6 +9,7 @@ import { State } from "./state.js"
 import { formName, sprite, typesText, abilitiesText, statText, eggGroupsText, typeText, learnMethodText, IVEVText, ballSprites, movesText } from "./pokemon-display.js"
 import { CollectionGroup } from "./local-collection.js"
 import { PokemonView } from "./pokemon-view.js"
+import { getSpreadsheetUrl } from "./spreadsheet-parser.js"
 
 window.onload = function () {
 	var site = new SearchSite()
@@ -62,7 +63,7 @@ function pokemonCollectionSetup() {
 	setupIndividual.showTableEntries(["sprite", "name+form", "types", "ability", "nature", "hpivev", "atkivev", "defivev", "spaivev", "spdivev", "speivev", "learntMoves", "balls"])
 	setupIndividual.showGridEntries(["sprite"])
 	const viewIndividual = new PokemonView()
-	viewIndividual.onSave = ()=>stuff.localCollectionGroup.saveToLocalStorage()
+	viewIndividual.onSave = () => stuff.localCollectionGroup.saveToLocalStorage()
 	setupIndividual.view = (pokemon, collection) => viewIndividual.withPokemon(pokemon, collection)
 	return [setup, setupIndividual]
 }
@@ -123,9 +124,9 @@ class PokemonStuff {
 			...this.collectionGroups.map(group => new NavGroup(group.title,
 				...Object.keys(group.tabs).map(title => {
 					return new NavEntry(title, () => {
-						this.site.setCollection(group.tabs[title], "pokemonIndividuals")
+						this.site.setCollection(group.tabs[title].pokemons, "pokemonIndividuals")
 						update()
-					}, () => this.site.sections.collection.collection == group.tabs[title])
+					}, () => this.site.sections.collection.collection == group.tabs[title].pokemons)
 				})
 			)),
 			new NavGroup(this.localCollectionGroup.title,
@@ -142,7 +143,7 @@ class PokemonStuff {
 				}),
 				new NavEntry("Import", () => {
 					this.site.show(new ImportView(this.site, (collection) => {
-						this.localCollectionGroup.addTab("Imported", collection.map(e=>new Pokemon(e)))
+						this.localCollectionGroup.addTab("Imported", collection.map(e => new Pokemon(e)))
 						this.site.setCollection(this.localCollectionGroup.tabs["Imported"].pokemons, "pokemonIndividuals")
 						this.site.clearSelection()
 						this.localCollectionGroup.saveToLocalStorage()
@@ -195,21 +196,36 @@ class PokemonStuff {
 	loadCollectionData() {
 		if (!window.location.search)
 			return
-		var argument = window.location.search.substring(1)
-		this.state.externalInventory.load = true
-		/*var args = argument.split(":")
-		for (var i in this.optionsSection.importMethods)
-			if (i.toLowerCase() == args[0].toLowerCase()) {
-				request("https://" + args[1], (response) => {
-					this.state.script = { type: args[0].toLowerCase(), content: response }
+		const args = this.parseLocationSearch()
+		//this.state.externalInventory.load = true
+		for (let i in this.site.importMethods)
+			if (i.toLowerCase() == args.type.toLowerCase()) {
+				request("https://" + args.path, (response) => {
+					this.loadData = () => {
+						return {
+							title: args.tab,
+							collection: this.site.importMethods[i](response).map(e => new Pokemon(e))
+						}
+					}
 					this.tryLoad()
 				})
 				return
-			}*/
-		/*requestJSON(this.spreadsheetParser.getSpreadsheetUrl(argument), (response) => {
+			}
+		requestJSON(getSpreadsheetUrl(argument), (response) => {
 			this.state.spreadsheet = { id: argument, spreadsheet: response }
 			this.tryLoad()
-		})*/
+		})
+	}
+
+	parseLocationSearch() {
+		const args = window.location.search.substring(1).split(":")
+		if (args.length == 1)
+			return { type: "sheet", path: args[0] }
+		if (args.length == 2)
+			return { type: args[0], path: args[1] }
+		if (args.length == 3)
+			return { type: args[1], path: args[2], tab: args[0] }
+		return {}
 	}
 
 	tryLoad() {
@@ -225,11 +241,15 @@ class PokemonStuff {
 		site.addCollectionSetup("pokemonIndividuals", pokemonSetups[1])
 		this.site.setCollection(this.data.pokemons, "pokemon")
 		this.localCollectionGroup.loadFromLocalStorage()
-		/*if (this.state.externalInventory.load) {
-			this.headerSection.showLocal = false
+		if (this.loadData) {
+			const loaded = this.loadData()
+			this.collectionGroups.push(new CollectionGroup("Loaded"))
+			this.collectionGroups[0].addTab(loaded.title, loaded.collection)
+		}
+		if (this.state.externalInventory.load) {
 			if (this.state.script)
 				for (var i in this.optionsSection.importMethods) {
-					if (i.toLowerCase() == this.state.script.type){
+					if (i.toLowerCase() == this.state.script.type) {
 						this.loadScript((content) => this.optionsSection.importMethods[i].method(content))
 						break
 					}
@@ -238,7 +258,7 @@ class PokemonStuff {
 				this.loadSpreadsheet()
 			if (!this.state.externalInventory.isLoaded)
 				return
-		}*/
+		}
 		this.state.loaded = true
 		/*this.headerSection.setup()
 		this.collection.loadLocalTabs()

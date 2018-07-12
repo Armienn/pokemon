@@ -127,7 +127,7 @@ export function moveText(move, eggMove) {
 
 export function movesText(pokemon) {
 	const elements = []
-	for (var move of pokemon.learntMoves)
+	for (var move of (pokemon.learntMoves || []))
 		elements.push(moveText(move, !!pokemon.moves.filter(m => m.method == "egg").find(m => m == move)), " · ")
 	elements.splice(elements.length - 1, 1)
 	return l("span", elements)
@@ -196,7 +196,7 @@ export function standardBallName(ball) {
 }
 
 export function ballSprites(pokemon) {
-	return l("span", ...pokemon.balls.map(e => ballSprite(e)))
+	return l("span", ...(pokemon.balls || []).map(e => ballSprite(e)))
 }
 
 export function ballSprite(ball) {
@@ -243,7 +243,7 @@ export class IVEVText extends Component {
 		return IVEV(this.stat, this.pokemon)
 	}
 
-	static styleThis(){
+	static styleThis() {
 		return {
 			".negative-nature": {
 				color: "#2ab9b9"

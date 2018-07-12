@@ -119,6 +119,7 @@ export class PokemonView {
 		if (this.view.model != pokemon) {
 			this.view.model = pokemon
 			this.collection = collection
+			this.view.editing = false
 			this.collectionView.collection = pokemon.moves.map(m => copyMove(stuff.data.moves[m.name], m.method))
 		}
 		return this.view
