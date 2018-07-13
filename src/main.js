@@ -6,7 +6,7 @@ import { ExportView } from "../../archive/search/export-view.js"
 import { ImportView } from "../../archive/search/import-view.js"
 import { PokemonData, Pokemon } from "./pokemon-data.js"
 import { State } from "./state.js"
-import { formName, sprite, typesText, abilitiesText, statText, eggGroupsText, typeText, learnMethodText, IVEVText, ballSprites, movesText } from "./pokemon-display.js"
+import { formName, sprite, typesText, abilitiesText, statText, eggGroupsText, typeText, learnMethodText, IVEVText, ballSprites, movesText, extendedName } from "./pokemon-display.js"
 import { CollectionGroup } from "./local-collection.js"
 import { PokemonView } from "./pokemon-view.js"
 import { getSpreadsheetUrl, loadSheetsFrom } from "./spreadsheet-parser.js"
@@ -30,7 +30,7 @@ function pokemonCollectionSetup() {
 	setup.add("id", "ID")
 	setup.add("name", "Name")
 	setup.add("form", "Form", {}, { options: ["Base", "Alola", "Mega"] })
-	setup.add("name+form", "Name & Form", { value: formName }, false, "name")
+	setup.add("name+form", "Pokémon", { value: formName }, false, "name")
 	setup.add("types", "Types", { value: typesText }, { options: stuff.data.typeNames, restricted: true })
 	setup.add("abilities", "Abilities", { value: abilitiesText }, { options: Object.keys(stuff.data.abilities) })
 	setup.add("hp", "HP", { value: p => statText(p.stats.hp), data: p => p.stats.hp })
@@ -47,10 +47,11 @@ function pokemonCollectionSetup() {
 	const view = new PokemonView()
 	setup.view = (pokemon, collection) => view.withPokemon(pokemon, collection)
 	var setupIndividual = new CollectionSetup()
+	setupIndividual.add("name+form", "Pokémon", { value: extendedName }, false, "name")
 	setupIndividual.add("nickname", "Nickname")
 	setupIndividual.add("ability", "Ability", { value: p => abilitiesText(p, true) }, { options: Object.keys(stuff.data.abilities) })
 	setupIndividual.add("nature", "Nature", { options: Object.keys(stuff.data.natures) })
-	setupIndividual.copyFrom(setup)
+	setupIndividual.copyFrom(setup, "name+form")
 	setupIndividual.add("hpivev", "HP IV/EV", { value: p => new IVEVText("hp", p), data: p => p.ivs.hp })
 	setupIndividual.add("atkivev", "Atk IV/EV", { value: p => new IVEVText("atk", p), data: p => p.ivs.atk })
 	setupIndividual.add("defivev", "Def IV/EV", { value: p => new IVEVText("def", p), data: p => p.ivs.def })
@@ -112,7 +113,10 @@ class PokemonStuff {
 
 	navThing() {
 		return [
-			...this.collectionGroups.map(group => new NavGroup(group.title,
+			...this.collectionGroups.map((group, index) => new NavGroup(group.title,
+				...(index == 0 ? [
+					this.collectorInfo.FriendCode ? new NavEntry(this.collectorInfo.FriendCode, () => { }) : undefined
+				] : []),
 				...Object.keys(group.tabs).map(title => {
 					return new NavEntry(title, () => {
 						this.site.setCollection(group.tabs[title].pokemons, "pokemonIndividuals")

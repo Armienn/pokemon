@@ -55,11 +55,17 @@ function addNewTab(title, index) {
 	const titleParts = title.split(":")
 	let group = stuff.collectionGroups[0]
 	if (titleParts.length > 1)
-		group = group //TODO
-
+		group = groupFor(titleParts[0])
 	const tab = group.addTab(titleParts[1] || titleParts[0], [])
 	stuff.state.externalInventory.tabsLoaded[index] = false
 	requestJSON(getWorksheetUrl(stuff.collectorInfo.spreadsheetId, (+index) + 1), parseSheet(tab, index))
+}
+
+function groupFor(title) {
+	let group = stuff.collectionGroups.find(e => title === e.title)
+	if (!group)
+		stuff.collectionGroups.push(group = new CollectionGroup(title))
+	return group
 }
 
 function parseSheet(tab, index) {

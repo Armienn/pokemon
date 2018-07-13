@@ -13,6 +13,16 @@ export function formName(pokemon) {
 	}
 }
 
+export function extendedName(pokemon) {
+	return l("span",
+		formName(pokemon), " ",
+		pokemon.gender && pokemon.gender != "—" ? genderText(pokemon) : "", " ",
+		amountText(pokemon), " ",
+		shinyText(pokemon), " ",
+		pokemon.nickname ? " [" + pokemon.nickname + "]" : ""
+	)
+}
+
 export function sprite(pokemon) {
 	var name = pokemon.name.toLowerCase().replace(" ", "-").replace("♀", "-f").replace("♂", "-m").replace("'", "").replace(".", "").replace("ébé", "ebe").replace(":", "")
 	const form = (pokemon.form || "").toLowerCase()
