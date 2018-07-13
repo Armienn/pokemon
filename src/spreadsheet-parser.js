@@ -1,9 +1,16 @@
-export function parse(spreadsheet) {
-	stuff.collection.spreadsheetId = spreadsheet.id
-	stuff.collection.collectorName = "Unknown"
+import { CollectionGroup } from "./local-collection.js"
+import { objectsFromTable } from "../../archive/search/porting.js"
+import { Pokemon } from "./pokemon-data.js"
+import { requestJSON } from "./main.js"
+import { pokemonFromUnsanitised } from "./porting.js";
+
+export function loadSheetsFrom(spreadsheet) {
+	stuff.collectorInfo.spreadsheetId = spreadsheet.id
+	stuff.collectorInfo.Name = "Unknown"
+	stuff.collectionGroups.push(new CollectionGroup("Unknown"))
 	for (var i in spreadsheet.spreadsheet.feed.entry) {
 		var entry = spreadsheet.spreadsheet.feed.entry[i]
-		var title = this.getValue(entry.title).trim()
+		var title = getValue(entry.title).trim()
 		if (title.toLowerCase().indexOf("[hide]") > -1 ||
 			title.toLowerCase().indexOf("item") > -1 ||
 			title.toLowerCase().indexOf("template") > -1 ||
@@ -14,13 +21,14 @@ export function parse(spreadsheet) {
 		) {
 			if (i == "0") {
 				stuff.state.externalInventory.tabsLoaded["config"] = false
-				requestJSON(this.getWorksheetUrl(spreadsheet.id, 1), (r) => { this.parseConfig(r) })
+				requestJSON(getWorksheetUrl(spreadsheet.id, 1), (r) => { parseConfig(r) })
 			}
 			continue
 		}
-		this.addNewTab(title, i)
+		addNewTab(title, i)
 	}
-	this.updateExternalInventoryLoadedness()
+	updateExternalInventoryLoadedness()
+	return true
 }
 
 function getWorksheetUrl(spreadsheetId, worksheetId) {
@@ -44,22 +52,23 @@ function tryValues(values, entry) {
 }
 
 function addNewTab(title, index) {
-	var tab
-	if (title.toLowerCase().startsWith("lf") || title.toLowerCase().startsWith("looking for"))
-		tab = stuff.collection.addLookingForTab(title, [], (+index) + 1)
-	else
-		tab = stuff.collection.addTab(title, [], (+index) + 1)
-	stuff.state.externalInventory.tabsLoaded[tab.id] = false
-	requestJSON(this.getWorksheetUrl(stuff.collection.spreadsheetId, tab.id), this.parseSheet(tab))
+	const titleParts = title.split(":")
+	let group = stuff.collectionGroups[0]
+	if (titleParts.length > 1)
+		group = group //TODO
+
+	const tab = group.addTab(titleParts[1] || titleParts[0], [])
+	stuff.state.externalInventory.tabsLoaded[index] = false
+	requestJSON(getWorksheetUrl(stuff.collectorInfo.spreadsheetId, (+index) + 1), parseSheet(tab, index))
 }
 
-function parseSheet(tab) {
+function parseSheet(tab, index) {
 	return (response) => {
-		var table = this.tablify(response.feed.entry)
-		tab.pokemons = Porting.parseTable(table)
-		stuff.state.externalInventory.tabsLoaded[tab.id] = true
-		this.updateExternalInventoryLoadedness()
-		stuff.tryLoad()
+		var table = tablify(response.feed.entry)
+		tab.pokemons = objectsFromTable(table).map(e => pokemonFromUnsanitised(e))
+		stuff.state.externalInventory.tabsLoaded[index] = true
+		updateExternalInventoryLoadedness()
+		stuff.tryLoadAgain()
 	}
 }
 
@@ -93,16 +102,17 @@ function updateExternalInventoryLoadedness() {
 
 function parseConfig(response) {
 	var entry = response.feed.entry[0]
-	stuff.collection.collectorName = this.tryValues(["ingamename"], entry)
-	stuff.collection.collectorFriendCode = this.tryValues(["friendcode"], entry)
-	stuff.collection.collectorUrl = this.tryValues(["contacturl"], entry)
-	var showBreedables = this.tryValues(["showbreedables"], entry)
-	stuff.settings.showBreedables = !!showBreedables && showBreedables.toLowerCase().trim() !== "no" && showBreedables.toLowerCase().trim() !== "false"
-	var colorScheme = this.tryValues(["colorscheme"], entry)
+	stuff.collectorInfo.Name = tryValues(["ingamename"], entry) || "Unknown"
+	stuff.collectionGroups[0].title = stuff.collectorInfo.Name
+	stuff.collectorInfo.FriendCode = tryValues(["friendcode"], entry)
+	stuff.collectorInfo.Url = tryValues(["contacturl"], entry)
+	var showBreedables = tryValues(["showbreedables"], entry)
+	stuff.collectorInfo.showBreedables = !!showBreedables && showBreedables.toLowerCase().trim() !== "no" && showBreedables.toLowerCase().trim() !== "false"
+	/*var colorScheme = tryValues(["colorscheme"], entry)
 	if (colorScheme)
 		colorScheme = colorScheme.toLowerCase()
 	if (colorScheme == "custom") {
-		stuff.settings.colorScheme = colorScheme
+		stuff.collectorInfo.colorScheme = colorScheme
 		stuff.headerSection.navGroups.colours.custom = {
 			text: "●",
 			click: () => { stuff.settings.colorScheme = "custom"; stuff.updateColors() },
@@ -111,12 +121,13 @@ function parseConfig(response) {
 		}
 	}
 	if ((colorScheme == "night" || colorScheme == "day") && !(localStorage && localStorage.colorScheme))
-		stuff.settings.colorScheme = colorScheme
-	stuff.settings.colorSchemes.custom[0] = this.tryValues(["custombackgroundcolor", "backgroundcolor"], entry)
-	stuff.settings.colorSchemes.custom[1] = this.tryValues(["customtextcolor", "textcolor"], entry)
-	stuff.settings.colorSchemes.custom[2] = this.tryValues(["customheadercolor", "headercolor"], entry)
+		stuff.collectorInfo.colorScheme = colorScheme
+	stuff.collectorInfo.colorSchemes.custom[0] = tryValues(["custombackgroundcolor", "backgroundcolor"], entry)
+	stuff.collectorInfo.colorSchemes.custom[1] = tryValues(["customtextcolor", "textcolor"], entry)
+	stuff.collectorInfo.colorSchemes.custom[2] = tryValues(["customheadercolor", "headercolor"], entry)
+	*/
 	stuff.state.externalInventory.tabsLoaded["config"] = true
-	this.updateExternalInventoryLoadedness()
-	stuff.tryLoad()
+	updateExternalInventoryLoadedness()
+	stuff.tryLoadAgain()
 }
 

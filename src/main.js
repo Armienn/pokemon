@@ -9,14 +9,14 @@ import { State } from "./state.js"
 import { formName, sprite, typesText, abilitiesText, statText, eggGroupsText, typeText, learnMethodText, IVEVText, ballSprites, movesText } from "./pokemon-display.js"
 import { CollectionGroup } from "./local-collection.js"
 import { PokemonView } from "./pokemon-view.js"
-import { getSpreadsheetUrl } from "./spreadsheet-parser.js"
+import { getSpreadsheetUrl, loadSheetsFrom } from "./spreadsheet-parser.js"
 
 window.onload = function () {
 	var site = new SearchSite()
 	window.site = site
 	var stuff = new PokemonStuff(site)
 	window.stuff = stuff
-	site.header = "Stuff"
+	site.header = "Pokémon Stuff"
 	site.sections.navigation.navigationEntries = () => stuff.navThing()
 	setRenderFunction(() => site.render())
 	update()
@@ -105,12 +105,21 @@ class PokemonStuff {
 		this.data = new PokemonData()
 		this.state = new State()
 		this.localCollectionGroup = new CollectionGroup("Local")
+		this.collectorInfo = {}
 		this.collectionGroups = []
 		this.load()
 	}
 
 	navThing() {
 		return [
+			...this.collectionGroups.map(group => new NavGroup(group.title,
+				...Object.keys(group.tabs).map(title => {
+					return new NavEntry(title, () => {
+						this.site.setCollection(group.tabs[title].pokemons, "pokemonIndividuals")
+						update()
+					}, () => this.site.sections.collection.collection == group.tabs[title].pokemons)
+				})
+			)),
 			new NavGroup("Game data",
 				new NavEntry("Pokémon", () => {
 					this.site.setCollection(this.data.pokemons, "pokemon")
@@ -121,14 +130,6 @@ class PokemonStuff {
 					update()
 				}, () => this.site.sections.collection.collection == this.data.movesList)
 			),
-			...this.collectionGroups.map(group => new NavGroup(group.title,
-				...Object.keys(group.tabs).map(title => {
-					return new NavEntry(title, () => {
-						this.site.setCollection(group.tabs[title].pokemons, "pokemonIndividuals")
-						update()
-					}, () => this.site.sections.collection.collection == group.tabs[title].pokemons)
-				})
-			)),
 			new NavGroup(this.localCollectionGroup.title,
 				...Object.keys(this.localCollectionGroup.tabs).map(title => {
 					return new NavEntry(title, () => {
@@ -197,24 +198,20 @@ class PokemonStuff {
 		if (!window.location.search)
 			return
 		const args = this.parseLocationSearch()
-		//this.state.externalInventory.load = true
+		this.state.externalInventory.load = true
 		for (let i in this.site.importMethods)
 			if (i.toLowerCase() == args.type.toLowerCase()) {
 				request("https://" + args.path, (response) => {
-					this.loadData = () => {
-						return {
-							title: args.tab,
-							collection: this.site.importMethods[i](response).map(e => new Pokemon(e))
-						}
-					}
+					this.loadData = () => this.loadFromImport(args.tab, this.site.importMethods[i](response).map(e => new Pokemon(e)))
 					this.tryLoad()
 				})
 				return
 			}
-		requestJSON(getSpreadsheetUrl(argument), (response) => {
-			this.state.spreadsheet = { id: argument, spreadsheet: response }
-			this.tryLoad()
-		})
+		if (args.type === "sheet")
+			requestJSON(getSpreadsheetUrl(args.path), (response) => {
+				this.loadData = () => loadSheetsFrom({ id: args.path, spreadsheet: response })
+				this.tryLoad()
+			})
 	}
 
 	parseLocationSearch() {
@@ -228,10 +225,15 @@ class PokemonStuff {
 		return {}
 	}
 
+	loadFromImport(title, collection) {
+		this.collectionGroups.push(new CollectionGroup("Loaded"))
+		this.collectionGroups[0].addTab(title, collection)
+		//TODO: select the tab
+	}
+
 	tryLoad() {
 		if (!this.state.thingsAreLoaded)
 			return
-		//dfs
 		this.data.movesList = Object.keys(this.data.moves).map(key => this.data.moves[key])
 		var moveSetups = movesCollectionSetup()
 		site.addCollectionSetup("moves", moveSetups[0])
@@ -241,32 +243,31 @@ class PokemonStuff {
 		site.addCollectionSetup("pokemonIndividuals", pokemonSetups[1])
 		this.site.setCollection(this.data.pokemons, "pokemon")
 		this.localCollectionGroup.loadFromLocalStorage()
-		if (this.loadData) {
-			const loaded = this.loadData()
-			this.collectionGroups.push(new CollectionGroup("Loaded"))
-			this.collectionGroups[0].addTab(loaded.title, loaded.collection)
-		}
-		if (this.state.externalInventory.load) {
-			if (this.state.script)
-				for (var i in this.optionsSection.importMethods) {
-					if (i.toLowerCase() == this.state.script.type) {
-						this.loadScript((content) => this.optionsSection.importMethods[i].method(content))
-						break
-					}
-				}
-			else if (this.state.spreadsheet)
-				this.loadSpreadsheet()
-			if (!this.state.externalInventory.isLoaded)
-				return
-		}
 		this.state.loaded = true
-		/*this.headerSection.setup()
-		this.collection.loadLocalTabs()
-		this.settings.loadLocalScript()*/
+		if (this.loadData) {
+			//try {
+			this.state.loaded = !this.loadData()
+			//}
+			//catch (e) {
+			/*document.getElementById("loading").innerHTML = "Failed to load external collection: " + e.message
+			document.getElementById("loading").onclick = () => {
+				this.state.externalInventory.load = false
+				this.tryLoad()
+			}
+			return*/
+			//}
+		}
 		update()
 		/*if (!this.collection.pokemons.length && this.state.destination)
 			this.selectPokemonBasedOn(this.state.destination)
 		setInterval(() => { this.listSection.loadMoreWhenScrolledDown() }, 500)*/
+	}
+
+	tryLoadAgain() {
+		if (!this.state.thingsAreLoaded)
+			return
+		this.state.loaded = true
+		update()
 	}
 
 	selectPokemonBasedOn(destination) {
@@ -279,36 +280,10 @@ class PokemonStuff {
 			}
 		}
 	}
-
-	loadScript(parser) {
-		var pokemons
-		try {
-			pokemons = parser(this.state.script.content)
-		}
-		catch (e) {
-			document.getElementById("loading").innerHTML = "Failed to load external collection: " + e.message
-			document.getElementById("loading").onclick = () => {
-				this.state.externalInventory.load = false
-				this.tryLoad()
-			}
-			return
-		}
-		this.state.script = undefined
-		this.state.externalInventory.isLoaded = true
-		if (!pokemons)
-			return
-		var tab = this.collection.addTab("Pokémon list", pokemons)
-		this.selectTab(tab)
-	}
-
-	loadSpreadsheet() {
-		this.spreadsheetParser.parse(this.state.spreadsheet)
-		this.state.spreadsheet = undefined
-	}
 }
 
 
-function requestJSON(url, callback) {
+export function requestJSON(url, callback) {
 	request(url, function (response) {
 		callback(JSON.parse(response))
 	})
