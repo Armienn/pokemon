@@ -10,6 +10,24 @@ export class CollectionGroup {
 		return this.tabs[title] = { pokemons: pokemons || [] }
 	}
 
+	groupings() {
+		const groupings = { "Collection": {} }
+		for (var key in this.tabs) {
+			const parts = key.split(":")
+			if (parts.length > 1) {
+				if (!groupings[parts[0]])
+					groupings[parts[0]] = {}
+				groupings[parts[0]][parts[1]] = this.tabs[key]
+			}
+			else {
+				groupings["Collection"][parts[0]] = this.tabs[key]
+			}
+		}
+		if (!Object.keys(groupings.Collection).length)
+			delete groupings.Collection
+		return groupings
+	}
+
 	saveToLocalStorage() {
 		var tabs = {}
 		for (var i in this.tabs) {

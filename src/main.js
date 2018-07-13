@@ -109,15 +109,18 @@ class PokemonStuff {
 		this.state = new State()
 		this.localCollectionGroup = new CollectionGroup("Local")
 		this.collectorInfo = {}
-		this.collectionGroups = []
-		this.load()
+		this.externalCollectionGroup = new CollectionGroup("Loaded")
+		this.location = { tab: "game-pokemon", type: "", path: "" }
+		this.loadBaseData()
+		this.loadCollectionData()
 	}
 
 	navThing() {
 		const setup = {}
-		if (this.collectionGroups.length) {
+		if (Object.keys(this.externalCollectionGroup.tabs).length) {
+			const groupings = this.externalCollectionGroup.groupings()
 			const section = {}
-			setup[this.collectorInfo.name || "Unknown"] = section
+			setup[this.collectorInfo.name || this.externalCollectionGroup.title] = section
 			section[""] = {}
 			if (this.collectorInfo.friendCode)
 				section[""][this.collectorInfo.friendCode] = {}
@@ -125,15 +128,18 @@ class PokemonStuff {
 				section[""]["Spreadsheet"] = { action: "https://docs.google.com/spreadsheets/d/" + this.collectorInfo.spreadsheetId }
 			if (this.collectorInfo.url)
 				section[""]["Link"] = { action: this.collectorInfo.url }
-			for (let group of this.collectionGroups) {
-				section[group.title] = {}
-				for (let key in group.tabs) {
-					section[group.title][key] = {
+			for (let groupTitle in groupings) {
+				section[groupTitle] = {}
+				for (let key in groupings[groupTitle]) {
+					section[groupTitle][key] = {
 						action: () => {
-							this.site.setCollection(group.tabs[key].pokemons, "pokemonIndividuals")
+							this.site.setCollection(groupings[groupTitle][key].pokemons, "pokemonIndividuals")
+							for (var title in this.externalCollectionGroup.tabs)
+								if (this.externalCollectionGroup.tabs[title] == groupings[groupTitle][key])
+									this.setLocation(title)
 							update()
 						},
-						selected: this.site.sections.collection.collection == group.tabs[key].pokemons
+						selected: this.site.sections.collection.collection == groupings[groupTitle][key].pokemons
 					}
 				}
 			}
@@ -143,6 +149,7 @@ class PokemonStuff {
 		setup["Game Data"][""]["Pokémon"] = {
 			action: () => {
 				this.site.setCollection(this.data.pokemons, "pokemon")
+				this.setLocation("game-pokemon")
 				update()
 			},
 			selected: this.site.sections.collection.collection == this.data.pokemons
@@ -150,6 +157,7 @@ class PokemonStuff {
 		setup["Game Data"][""]["Moves"] = {
 			action: () => {
 				this.site.setCollection(this.data.movesList, "moves")
+				this.setLocation("game-moves")
 				update()
 			},
 			selected: this.site.sections.collection.collection == this.data.movesList
@@ -193,12 +201,6 @@ class PokemonStuff {
 		update()
 	}
 
-	load() {
-		this.loadBaseData()
-		this.loadCollectionData()
-		//this.settings.load()
-	}
-
 	loadBaseData() {
 		this.loadJSONData("pokemons")
 		this.loadJSONData("moves")
@@ -226,38 +228,50 @@ class PokemonStuff {
 	loadCollectionData() {
 		if (!window.location.search)
 			return
-		const args = this.parseLocationSearch()
+		this.parseLocation()
 		this.state.externalInventory.load = true
 		for (let i in this.site.importMethods)
-			if (i.toLowerCase() == args.type.toLowerCase()) {
-				request("https://" + args.path, (response) => {
-					this.loadData = () => this.loadFromImport(args.tab, this.site.importMethods[i](response).map(e => new Pokemon(e)))
+			if (i.toLowerCase() == this.location.type.toLowerCase()) {
+				request("https://" + this.location.path, (response) => {
+					this.loadData = () => this.loadFromImport(this.location.tab, this.site.importMethods[i](response).map(e => new Pokemon(e)))
 					this.tryLoad()
 				})
 				return
 			}
-		if (args.type === "sheet")
-			requestJSON(getSpreadsheetUrl(args.path), (response) => {
-				this.loadData = () => loadSheetsFrom({ id: args.path, spreadsheet: response })
+		if (this.location.type === "sheet")
+			requestJSON(getSpreadsheetUrl(this.location.path), (response) => {
+				this.loadData = () => loadSheetsFrom({ id: this.location.path, spreadsheet: response })
 				this.tryLoad()
 			})
 	}
 
-	parseLocationSearch() {
+	parseLocation() {
 		const args = window.location.search.substring(1).split(":")
-		if (args.length == 1)
-			return { type: "sheet", path: args[0] }
-		if (args.length == 2)
-			return { type: args[0], path: args[1] }
-		if (args.length == 3)
-			return { type: args[1], path: args[2], tab: args[0] }
-		return {}
+		if (args.length == 1) {
+			this.location.tab = ""
+			this.location.type = "sheet"
+			this.location.path = args[0]
+		}
+		else if (args.length == 2) {
+			this.location.tab = ""
+			this.location.type = args[0]
+			this.location.path = args[1]
+		}
+		else if (args.length == 3) {
+			this.location.tab = args[0]
+			this.location.type = args[1]
+			this.location.path = args[2]
+		}
+	}
+
+	setLocation(tab) {
+		this.location.tab = tab
+		history.replaceState({}, "", "?" + tab.toLowerCase().replace(/[: ]/g, "") + ":" + this.location.type + ":" + this.location.path)
 	}
 
 	loadFromImport(title, collection) {
-		this.collectionGroups.push(new CollectionGroup("Loaded"))
-		this.collectionGroups[0].addTab(title, collection)
-		//TODO: select the tab
+		const tab = this.externalCollectionGroup.addTab(title, collection)
+		this.site.setCollection(tab, "pokemonIndividuals")
 	}
 
 	tryLoad() {
@@ -286,35 +300,36 @@ class PokemonStuff {
 			return*/
 			//}
 		}
+		if (!this.state.loaded)
+			return
+		this.selectCollectionFrom(this.location.tab)
 		update()
-		/*if (!this.collection.pokemons.length && this.state.destination)
-			this.selectPokemonBasedOn(this.state.destination)
-		setInterval(() => { this.listSection.loadMoreWhenScrolledDown() }, 500)*/
+		//setInterval(() => { this.listSection.loadMoreWhenScrolledDown() }, 500)
 	}
 
 	tryLoadAgain() {
 		if (!this.state.thingsAreLoaded)
 			return
 		this.state.loaded = true
-		if (Object.keys(this.collectionGroups[0].tabs).length == 0)
-			this.collectionGroups.splice(0, 1)
-		if (this.collectionGroups[0]) {
-			var tab = this.collectionGroups[0].tabs[Object.keys(this.collectionGroups[0].tabs)[0]]
-			if (tab)
-				this.site.setCollection(tab.pokemons, "pokemonIndividuals")
-		}
+		var tab = this.externalCollectionGroup.tabs[Object.keys(this.externalCollectionGroup.tabs)[0]]
+		if (this.location)
+			this.selectCollectionFrom(this.location.tab, tab)
+		else if (tab)
+			this.site.setCollection(tab.pokemons, "pokemonIndividuals")
 		update()
 	}
 
-	selectPokemonBasedOn(destination) {
-		for (var n in this.data.pokemons) {
-			var pokemon = this.data.pokemons[n]
-			var name = pokemon.name.toLowerCase().replace(" ", "-").replace("♀", "-f").replace("♂", "-m").replace("'", "").replace(".", "").replace("ébé", "ebe").replace(":", "")
-			if (pokemon.id == destination || name == destination.toLowerCase()) {
-				this.selectPokemon(pokemon)
-				return
-			}
-		}
+	selectCollectionFrom(destination, defaultTab) {
+		if (destination === "game-pokemon")
+			return this.site.setCollection(this.data.pokemons, "pokemon")
+		if (destination === "game-moves")
+			return this.site.setCollection(this.data.movesList, "moves")
+		destination = destination.toLowerCase().replace(/[: ]/g, "")
+		for (var key in this.externalCollectionGroup.tabs)
+			if (key.toLowerCase().replace(/[: ]/g, "") === destination)
+				return this.site.setCollection(this.externalCollectionGroup.tabs[key].pokemons, "pokemonIndividuals")
+		if (defaultTab)
+			this.site.setCollection(defaultTab.pokemons, "pokemonIndividuals")
 	}
 }
 

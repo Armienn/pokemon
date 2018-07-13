@@ -6,7 +6,6 @@ import { pokemonFromUnsanitised } from "./porting.js"
 export function loadSheetsFrom(spreadsheet) {
 	stuff.collectorInfo.spreadsheetId = spreadsheet.id
 	stuff.collectorInfo.Name = "Unknown"
-	stuff.collectionGroups.push(new CollectionGroup("Collection"))
 	for (var i in spreadsheet.spreadsheet.feed.entry) {
 		var entry = spreadsheet.spreadsheet.feed.entry[i]
 		var title = getValue(entry.title).trim()
@@ -51,20 +50,9 @@ function tryValues(values, entry) {
 }
 
 function addNewTab(title, index) {
-	const titleParts = title.split(":")
-	let group = stuff.collectionGroups[0]
-	if (titleParts.length > 1)
-		group = groupFor(titleParts[0])
-	const tab = group.addTab(titleParts[1] || titleParts[0], [])
+	const tab = stuff.externalCollectionGroup.addTab(title, [])
 	stuff.state.externalInventory.tabsLoaded[index] = false
 	requestJSON(getWorksheetUrl(stuff.collectorInfo.spreadsheetId, (+index) + 1), parseSheet(tab, index))
-}
-
-function groupFor(title) {
-	let group = stuff.collectionGroups.find(e => title === e.title)
-	if (!group)
-		stuff.collectionGroups.push(group = new CollectionGroup(title))
-	return group
 }
 
 function parseSheet(tab, index) {
