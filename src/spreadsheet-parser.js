@@ -1,13 +1,12 @@
 import { CollectionGroup } from "./local-collection.js"
 import { objectsFromTable } from "../../archive/search/porting.js"
-import { Pokemon } from "./pokemon-data.js"
 import { requestJSON } from "./main.js"
-import { pokemonFromUnsanitised } from "./porting.js";
+import { pokemonFromUnsanitised } from "./porting.js"
 
 export function loadSheetsFrom(spreadsheet) {
 	stuff.collectorInfo.spreadsheetId = spreadsheet.id
 	stuff.collectorInfo.Name = "Unknown"
-	stuff.collectionGroups.push(new CollectionGroup("Unknown"))
+	stuff.collectionGroups.push(new CollectionGroup("Collection"))
 	for (var i in spreadsheet.spreadsheet.feed.entry) {
 		var entry = spreadsheet.spreadsheet.feed.entry[i]
 		var title = getValue(entry.title).trim()
@@ -108,10 +107,9 @@ function updateExternalInventoryLoadedness() {
 
 function parseConfig(response) {
 	var entry = response.feed.entry[0]
-	stuff.collectorInfo.Name = tryValues(["ingamename"], entry) || "Unknown"
-	stuff.collectionGroups[0].title = stuff.collectorInfo.Name
-	stuff.collectorInfo.FriendCode = tryValues(["friendcode"], entry)
-	stuff.collectorInfo.Url = tryValues(["contacturl"], entry)
+	stuff.collectorInfo.name = tryValues(["ingamename"], entry) || "Unknown"
+	stuff.collectorInfo.friendCode = tryValues(["friendcode"], entry)
+	stuff.collectorInfo.url = tryValues(["contacturl"], entry)
 	var showBreedables = tryValues(["showbreedables"], entry)
 	stuff.collectorInfo.showBreedables = !!showBreedables && showBreedables.toLowerCase().trim() !== "no" && showBreedables.toLowerCase().trim() !== "false"
 	/*var colorScheme = tryValues(["colorscheme"], entry)

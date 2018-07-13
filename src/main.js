@@ -17,7 +17,9 @@ window.onload = function () {
 	var stuff = new PokemonStuff(site)
 	window.stuff = stuff
 	site.header = "Pokémon Stuff"
-	site.sections.navigation.navigationEntries = () => stuff.navThing()
+	site.sections.header.url = "https://armienn.github.com/pokemon"
+	//site.sections.navigation.navigationEntries = () => stuff.navThing()
+	site.sections.navigation.navigationSetup = () => stuff.navThing()
 	setRenderFunction(() => site.render())
 	update()
 }
@@ -112,51 +114,74 @@ class PokemonStuff {
 	}
 
 	navThing() {
-		return [
-			...this.collectionGroups.map((group, index) => new NavGroup(group.title,
-				...(index == 0 ? [
-					this.collectorInfo.FriendCode ? new NavEntry(this.collectorInfo.FriendCode, () => { }) : undefined
-				] : []),
-				...Object.keys(group.tabs).map(title => {
-					return new NavEntry(title, () => {
-						this.site.setCollection(group.tabs[title].pokemons, "pokemonIndividuals")
-						update()
-					}, () => this.site.sections.collection.collection == group.tabs[title].pokemons)
-				})
-			)),
-			new NavGroup("Game data",
-				new NavEntry("Pokémon", () => {
-					this.site.setCollection(this.data.pokemons, "pokemon")
+		const setup = {}
+		if (this.collectionGroups.length) {
+			const section = {}
+			setup[this.collectorInfo.name || "Unknown"] = section
+			section[""] = {}
+			if (this.collectorInfo.friendCode)
+				section[""][this.collectorInfo.friendCode] = {}
+			if (this.collectorInfo.spreadsheetId)
+				section[""]["Spreadsheet"] = { action: "https://docs.google.com/spreadsheets/d/" + this.collectorInfo.spreadsheetId }
+			if (this.collectorInfo.url)
+				section[""]["Link"] = { action: this.collectorInfo.url }
+			for (let group of this.collectionGroups) {
+				section[group.title] = {}
+				for (let key in group.tabs) {
+					section[group.title][key] = {
+						action: () => {
+							this.site.setCollection(group.tabs[key].pokemons, "pokemonIndividuals")
+							update()
+						},
+						selected: this.site.sections.collection.collection == group.tabs[key].pokemons
+					}
+				}
+			}
+		}
+		setup["Game Data"] = {}
+		setup["Game Data"][""] = {}
+		setup["Game Data"][""]["Pokémon"] = {
+			action: () => {
+				this.site.setCollection(this.data.pokemons, "pokemon")
+				update()
+			},
+			selected: this.site.sections.collection.collection == this.data.pokemons
+		}
+		setup["Game Data"][""]["Moves"] = {
+			action: () => {
+				this.site.setCollection(this.data.movesList, "moves")
+				update()
+			},
+			selected: this.site.sections.collection.collection == this.data.movesList
+		}
+		setup["Game Data"]["Local"] = {}
+		for (let key in this.localCollectionGroup.tabs) {
+			setup["Game Data"]["Local"][key] = {
+				action: () => {
+					this.site.setCollection(this.localCollectionGroup.tabs[key].pokemons, "pokemonIndividuals")
 					update()
-				}, () => this.site.sections.collection.collection == this.data.pokemons),
-				new NavEntry("Moves", () => {
-					this.site.setCollection(this.data.movesList, "moves")
+				},
+				selected: this.site.sections.collection.collection == this.localCollectionGroup.tabs[key].pokemons
+			}
+		}
+		setup["Game Data"]["Options"] = {}
+		setup["Game Data"]["Options"]["Import"] = {
+			action: () => {
+				this.site.show(new ImportView(this.site, (collection) => {
+					this.localCollectionGroup.addTab("Imported", collection.map(e => new Pokemon(e)))
+					this.site.setCollection(this.localCollectionGroup.tabs["Imported"].pokemons, "pokemonIndividuals")
+					this.site.clearSelection()
+					this.localCollectionGroup.saveToLocalStorage()
 					update()
-				}, () => this.site.sections.collection.collection == this.data.movesList)
-			),
-			new NavGroup(this.localCollectionGroup.title,
-				...Object.keys(this.localCollectionGroup.tabs).map(title => {
-					return new NavEntry(title, () => {
-						this.site.setCollection(this.localCollectionGroup.tabs[title].pokemons, "pokemonIndividuals")
-						update()
-					}, () => this.site.sections.collection.collection == this.localCollectionGroup.tabs[title].pokemons)
-				})
-			),
-			new NavGroup("Actions",
-				new NavEntry("Export", () => {
-					this.site.show(new ExportView(this.site))
-				}),
-				new NavEntry("Import", () => {
-					this.site.show(new ImportView(this.site, (collection) => {
-						this.localCollectionGroup.addTab("Imported", collection.map(e => new Pokemon(e)))
-						this.site.setCollection(this.localCollectionGroup.tabs["Imported"].pokemons, "pokemonIndividuals")
-						this.site.clearSelection()
-						this.localCollectionGroup.saveToLocalStorage()
-						update()
-					}))
-				})
-			)
-		].filter(e => e)
+				}))
+			}
+		}
+		setup["Game Data"]["Options"]["Export"] = {
+			action: () => {
+				this.site.show(new ExportView(this.site))
+			}
+		}
+		return setup
 	}
 
 	insertImported() {
@@ -271,6 +296,13 @@ class PokemonStuff {
 		if (!this.state.thingsAreLoaded)
 			return
 		this.state.loaded = true
+		if (Object.keys(this.collectionGroups[0].tabs).length == 0)
+			this.collectionGroups.splice(0, 1)
+		if (this.collectionGroups[0]) {
+			var tab = this.collectionGroups[0].tabs[Object.keys(this.collectionGroups[0].tabs)[0]]
+			if (tab)
+				this.site.setCollection(tab.pokemons, "pokemonIndividuals")
+		}
 		update()
 	}
 
