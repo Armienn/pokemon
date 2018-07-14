@@ -203,7 +203,17 @@ class PokemonStuff {
 		}
 		setup["Game Data"]["Options"]["Export"] = {
 			action: () => {
-				this.site.show(new ExportView(this.site))
+				this.site.show(new ExportView(this.site, (collection, type) => {
+					if (type == "raw")
+						return collection.map(e => {
+							const model = {}
+							for (var key in e)
+								model[key] = e[key]
+							delete model.base
+							return model
+						})
+					return collection
+				}))
 			}
 		}
 		setup["Game Data"]["Options"]["Add Collection"] = {
@@ -273,23 +283,19 @@ class PokemonStuff {
 					))
 				}
 			}
-			if (this.selectedLocal.title !== "Imported" && this.localCollectionGroup.tabs.find(e => e == "Imported"))
+			if (this.selectedLocal.title !== "Imported" && this.localCollectionGroup.tabs.find(e => e.title == "Imported"))
 				setup["Game Data"][this.selectedLocal.title]["Copy from Imported"] = {
 					action: () => {
-						this.site.show(new ExportView(this.site))
+						const imported = this.localCollectionGroup.tabs.find(e => e.title == "Imported")
+						this.selectedLocal.pokemons.push(...imported.pokemons)
+						this.localCollectionGroup.remove(imported)
+						this.site.engine.changed(true)
+						this.localCollectionGroup.saveToLocalStorage()
+						update()
 					}
 				}
 		}
 		return setup
-	}
-
-	insertImported() {
-		var index = this.collections.findIndex(e => e.title == "Imported")
-		this.currentSetup.collection.push(...this.collections[index].collection)
-		this.collections.splice(index, 1)
-		this.site.engine.updateFilteredCollection()
-		this.save()
-		update()
 	}
 
 	loadBaseData() {
