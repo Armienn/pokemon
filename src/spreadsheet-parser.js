@@ -58,7 +58,7 @@ function addNewTab(title, index) {
 function parseSheet(tab, index) {
 	return (response) => {
 		var table = tablify(response.feed.entry)
-		tab.pokemons = objectsFromTable(table).map(e => pokemonFromUnsanitised(e))
+		tab.pokemons = objectsFromTable(table).map(e => pokemonFromUnsanitised(e)).filter(e => e)
 		stuff.state.externalInventory.tabsLoaded[index] = true
 		updateExternalInventoryLoadedness()
 		stuff.tryLoadAgain()

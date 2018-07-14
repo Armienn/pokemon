@@ -3,24 +3,30 @@ import { Pokemon } from "./pokemon-data.js"
 export class CollectionGroup {
 	constructor(title) {
 		this.title = title
-		this.tabs = {}
+		this.tabs = []
 	}
 
 	addTab(title, pokemons) {
-		return this.tabs[title] = { pokemons: pokemons || [] }
+		const tab = { pokemons: pokemons || [], title: title }
+		this.tabs.push(tab)
+		return tab
+	}
+
+	remove(tab) {
+		this.tabs.splice(this.tabs.indexOf(tab), 1)
 	}
 
 	groupings() {
 		const groupings = { "Collection": {} }
-		for (var key in this.tabs) {
-			const parts = key.split(":")
+		for (var tab of this.tabs) {
+			const parts = tab.title.split(":")
 			if (parts.length > 1) {
 				if (!groupings[parts[0]])
 					groupings[parts[0]] = {}
-				groupings[parts[0]][parts[1]] = this.tabs[key]
+				groupings[parts[0]][parts[1]] = tab
 			}
 			else {
-				groupings["Collection"][parts[0]] = this.tabs[key]
+				groupings["Collection"][parts[0]] = tab
 			}
 		}
 		if (!Object.keys(groupings.Collection).length)
@@ -31,7 +37,7 @@ export class CollectionGroup {
 	saveToLocalStorage() {
 		var tabs = {}
 		for (var i in this.tabs) {
-			tabs[i] = { title: i, pokemons: [] }
+			tabs[i] = { title: this.tabs[i].title, pokemons: [] }
 			var pokemons = this.tabs[i].pokemons
 			for (var n in pokemons) {
 				var pokemon = pokemons[n]
@@ -48,6 +54,7 @@ export class CollectionGroup {
 		if (!(localStorage && localStorage.tabs))
 			return
 		var tabs = JSON.parse(localStorage.tabs)
+		this.tabs = []
 		for (var i in tabs) {
 			for (var n in tabs[i].pokemons)
 				tabs[i].pokemons[n] = new Pokemon(tabs[i].pokemons[n])

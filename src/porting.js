@@ -27,8 +27,9 @@ export function parseSmogonPokemon(input) {
 
 function find(object, keys) {
 	for (var key of keys)
-		if (key in object)
-			return typeof object[key] === "string" ? object[key].trim() : object[key]
+		for (var k in object)
+			if (key == k.toLowerCase())
+				return typeof object[k] === "string" ? object[k].trim() : object[k]
 }
 
 function findExisting(value, possibilities) {
@@ -89,14 +90,16 @@ export function pokemonFromUnsanitised(object) {
 	pokemon.evs.spe = find(object, ["speev", "speedev", "evspeed", "evspe"]) || pokemon.evs.spe || "x"
 	pokemon.hiddenPower = find(object, ["hiddenpower", "hidden"])
 	pokemon.learntMoves = []
-	var moves = find(object, ["moves", "eggmoves"])
-	if (moves) {
+	var moves = find(object, ["moves", "learntmoves", "eggmoves"])
+	if (typeof moves === "string") {
 		var split = moves.split(", ")
 		if (split.length < 2)
 			split = moves.split("/")
 		moves = split
 		pokemon.learntMoves = moves.map(e => e.trim()).filter(e => e)
 	}
+	else if (moves)
+		pokemon.learntMoves = moves.map(e => e.trim()).filter(e => e)
 	if (!pokemon.learntMoves.length) {
 		pokemon.learntMoves = [
 			find(object, ["move1", "eggmove1", "moveslot1"]),
@@ -136,7 +139,7 @@ export function pokemonFromUnsanitised(object) {
 	pokemon.notes = find(object, ["notes", "note", "comments", "comment"])
 	pokemon.balls = []
 	var balls = find(object, ["pokeball", "ball", "pokeballs", "balls"])
-	if (balls) {
+	if (typeof balls === "string") {
 		var split = balls.split(",")
 		if (split.length < 2)
 			split = balls.split("[](/")
@@ -145,6 +148,8 @@ export function pokemonFromUnsanitised(object) {
 		balls = split
 		pokemon.balls = balls.map(e => e.trim()).filter(e => e)
 	}
+	else if (balls)
+		pokemon.balls = balls.map(e => e.trim()).filter(e => e)
 	if (pokemon.balls.length == 0) {
 		for (var i in stuff.data.pokeballs) {
 			var ball = find(object, [stuff.data.pokeballs[i].toLowerCase()])

@@ -10,6 +10,8 @@ import { formName, sprite, typesText, abilitiesText, statText, eggGroupsText, ty
 import { CollectionGroup } from "./local-collection.js"
 import { PokemonView } from "./pokemon-view.js"
 import { getSpreadsheetUrl, loadSheetsFrom } from "./spreadsheet-parser.js"
+import { CollectionEditor } from "./collection-editor.js";
+import { pokemonFromUnsanitised } from "./porting.js";
 
 window.onload = function () {
 	var site = new SearchSite()
@@ -32,7 +34,7 @@ function pokemonCollectionSetup() {
 	setup.add("id", "ID")
 	setup.add("name", "Name")
 	setup.add("form", "Form", {}, { options: ["Base", "Alola", "Mega"] })
-	setup.add("name+form", "Pokémon", { value: formName }, false, "name")
+	setup.add("name+form", "Pokémon", { value: formName, data: p => p.name + (p.form == "Base" ? "" : " (" + p.form + ")") }, false, "name")
 	setup.add("types", "Types", { value: typesText }, { options: stuff.data.typeNames, restricted: true })
 	setup.add("abilities", "Abilities", { value: abilitiesText }, { options: Object.keys(stuff.data.abilities) })
 	setup.add("hp", "HP", { value: p => statText(p.stats.hp), data: p => p.stats.hp })
@@ -49,19 +51,26 @@ function pokemonCollectionSetup() {
 	const view = new PokemonView()
 	setup.view = (pokemon, collection) => view.withPokemon(pokemon, collection)
 	var setupIndividual = new CollectionSetup()
-	setupIndividual.add("name+form", "Pokémon", { value: extendedName }, false, "name")
+	setupIndividual.add("name+form", "Pokémon", { value: extendedName, data: p => p.name + (p.form == "Base" ? "" : " (" + p.form + ")") }, false, "name")
 	setupIndividual.add("nickname", "Nickname")
 	setupIndividual.add("ability", "Ability", { value: p => abilitiesText(p, true) }, { options: Object.keys(stuff.data.abilities) })
 	setupIndividual.add("nature", "Nature", { options: Object.keys(stuff.data.natures) })
-	setupIndividual.copyFrom(setup, "name+form")
-	setupIndividual.add("hpivev", "HP IV/EV", { value: p => new IVEVText("hp", p), data: p => p.ivs.hp })
-	setupIndividual.add("atkivev", "Atk IV/EV", { value: p => new IVEVText("atk", p), data: p => p.ivs.atk })
-	setupIndividual.add("defivev", "Def IV/EV", { value: p => new IVEVText("def", p), data: p => p.ivs.def })
-	setupIndividual.add("spaivev", "SpA IV/EV", { value: p => new IVEVText("spa", p), data: p => p.ivs.spa })
-	setupIndividual.add("spdivev", "SpD IV/EV", { value: p => new IVEVText("spd", p), data: p => p.ivs.spd })
-	setupIndividual.add("speivev", "Spe IV/EV", { value: p => new IVEVText("spe", p), data: p => p.ivs.spe })
+	setupIndividual.copyFrom(setup, "name+form", "hp", "atk", "def", "spa", "spd", "spe")
+	setupIndividual.add("hpivev", "HP", { value: p => new IVEVText("hp", p), data: p => p.ivs.hp })
+	setupIndividual.add("atkivev", "Atk", { value: p => new IVEVText("atk", p), data: p => p.ivs.atk })
+	setupIndividual.add("defivev", "Def", { value: p => new IVEVText("def", p), data: p => p.ivs.def })
+	setupIndividual.add("spaivev", "SpA", { value: p => new IVEVText("spa", p), data: p => p.ivs.spa })
+	setupIndividual.add("spdivev", "SpD", { value: p => new IVEVText("spd", p), data: p => p.ivs.spd })
+	setupIndividual.add("speivev", "Spe", { value: p => new IVEVText("spe", p), data: p => p.ivs.spe })
+	setupIndividual.add("hp", "HP Base", { value: p => statText(p.stats.hp), data: p => p.stats.hp })
+	setupIndividual.add("atk", "Atk Base", { value: p => statText(p.stats.atk), data: p => p.stats.atk })
+	setupIndividual.add("def", "Def Base", { value: p => statText(p.stats.def), data: p => p.stats.def })
+	setupIndividual.add("spa", "SpA Base", { value: p => statText(p.stats.spa), data: p => p.stats.spa })
+	setupIndividual.add("spd", "SpD Base", { value: p => statText(p.stats.spd), data: p => p.stats.spd })
+	setupIndividual.add("spe", "Spe Base", { value: p => statText(p.stats.spe), data: p => p.stats.spe })
 	setupIndividual.add("learntMoves", "Moves", { value: movesText })
 	setupIndividual.add("balls", "Balls", { value: ballSprites })
+	setupIndividual.add("shiny", "Shiny")
 	setupIndividual.add("count", "Count")
 	setupIndividual.showTableEntries(["sprite", "name+form", "types", "ability", "nature", "hpivev", "atkivev", "defivev", "spaivev", "spdivev", "speivev", "learntMoves", "balls"])
 	setupIndividual.showGridEntries(["sprite"])
@@ -111,6 +120,7 @@ class PokemonStuff {
 		this.collectorInfo = {}
 		this.externalCollectionGroup = new CollectionGroup("Loaded")
 		this.location = { tab: "game-pokemon", type: "", path: "" }
+		this.selectedLocal
 		this.loadBaseData()
 		this.loadCollectionData()
 	}
@@ -131,15 +141,16 @@ class PokemonStuff {
 			for (let groupTitle in groupings) {
 				section[groupTitle] = {}
 				for (let key in groupings[groupTitle]) {
+					const tab = groupings[groupTitle][key]
 					section[groupTitle][key] = {
 						action: () => {
-							this.site.setCollection(groupings[groupTitle][key].pokemons, "pokemonIndividuals")
-							for (var title in this.externalCollectionGroup.tabs)
-								if (this.externalCollectionGroup.tabs[title] == groupings[groupTitle][key])
-									this.setLocation(title)
+							this.site.setCollection(tab.pokemons, "pokemonIndividuals")
+							this.selectedLocal = undefined
+							if (this.externalCollectionGroup.tabs.find(e => e == tab))
+								this.setLocation(tab.title)
 							update()
 						},
-						selected: this.site.sections.collection.collection == groupings[groupTitle][key].pokemons
+						selected: this.site.sections.collection.collection == tab.pokemons
 					}
 				}
 			}
@@ -149,6 +160,7 @@ class PokemonStuff {
 		setup["Game Data"][""]["Pokémon"] = {
 			action: () => {
 				this.site.setCollection(this.data.pokemons, "pokemon")
+				this.selectedLocal = undefined
 				this.setLocation("game-pokemon")
 				update()
 			},
@@ -157,27 +169,32 @@ class PokemonStuff {
 		setup["Game Data"][""]["Moves"] = {
 			action: () => {
 				this.site.setCollection(this.data.movesList, "moves")
+				this.selectedLocal = undefined
 				this.setLocation("game-moves")
 				update()
 			},
 			selected: this.site.sections.collection.collection == this.data.movesList
 		}
 		setup["Game Data"]["Local"] = {}
-		for (let key in this.localCollectionGroup.tabs) {
-			setup["Game Data"]["Local"][key] = {
+		for (let tab of this.localCollectionGroup.tabs) {
+			setup["Game Data"]["Local"][tab.title] = {
 				action: () => {
-					this.site.setCollection(this.localCollectionGroup.tabs[key].pokemons, "pokemonIndividuals")
+					this.selectedLocal = tab
+					this.site.setCollection(tab.pokemons, "pokemonIndividuals")
 					update()
 				},
-				selected: this.site.sections.collection.collection == this.localCollectionGroup.tabs[key].pokemons
+				selected: this.site.sections.collection.collection == tab.pokemons
 			}
 		}
 		setup["Game Data"]["Options"] = {}
 		setup["Game Data"]["Options"]["Import"] = {
 			action: () => {
-				this.site.show(new ImportView(this.site, (collection) => {
-					this.localCollectionGroup.addTab("Imported", collection.map(e => new Pokemon(e)))
-					this.site.setCollection(this.localCollectionGroup.tabs["Imported"].pokemons, "pokemonIndividuals")
+				this.site.show(new ImportView(this.site, (collection, type) => {
+					let parsedCollection = collection.map(e => type === "JSON" ? new Pokemon(e) : pokemonFromUnsanitised(e)).filter(e => e)
+					if (collection.length == 0)
+						parsedCollection = collection.map(e => pokemonFromUnsanitised(e)).filter(e => e)
+					const tab = this.localCollectionGroup.addTab("Imported", parsedCollection)
+					this.site.setCollection(tab.pokemons, "pokemonIndividuals")
 					this.site.clearSelection()
 					this.localCollectionGroup.saveToLocalStorage()
 					update()
@@ -188,6 +205,64 @@ class PokemonStuff {
 			action: () => {
 				this.site.show(new ExportView(this.site))
 			}
+		}
+		setup["Game Data"]["Options"]["Add Collection"] = {
+			action: () => {
+				this.site.show(new CollectionEditor("New Collection",
+					(title) => {
+						const tab = this.localCollectionGroup.addTab(title, [])
+						this.site.setCollection(tab.pokemons, "pokemonIndividuals")
+						this.site.clearSelection()
+						this.localCollectionGroup.saveToLocalStorage()
+						update()
+					},
+					() => {
+						this.site.clearSelection()
+						update()
+					},
+					() => {
+						this.site.clearSelection()
+						update()
+					}
+				))
+			}
+		}
+		if (this.selectedLocal) {
+			setup["Game Data"][this.selectedLocal.title] = {}
+			setup["Game Data"][this.selectedLocal.title]["Add Pokémon"] = {
+				action: () => {
+					this.site.show(new ExportView(this.site))
+				}
+			}
+			setup["Game Data"][this.selectedLocal.title]["Edit collection"] = {
+				action: () => {
+					const tab = this.selectedLocal
+					this.site.show(new CollectionEditor(tab.title,
+						(title) => {
+							tab.title = title
+							this.site.clearSelection()
+							this.localCollectionGroup.saveToLocalStorage()
+							update()
+						},
+						() => {
+							this.site.clearSelection()
+							update()
+						},
+						() => {
+							this.site.clearSelection()
+							this.localCollectionGroup.remove(tab)
+							this.localCollectionGroup.saveToLocalStorage()
+							update()
+						}
+					))
+				}
+			}
+			if (this.selectedLocal.title !== "Imported" && this.localCollectionGroup.tabs.find(e => e == "Imported"))
+				setup["Game Data"][this.selectedLocal.title]["Copy from Imported"] = {
+					action: () => {
+						this.site.show(new ExportView(this.site))
+					}
+				}
 		}
 		return setup
 	}
@@ -234,6 +309,7 @@ class PokemonStuff {
 			if (i.toLowerCase() == this.location.type.toLowerCase()) {
 				request("https://" + this.location.path, (response) => {
 					this.loadData = () => this.loadFromImport(this.location.tab, this.site.importMethods[i](response).map(e => new Pokemon(e)))
+					stuff.state.externalInventory.load = false
 					this.tryLoad()
 				})
 				return
@@ -241,6 +317,7 @@ class PokemonStuff {
 		if (this.location.type === "sheet")
 			requestJSON(getSpreadsheetUrl(this.location.path), (response) => {
 				this.loadData = () => loadSheetsFrom({ id: this.location.path, spreadsheet: response })
+				stuff.state.externalInventory.load = false
 				this.tryLoad()
 			})
 	}
@@ -308,7 +385,7 @@ class PokemonStuff {
 	}
 
 	tryLoadAgain() {
-		if (!this.state.thingsAreLoaded)
+		if (!this.state.externalThingsAreLoaded)
 			return
 		this.state.loaded = true
 		var tab = this.externalCollectionGroup.tabs[Object.keys(this.externalCollectionGroup.tabs)[0]]
@@ -325,9 +402,9 @@ class PokemonStuff {
 		if (destination === "game-moves")
 			return this.site.setCollection(this.data.movesList, "moves")
 		destination = destination.toLowerCase().replace(/[: ]/g, "")
-		for (var key in this.externalCollectionGroup.tabs)
-			if (key.toLowerCase().replace(/[: ]/g, "") === destination)
-				return this.site.setCollection(this.externalCollectionGroup.tabs[key].pokemons, "pokemonIndividuals")
+		for (var tab of this.externalCollectionGroup.tabs)
+			if (tab.title.toLowerCase().replace(/[: ]/g, "") === destination)
+				return this.site.setCollection(tab.pokemons, "pokemonIndividuals")
 		if (defaultTab)
 			this.site.setCollection(defaultTab.pokemons, "pokemonIndividuals")
 	}
