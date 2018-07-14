@@ -133,11 +133,9 @@ class PokemonStuff {
 			setup[this.collectorInfo.name || this.externalCollectionGroup.title] = section
 			section[""] = {}
 			if (this.collectorInfo.friendCode)
-				section[""][this.collectorInfo.friendCode] = {}
+				section[""][this.collectorInfo.friendCode] = this.collectorInfo.url ? { action: this.collectorInfo.url } : {}
 			if (this.collectorInfo.spreadsheetId)
 				section[""]["Spreadsheet"] = { action: "https://docs.google.com/spreadsheets/d/" + this.collectorInfo.spreadsheetId }
-			if (this.collectorInfo.url)
-				section[""]["Link"] = { action: this.collectorInfo.url }
 			for (let groupTitle in groupings) {
 				section[groupTitle] = {}
 				for (let key in groupings[groupTitle]) {
@@ -175,7 +173,8 @@ class PokemonStuff {
 			},
 			selected: this.site.sections.collection.collection == this.data.movesList
 		}
-		setup["Game Data"]["Local"] = {}
+		if (this.localCollectionGroup.tabs.length)
+			setup["Game Data"]["Local"] = {}
 		for (let tab of this.localCollectionGroup.tabs) {
 			setup["Game Data"]["Local"][tab.title] = {
 				action: () => {

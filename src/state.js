@@ -25,9 +25,9 @@ export class State {
 		return true
 	}
 
-	get externalThingsAreLoaded(){
+	get externalThingsAreLoaded() {
 		for (var tab of this.externalInventory.tabsLoaded)
-			if (!tab)
+			if (tab === false)
 				return false
 		return true
 	}
