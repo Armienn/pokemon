@@ -45,6 +45,7 @@ function pokemonCollectionSetup() {
 	setup.add("spe", "Spe", { value: p => statText(p.stats.spe), data: p => p.stats.spe })
 	setup.add("total", "Total", { value: p => sumStats(p) + "" })
 	setup.add("eggGroups", "Egg Groups", { value: eggGroupsText }, { options: stuff.data.eggGroups, restricted: true })
+	setup.addScriptFilter("return model.stats.atk > 150 || model.stats.spa > 150")
 	setup.showTableEntries(["sprite", "name+form", "types", "abilities", "hp", "atk", "def", "spa", "spd", "spe", "total", "eggGroups"])
 	setup.showGridEntries(["sprite"])
 	setup.gridSetup.compact = true
@@ -72,6 +73,8 @@ function pokemonCollectionSetup() {
 	setupIndividual.add("balls", "Balls", { value: ballSprites })
 	setupIndividual.add("shiny", "Shiny")
 	setupIndividual.add("count", "Count")
+	delete setupIndividual.filterModel["_script_"]
+	setupIndividual.addScriptFilter("return model.stats.atk > 150 || model.stats.spa > 150")
 	setupIndividual.showTableEntries(["sprite", "name+form", "types", "ability", "nature", "hpivev", "atkivev", "defivev", "spaivev", "spdivev", "speivev", "learntMoves", "balls"])
 	setupIndividual.showGridEntries(["sprite"])
 	const viewIndividual = new PokemonView()
@@ -91,8 +94,9 @@ function movesCollectionSetup() {
 	setup.add("accuracy", "Accuracy")
 	setup.add("pp", "PP")
 	setup.add("priority", "Priority")
-	setup.add("target", "Target")
-	setup.add("gameDescription", "Game Description")
+	setup.add("target", "Target", {}, {}, false)
+	setup.add("gameDescription", "Game Description", {}, {}, false)
+	setup.addScriptFilter("return model.power >= 100 || model.accuracy == 100")
 	setup.showTableEntries(["name", "type", "category", "power", "accuracy", "gameDescription"])
 	setup.showGridEntries(["name", "type", "category", "power", "accuracy"])
 	var setupPokemonMoves = new CollectionSetup()
