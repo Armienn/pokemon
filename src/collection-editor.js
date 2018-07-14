@@ -13,7 +13,7 @@ export class CollectionEditor extends Component {
 	renderThis() {
 		return l("div",
 			l("div",
-				l("span", { style: { color: "#888" } }, "Title |"),
+				l("span", { style: { color: "#888", height: "2rem", lineHeight: "2rem" } }, "Title |"),
 				l("input", {
 					placeholder: "Collection title",
 					oninput: (event) => {

@@ -50,7 +50,7 @@ export class PokemonView {
 					for (var key in newPokemon)
 						if (key !== "base")
 							pokemon[key] = newPokemon[key]
-					pokemon.learntMoves = Object.keys(pokemon.learntMoves).map(k => pokemon.learntMoves[k]).filter(e => e)
+					pokemon.learntMoves = Object.keys(pokemon.learntMoves || {}).map(k => pokemon.learntMoves[k]).filter(e => e)
 					pokemon.base = new Pokemon(newPokemon).base
 					if (this.onSave)
 						this.onSave()
@@ -232,6 +232,8 @@ function pokeballEditSection(pokemon) {
 
 function ballElement(ball, pokemon) {
 	ball = standardBallName(ball)
+	if (!pokemon.balls)
+		pokemon.balls = []
 	const index = pokemon.balls.findIndex(b => standardBallName(b) === ball)
 	const exists = index > -1
 	const icon = PkSpr.decorate({ slug: ball, type: "pokeball" })
@@ -286,11 +288,11 @@ class StatNumber extends Component {
 	renderThis() {
 		const pokemon = this.pokemon
 		var ivText = pokemon.ivs ? pokemon.ivs[this.stat] : 0
-		if (!ivText && ivText != 0)
+		if (!ivText && ivText !== 0)
 			ivText = "x"
 		var evBase = pokemon.evs ? pokemon.evs[this.stat] : 0
-		if (!ivText && ivText != 0)
-			ivText = ""
+		if (!evBase && evBase !== 0)
+			evBase = "x"
 		var blub = pokemon.stats[this.stat]
 		if (pokemon.ivs || pokemon.evs)
 			blub += " · " + ivText + " · " + evBase
@@ -327,8 +329,6 @@ class StatBar extends Component {
 		if (!ivText && ivText != 0)
 			ivText = "x"
 		var evBase = pokemon.evs ? pokemon.evs[this.stat] : 0
-		if (!ivText && ivText != 0)
-			ivText = ""
 		var ivBase = ivText.toString().endsWith("*") ? 31 : ivText
 		ivBase = isNaN(+ivBase) ? ivBase.replace(/(^\d+)(.+$)/i, '$1') : +ivBase
 		var content = [l("div.stat-bar.base-bar", {

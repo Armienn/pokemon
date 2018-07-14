@@ -1,6 +1,5 @@
 import { SearchSite } from "../../archive/search/search-site.js"
 import { update, setRenderFunction, l } from "../../archive/arf/arf.js"
-import { NavGroup, NavEntry } from "../../archive/search/section-navigation.js"
 import { CollectionSetup } from "../../archive/search/collection-setup.js"
 import { ExportView } from "../../archive/search/export-view.js"
 import { ImportView } from "../../archive/search/import-view.js"
@@ -10,8 +9,9 @@ import { formName, sprite, typesText, abilitiesText, statText, eggGroupsText, ty
 import { CollectionGroup } from "./local-collection.js"
 import { PokemonView } from "./pokemon-view.js"
 import { getSpreadsheetUrl, loadSheetsFrom } from "./spreadsheet-parser.js"
-import { CollectionEditor } from "./collection-editor.js";
-import { pokemonFromUnsanitised } from "./porting.js";
+import { CollectionEditor } from "./collection-editor.js"
+import { pokemonFromUnsanitised } from "./porting.js"
+import { NewPokemonView } from "./new-pokemon-view.js"
 
 window.onload = function () {
 	var site = new SearchSite()
@@ -231,7 +231,23 @@ class PokemonStuff {
 			setup["Game Data"][this.selectedLocal.title] = {}
 			setup["Game Data"][this.selectedLocal.title]["Add Pokémon"] = {
 				action: () => {
-					this.site.show(new ExportView(this.site))
+					const tab = this.selectedLocal
+					this.site.show(new NewPokemonView(tab.title,
+						(pokemon) => {
+							this.site.clearSelection()
+							if (!pokemon)
+								return update()
+							tab.pokemons.push(pokemon)
+							this.localCollectionGroup.saveToLocalStorage()
+							this.site.showModel(pokemon, "pokemonIndividuals", tab.pokemons)
+							this.site.sections.selection.content.switchToEdit()
+							update()
+						},
+						() => {
+							this.site.clearSelection()
+							update()
+						}
+					))
 				}
 			}
 			setup["Game Data"][this.selectedLocal.title]["Edit collection"] = {
