@@ -84,7 +84,7 @@ export class PokemonView {
 							"Ability", { key: "ability", options: ["", ...poke.abilities.filter(e => e)], restricted: true },
 							"Nature", { key: "nature", options: Object.keys(stuff.data.natures) },
 							"Gender", { key: "gender", options: ["", "♂", "♀", "—"], restricted: true },
-							"Shiny", { key: "shiny", options: ["", "yes", "no"], restricted: true },
+							"Shiny", this.shinyToggler(pokemon),
 							"Language", { key: "language" },
 							"Level", { key: "level", type: "number" },
 							"Move", { value: nested(pokemon, "learntMoves", "0"), set: setNested(pokemon, "learntMoves", "0") },
@@ -112,6 +112,22 @@ export class PokemonView {
 					]
 				}
 			}
+		)
+	}
+
+	shinyToggler(model) {
+		return l("button",
+			{
+				onclick: (event) => {
+					if (model.shiny)
+						model.shiny = ""
+					else
+						model.shiny = "x"
+					update()
+				},
+				style: { width: "10rem", margin: "0.25rem" }
+			},
+			model.shiny ? "yes" : "no"
 		)
 	}
 
