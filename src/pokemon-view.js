@@ -345,7 +345,7 @@ class StatBar extends Component {
 		if (!ivText && ivText != 0)
 			ivText = "x"
 		var evBase = pokemon.evs ? pokemon.evs[this.stat] : 0
-		var ivBase = ivText.toString().endsWith("*") ? 31 : ivText
+		var ivBase = ivText.toString().endsWith("*") || ivText.toString().toLowerCase() === "ht" ? 31 : ivText
 		ivBase = isNaN(+ivBase) ? ivBase.replace(/(^\d+)(.+$)/i, '$1') : +ivBase
 		var content = [l("div.stat-bar.base-bar", {
 			style: { width: statBase + "px", background: "linear-gradient(to right, red, " + statColor(statBase) + ")" }

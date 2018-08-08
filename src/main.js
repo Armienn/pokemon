@@ -4,7 +4,6 @@ import { CollectionSetup } from "../../archive/search/collection-setup.js"
 import { ExportView } from "../../archive/search/export-view.js"
 import { ImportView } from "../../archive/search/import-view.js"
 import { PokemonData, Pokemon } from "./pokemon-data.js"
-import { State } from "./state.js"
 import { formName, sprite, typesText, abilitiesText, statText, eggGroupsText, typeText, learnMethodText, IVEVText, ballSprites, movesText, extendedName } from "./pokemon-display.js"
 import { CollectionGroup } from "./local-collection.js"
 import { PokemonView } from "./pokemon-view.js"
@@ -119,7 +118,6 @@ class PokemonStuff {
 	constructor(site) {
 		this.site = site
 		this.data = new PokemonData()
-		this.state = new State()
 		this.localCollectionGroup = new CollectionGroup("Local")
 		this.collectorInfo = {}
 		this.externalCollectionGroup = new CollectionGroup("Loaded")
@@ -302,26 +300,16 @@ class PokemonStuff {
 	}
 
 	loadBaseData() {
-		this.loadJSONData("pokemons")
-		this.loadJSONData("moves")
-		this.loadJSONData("abilities")
-		this.loadJSONData("natures")
-		this.loadJSONData("eggGroups", "egg-groups")
-		requestJSON("./data-usum/types.json", (types) => {
-			this.data.types = types
-			this.data.typeNames = Object.keys(types)
-			this.state.thingsLoaded.types = true
-			this.tryLoad()
-		})
-	}
-
-	loadJSONData(thing, file) {
-		if (!file)
-			file = thing
-		requestJSON("./data-usum/" + file + ".json", (data) => {
-			this.data[thing] = data
-			this.state.thingsLoaded[thing] = true
-			this.tryLoad()
+		this.data.directory = "./data-usum/"
+		this.data.addDataSource("pokemons")
+		this.data.addDataSource("moves")
+		this.data.addDataSource("abilities")
+		this.data.addDataSource("natures")
+		this.data.addDataSource("eggGroups", "egg-groups.json")
+		this.data.addDataSource("types")
+		this.data.load(() => {
+			this.data.typeNames = Object.keys(this.data.types)
+			this.initialise()
 		})
 	}
 
@@ -329,21 +317,18 @@ class PokemonStuff {
 		if (!window.location.search)
 			return
 		this.parseLocation()
-		this.state.externalInventory.load = true
 		for (let i in this.site.importMethods)
 			if (i.toLowerCase() == this.location.type.toLowerCase()) {
 				request("https://" + this.location.path, (response) => {
-					this.loadData = () => this.loadFromImport(this.location.tab, this.site.importMethods[i](response).map(e => new Pokemon(e)))
-					stuff.state.externalInventory.load = false
-					this.tryLoad()
+					this.loadExtra = () => this.loadFromImport(this.location.tab, this.site.importMethods[i](response).map(e => new Pokemon(e)))
+					this.initialise()
 				})
 				return
 			}
 		if (this.location.type === "sheet")
 			requestJSON(getSpreadsheetUrl(this.location.path), (response) => {
-				this.loadData = () => loadSheetsFrom({ id: this.location.path, spreadsheet: response })
-				stuff.state.externalInventory.load = false
-				this.tryLoad()
+				this.loadExtra = () => loadSheetsFrom({ id: this.location.path, spreadsheet: response })
+				this.initialise()
 			})
 	}
 
@@ -376,9 +361,7 @@ class PokemonStuff {
 		this.site.setCollection(tab, "pokemonIndividuals")
 	}
 
-	tryLoad() {
-		if (!this.state.thingsAreLoaded)
-			return
+	initialise() {
 		this.data.movesList = Object.keys(this.data.moves).map(key => this.data.moves[key])
 		var moveSetups = movesCollectionSetup()
 		site.addCollectionSetup("moves", moveSetups[0])
@@ -388,10 +371,10 @@ class PokemonStuff {
 		site.addCollectionSetup("pokemonIndividuals", pokemonSetups[1])
 		this.site.setCollection(this.data.pokemons, "pokemon")
 		this.localCollectionGroup.loadFromLocalStorage()
-		this.state.loaded = true
-		if (this.loadData) {
+		var loaded = true
+		if (this.loadExtra) {
 			//try {
-			this.state.loaded = !this.loadData()
+			loaded = !this.loadExtra()
 			//}
 			//catch (e) {
 			/*document.getElementById("loading").innerHTML = "Failed to load external collection: " + e.message
@@ -402,7 +385,7 @@ class PokemonStuff {
 			return*/
 			//}
 		}
-		if (!this.state.loaded)
+		if (!loaded)
 			return
 		this.selectCollectionFrom(this.location.tab)
 		update()
@@ -410,9 +393,8 @@ class PokemonStuff {
 	}
 
 	tryLoadAgain() {
-		if (!this.state.externalThingsAreLoaded)
+		if (!this.data.finishedExternal())
 			return
-		this.state.loaded = true
 		var tab = this.externalCollectionGroup.tabs[Object.keys(this.externalCollectionGroup.tabs)[0]]
 		if (this.location)
 			this.selectCollectionFrom(this.location.tab, tab)

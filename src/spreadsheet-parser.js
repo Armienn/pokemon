@@ -18,14 +18,13 @@ export function loadSheetsFrom(spreadsheet) {
 			title.toLowerCase() == "db"
 		) {
 			if (i == "0") {
-				stuff.state.externalInventory.tabsLoaded["config"] = false
+				stuff.data.addExternalSource("config")
 				requestJSON(getWorksheetUrl(spreadsheet.id, 1), (r) => { parseConfig(r) })
 			}
 			continue
 		}
 		addNewTab(title, i)
 	}
-	updateExternalInventoryLoadedness()
 	return true
 }
 
@@ -51,7 +50,7 @@ function tryValues(values, entry) {
 
 function addNewTab(title, index) {
 	const tab = stuff.externalCollectionGroup.addTab(title, [])
-	stuff.state.externalInventory.tabsLoaded[index] = false
+	stuff.data.addExternalSource(index)
 	requestJSON(getWorksheetUrl(stuff.collectorInfo.spreadsheetId, (+index) + 1), parseSheet(tab, index))
 }
 
@@ -59,8 +58,7 @@ function parseSheet(tab, index) {
 	return (response) => {
 		var table = tablify(response.feed.entry)
 		tab.pokemons = objectsFromTable(table).map(e => pokemonFromUnsanitised(e)).filter(e => e)
-		stuff.state.externalInventory.tabsLoaded[index] = true
-		updateExternalInventoryLoadedness()
+		stuff.data.external[index] = true
 		stuff.tryLoadAgain()
 	}
 }
@@ -83,14 +81,6 @@ function tablify(entries) {
 	for (var i in headers)
 		table[0][headers[i]] = i
 	return table
-}
-
-function updateExternalInventoryLoadedness() {
-	if (stuff.state.externalInventory.tabsLoaded)
-		for (var i in stuff.state.externalInventory.tabsLoaded)
-			if (!stuff.state.externalInventory.tabsLoaded[i])
-				return
-	stuff.state.externalInventory.isLoaded = true
 }
 
 function parseConfig(response) {
@@ -118,8 +108,7 @@ function parseConfig(response) {
 	stuff.collectorInfo.colorSchemes.custom[1] = tryValues(["customtextcolor", "textcolor"], entry)
 	stuff.collectorInfo.colorSchemes.custom[2] = tryValues(["customheadercolor", "headercolor"], entry)
 	*/
-	stuff.state.externalInventory.tabsLoaded["config"] = true
-	updateExternalInventoryLoadedness()
+	stuff.data.external["config"] = true
 	stuff.tryLoadAgain()
 }
 
