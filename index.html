@@ -1,108 +1,11 @@
-<!DOCTYPE html>
-
-<html>
-
-<head profile="http://a9.com/-/spec/opensearch/1.1/">
-	<meta charset="utf-8" />
-	<title>Pokémon Stuff</title>
-	<link rel="stylesheet" href="static/style.css">
-	<link rel="search" type="application/opensearchdescription+xml" title="Pokemon Stuff" href="https://armienn.github.io/pokemon/search.xml">
-</head>
-
-<body>
-	<article id="main">
-
-		<header>
-			<h1 id="main-title"><a href="https://github.com/Armienn/pokemon#pok%C3%A9mon-stuff">Pokémon Stuff</a></h1>
-			<h4 id="sub-title" style="display: none;">Pokémon</h4>
-			<nav>
-				<ul id="nav-list">
-				</ul>
-			</nav>
-		</header>
-
-		<section style="padding-top:0;">
-			<ul id="options-section" class="hidden-options">
-			</ul>
-			<ul id="options-sub-section" class="hidden-options">
-			</ul>
-			<ul>
-				<ul id="filter-adder" style="display: inline-table;">
-				</ul>
-				<ul id="filter-list">
-				</ul>
-				<ul id="custom-adder" style="display: inline-table;">
-				</ul>
-				<li id="custom-sort">
-				</li>
-			</ul>
-			<ul id="current-filter-list">
-			</ul>
-		</section>
-
-		<table cellspacing="0" cellpadding="0" style="margin: 1rem;">
-			<thead>
-			</thead>
-			<tbody id="pokemon-info-base">
-				<tr id="pokemon-info-row" style="display: none; background-color: transparent; cursor: initial;">
-					<td>
-
-						<section id="pokemon-info" class="hidden-info" style="max-width: calc(100vw - 2rem);">
-							<h2 id="name-header"></h2>
-							<p id="description-header"></p>
-
-							<section id="info-sections">
-								<section id="image-section">
-								</section>
-							</section>
-
-							<h3 id="moves-header">Moves ▶</h3>
-							<section id="moves-section" class="hidden-moves">
-							</section>
-
-							<h3 id="close-header">◬</h3>
-						</section>
-
-					</td>
-				</tr>
-			</tbody>
-		</table>
-
-
-		<section>
-			<table id="pokemon-list" cellspacing="0" cellpadding="0">
-				<thead>
-				</thead>
-				<tbody>
-				</tbody>
-			</table>
-			<ul id="pokemon-grid">
-			</ul>
-		</section>
-
-		<footer>
-			<a href="https://github.com/Armienn/pokemon#pok%C3%A9mon-stuff">Design and code © Armienn, 2017.</a> Pokémon © Nintendo
-			/ Game Freak, 1995-2017. Thanks to Michiel Sikma for sprites and to richi3f for inspiration.
-		</footer>
-
-		<div id="loading" style="color: white; text-align: center; padding-top:50vh;">
-			<img src="static/pokeball-white.png">
-		</div>
-
-	</article>
-	<script src="static/porting.js"></script>
-	<script src="static/spreadsheet-parser.js"></script>
-	<script src="static/poke-text.js"></script>
-	<script src="static/pokemon-data.js"></script>
-	<script src="static/header-section.js"></script>
-	<script src="static/info-section.js"></script>
-	<script src="static/list-section.js"></script>
-	<script src="static/options-section.js"></script>
-	<script src="static/collection.js"></script>
-	<script src="static/settings.js"></script>
-	<script src="static/state.js"></script>
-	<script src="static/main.js"></script>
-
-</body>
-
-</html>
+<!DOCTYPE HTML>
+<!--head profile="http://a9.com/-/spec/opensearch/1.1/"></head-->
+<meta charset="utf-8" />
+<title>Pokémon Stuff</title>
+<meta name="viewport" content="width=device-width" />
+<link rel="search" type="application/opensearchdescription+xml" title="Pokemon Stuff" href="https://armienn.github.io/pokemon/search.xml">
+<link rel="stylesheet" href="../archive/search/search-styles.css"></link>
+<link rel="stylesheet" href="static/pokesprite.min.css"></link>
+<script src="static/pokesprite.min.js"></script>
+<script src="../archive/arf/virtual-dom.js"></script>
+<script src="src/main.js" type="module"></script>
