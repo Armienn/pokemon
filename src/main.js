@@ -81,6 +81,11 @@ function pokemonCollectionSetup() {
 	setupIndividual.addScriptFilter("return model.stats.atk > 150 || model.stats.spa > 150")
 	setupIndividual.showTableEntries(["sprite", "name+form", "types", "ability", "nature", "hpivev", "atkivev", "defivev", "spaivev", "spdivev", "speivev", "learntMoves", "balls"])
 	setupIndividual.showGridEntries(["sprite"])
+	setupIndividual.style = (pokemon) => {
+		if (pokemon.hue >= 0)
+			return { backgroundColor: "hsla(" + pokemon.hue*360 + ", 100%, 70%, 0.2)" }
+		return {}
+	}
 	const viewIndividual = new PokemonView()
 	viewIndividual.onSave = () => stuff.localCollectionGroup.saveToLocalStorage()
 	setupIndividual.view = (pokemon, collection) => viewIndividual.withPokemon(pokemon, collection)
