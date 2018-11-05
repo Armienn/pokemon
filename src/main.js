@@ -48,6 +48,11 @@ function pokemonCollectionSetup() {
 	setup.showTableEntries(["sprite", "name+form", "types", "abilities", "hp", "atk", "def", "spa", "spd", "spe", "total", "eggGroups"])
 	setup.showGridEntries(["sprite"])
 	setup.gridSetup.compact = true
+	setup.style = (pokemon) => {
+		if (pokemon.hue >= 0)
+			return { backgroundColor: "hsla(" + pokemon.hue*360 + ", 100%, 70%, 0.2)" }
+		return {}
+	}
 	const view = new PokemonView()
 	setup.view = (pokemon, collection) => view.withPokemon(pokemon, collection)
 	var setupIndividual = new CollectionSetup()
