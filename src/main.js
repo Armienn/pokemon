@@ -50,7 +50,7 @@ function pokemonCollectionSetup() {
 	setup.gridSetup.compact = true
 	setup.style = (pokemon) => {
 		if (pokemon.hue >= 0)
-			return { backgroundColor: "hsla(" + pokemon.hue*360 + ", 100%, 70%, 0.2)" }
+			return { backgroundColor: "hsla(" + pokemon.hue * 360 + ", 100%, 70%, 0.2)" }
 		return {}
 	}
 	const view = new PokemonView()
@@ -83,7 +83,7 @@ function pokemonCollectionSetup() {
 	setupIndividual.showGridEntries(["sprite"])
 	setupIndividual.style = (pokemon) => {
 		if (pokemon.hue >= 0)
-			return { backgroundColor: "hsla(" + pokemon.hue*360 + ", 100%, 70%, 0.2)" }
+			return { backgroundColor: "hsla(" + pokemon.hue * 360 + ", 100%, 70%, 0.2)" }
 		return {}
 	}
 	const viewIndividual = new PokemonView()
@@ -99,22 +99,47 @@ function movesCollectionSetup() {
 	setup.add("name", "Name")
 	setup.add("type", "Type", { value: m => typeText(m.type) }, { options: stuff.data.typeNames, restricted: true })
 	setup.add("category", "Category", {}, { options: ["Physical", "Special", "Status"], restricted: true })
-	setup.add("power", "Power")
-	setup.add("accuracy", "Accuracy")
-	setup.add("pp", "PP")
-	setup.add("priority", "Priority")
+	setup.add("power", "Power", { data: x => toNumberIfNumber(x.power) })
+	setup.add("accuracy", "Accuracy", { data: x => toNumberIfNumber(x.accuracy) })
+	setup.add("pp", "PP", { data: x => toNumberIfNumber(x.pp.split(" ")[0]) })
+	setup.add("priority", "Priority", { data: x => toNumberIfNumber(x.priority) })
 	setup.add("target", "Target", {}, {}, false)
 	setup.add("gameDescription", "Game Description", {}, {}, false)
 	setup.addScriptFilter("return model.power >= 100 || model.accuracy == 100")
 	setup.showTableEntries(["name", "type", "category", "power", "accuracy", "gameDescription"])
 	setup.showGridEntries(["name", "type", "category", "power", "accuracy"])
 	var setupPokemonMoves = new CollectionSetup()
-	setupPokemonMoves.add("method", "Learned By", { value: learnMethodText },
-		{ options: ["Level", "TM", "Egg", "Tutor"], specialQueries: { "level": (m) => m > 0 }, restricted: true })
+	setupPokemonMoves.add("method", "Learned By", {
+		value: learnMethodText,
+		data: moveMethodSortNumber,
+	}, {
+		options: ["Level", "TM", "Egg", "Tutor"],
+		specialQueries: { "level": (m) => m > -1 },
+		restricted: true,
+	})
 	setupPokemonMoves.copyFrom(setup)
 	setupPokemonMoves.showTableEntries(["method", "name", "type", "category", "power", "accuracy", "gameDescription"])
 	setupPokemonMoves.showGridEntries(["method", "name", "type", "category", "power", "accuracy"])
 	return [setup, setupPokemonMoves]
+}
+
+function toNumberIfNumber(text) {
+	return isNaN(text)
+		? text
+		: +text
+}
+
+function moveMethodSortNumber(move) {
+	if (+move.method > -1)
+		return +move.method
+	switch (move.method) {
+		case "egg": return 200
+		case "evolution": return 300
+		case "pre": return 400
+		case "tm": return 500
+		case "tutor": return 600
+		default: return 700
+	}
 }
 
 function sumStats(p) {

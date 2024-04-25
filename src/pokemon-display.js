@@ -321,7 +321,7 @@ function parseStatType(text) {
 }
 
 export function learnMethodText(move) {
-	if (move.method > 0)
+	if (move.method > -1)
 		return "Lvl " + move.method
 	switch (move.method) {
 		case "tm": return "TM"
