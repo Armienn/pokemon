@@ -36,6 +36,7 @@ function pokemonCollectionSetup() {
 	setup.add("name+form", "Pokémon", { value: formName, data: p => p.name + (p.form == "Base" ? "" : " (" + p.form + ")") }, false, "name")
 	setup.add("types", "Types", { value: typesText }, { options: stuff.data.typeNames, restricted: true })
 	setup.add("abilities", "Abilities", { value: abilitiesText }, { options: Object.keys(stuff.data.abilities) })
+	setup.add("moves", "Moves", (m, q) => m.moves.some(x => x.name.toLowerCase() === q.toLowerCase()))
 	setup.add("hp", "HP", { value: p => statText(p.stats.hp), data: p => p.stats.hp })
 	setup.add("atk", "Atk", { value: p => statText(p.stats.atk), data: p => p.stats.atk })
 	setup.add("def", "Def", { value: p => statText(p.stats.def), data: p => p.stats.def })
