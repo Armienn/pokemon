@@ -328,6 +328,7 @@ export function learnMethodText(move) {
 		case "tutor": return "Tutor"
 		case "egg": return "Egg"
 		case "evolution": return "Evolution"
+		case "pre": return "Pre-evolution"
 	}
 	return move.method
 }

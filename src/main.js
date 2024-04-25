@@ -398,6 +398,16 @@ class PokemonStuff {
 
 	initialise() {
 		this.data.movesList = Object.keys(this.data.moves).map(key => this.data.moves[key])
+		this.setupMissingPreEvolutionMoves()
+		const pokemonById = {}
+		for (const pokemon of this.data.pokemons) {
+			if (!pokemonById[pokemon.id])
+				pokemonById[pokemon.id] = []
+			pokemonById[pokemon.id].push(pokemon)
+		}
+		for (const pokemon of this.data.pokemons)
+			this.propagateMoves(pokemon, pokemonById)
+
 		var moveSetups = movesCollectionSetup()
 		site.addCollectionSetup("moves", moveSetups[0])
 		site.addCollectionSetup("pokemonMoves", moveSetups[1])
@@ -425,6 +435,41 @@ class PokemonStuff {
 		this.selectCollectionFrom(this.location.tab)
 		update()
 		//setInterval(() => { this.listSection.loadMoreWhenScrolledDown() }, 500)
+	}
+
+	setupMissingPreEvolutionMoves() {
+		const pokemonById = {}
+		for (const pokemon of this.data.pokemons) {
+			if (!pokemonById[pokemon.id])
+				pokemonById[pokemon.id] = []
+			pokemonById[pokemon.id].push(pokemon)
+		}
+		for (const pokemon of this.data.pokemons)
+			this.propagateMoves(pokemon, pokemonById)
+	}
+
+	propagateMoves(pokemon, byId) {
+		const poke = this.previousPokemonFor(pokemon, byId)
+		if (!poke)
+			return
+		this.propagateMoves(poke, byId)
+
+		for (const move of poke.moves)
+			if (!pokemon.moves.some(x => x.name === move.name))
+				pokemon.moves.push({ name: move.name, method: move.method === "egg" ? "egg" : "pre" })
+	}
+
+	previousPokemonFor(pokemon, byId) {
+		if (!pokemon.evolvesFrom)
+			return
+		const previous = byId[pokemon.evolvesFrom.id]
+		if (previous.length === 1)
+			return previous[0]
+		const form = pokemon.evolvesFrom.form === "Same" ? pokemon.form : pokemon.evolvesFrom.form
+		const poke = previous.find(x => x.form === form)
+		if (!poke)
+			console.log("couldn't choose between " + previous.map(x => x.name).join(", "))
+		return poke
 	}
 
 	tryLoadAgain() {
